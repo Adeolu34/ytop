@@ -3,7 +3,8 @@ import { Pool } from 'pg';
 import { PrismaClient } from '@/app/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-const connectionString = process.env.DATABASE_URL;
+// Netlify injects NETLIFY_DATABASE_URL when Neon is connected; use it if DATABASE_URL is not set
+const connectionString = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -12,7 +13,7 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient(): PrismaClient {
   if (!connectionString) {
-    throw new Error('DATABASE_URL is not set. Add it to .env to use blog, programs, and other database features.');
+    throw new Error('DATABASE_URL (or NETLIFY_DATABASE_URL on Netlify) is not set. Add it to .env or Netlify env to use blog, programs, and other database features.');
   }
   const pool = new Pool({
     connectionString,
