@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YTOP Global - Expand to that Future</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#D32F2F", // A strong non-profit red
+                        secondary: "#1A237E", // Deep navy from logo
+                        "background-light": "#FAFAFA",
+                        "background-dark": "#121212",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1E1E1E",
+                        "text-light": "#333333",
+                        "text-dark": "#E0E0E0",
+                    },
+                    fontFamily: {
+                        display: ["Montserrat", "sans-serif"],
+                        body: ["Open Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .masonry-grid {
+                column-count: 2;
+            }
+        }
+        @media (min-width: 1024px) {
+            .masonry-grid {
+                column-count: 3;
+            }
+        }
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+        }html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-body antialiased transition-colors duration-300">
+<nav class="sticky top-0 z-50 bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur shadow-sm border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-20">
+<div class="flex-shrink-0 flex items-center gap-3">
+<img alt="YTOP Global Logo" class="h-12 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHP41u8QF8m8r4k2kXk32FCDPqNEh68WSlBCfnZRlRY6UUldKPWfYWZVzJWjieXHXCeugQpntG9kUbGqSt0FTaJQYCxsD5K-gCnjNfTe--LmDx14KgCTm-945HCDW25TMry6RV4YusHVTlPJhQDCF4HAmX5P1LZtQjGCtlxCtcYIDBtksBJ66A7DW3zLTga9kel0sU3xuLmnoGHwsG_NA4vUP8uV6n6Sz2rkyRy8d5QXTR0lRj5MFEkrzfWtTvFE_Ayn0ewFbSGZ0"/>
+<div class="hidden md:block">
+<span class="block font-display font-bold text-secondary dark:text-white text-lg tracking-tight">YTOP GLOBAL</span>
+<span class="block text-xs text-primary font-medium tracking-widest uppercase">Expand to that future</span>
+</div>
+</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">About Us</a>
+<a class="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#impact">Impact</a>
+<a class="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#services">What We Do</a>
+<a class="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#stories">Stories</a>
+<a class="bg-primary hover:bg-red-700 text-white px-5 py-2.5 rounded-full font-bold text-sm transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5" href="#donate">
+                        Donate Now
+                    </a>
+<button class="p-2 text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-icons text-xl">brightness_medium</span>
+</button>
+</div>
+<div class="md:hidden flex items-center">
+<button class="text-gray-700 dark:text-gray-200 hover:text-primary p-2">
+<span class="material-icons text-2xl">menu</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<header class="relative overflow-hidden">
+<div class="flex flex-col lg:flex-row min-h-[calc(100vh-5rem)]">
+<div class="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 lg:py-0 bg-white dark:bg-background-dark relative z-10">
+<div class="max-w-lg mx-auto lg:mx-0">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        Empowering Youth
+                    </div>
+<h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold text-secondary dark:text-white leading-tight mb-6">
+                        Building the <span class="text-primary relative inline-block">
+                            Leaders
+                            <svg class="absolute w-full h-3 -bottom-1 left-0 text-red-200 dark:text-red-900 -z-10" preserveAspectRatio="none" viewBox="0 0 100 10">
+<path d="M0 5 Q 50 10 100 5" fill="none" stroke="currentColor" stroke-width="8"></path>
+</svg>
+</span> of Tomorrow.
+                    </h1>
+<p class="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                        At YTOP Global, we bridge the gap between potential and reality. Through leadership training, personal development, and social impact initiatives, we empower young minds to expand to that future they envision.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<a class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-secondary hover:bg-blue-900 rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-1" href="#join">
+                            Join the Movement
+                        </a>
+<a class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-secondary dark:text-white border-2 border-secondary dark:border-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-all" href="#watch">
+<span class="material-icons mr-2">play_circle_outline</span>
+                            Watch Our Story
+                        </a>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-1/2 relative min-h-[400px] lg:min-h-full">
+<div class="absolute inset-0 bg-secondary/20 dark:bg-black/40 z-10"></div>
+<img alt="Diverse group of happy youths collaborating outdoors" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDidJxEKXhfY-bM2ugRkL_2dpgYrKZOV58CSNBoX2mYG4l5plG_Q3VtLovBvRcCHo3saU8ZPFrkzyUN95PnXbApezXoP1ZH1DgoMi-O4gHIsofdXnOIN_usjSEuBPPLawPN0LGTcfyfV1_o98darkdhX2cRkyDzB6Z70_Od6_WAJFDqt9swkszUdQ-Atkz-7Syyr-KdtnzcQmojJSmWii1VJiGI6J5zIArPzlR0PA6vmThyOSWjx2wa8sJelmWAJd_WQ-wIfDeIn14"/>
+<div class="absolute bottom-8 left-8 right-8 lg:left-12 lg:right-auto z-20 bg-white dark:bg-surface-dark p-6 rounded-xl shadow-2xl max-w-sm border-l-4 border-primary">
+<p class="font-display font-bold text-xl text-gray-900 dark:text-white mb-1">"YTOP changed my perspective."</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">- Recent Beneficiary</p>
+</div>
+</div>
+</div>
+</header>
+<section class="py-20 bg-secondary dark:bg-gray-900 text-white relative overflow-hidden" id="impact">
+<div class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+<svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="20" id="dots" patternUnits="userSpaceOnUse" width="20">
+<circle cx="2" cy="2" fill="currentColor" r="1"></circle>
+</pattern>
+</defs>
+<rect fill="url(#dots)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="text-center mb-16">
+<h2 class="text-primary font-bold tracking-widest uppercase mb-2">Our Reach</h2>
+<h3 class="font-display text-3xl md:text-4xl font-bold text-white">Making Tangible Impact</h3>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+<div class="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+<div class="text-5xl font-display font-extrabold text-primary mb-2">5k+</div>
+<div class="text-sm md:text-base font-medium text-gray-300">Youths Empowered</div>
+</div>
+<div class="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+<div class="text-5xl font-display font-extrabold text-white mb-2">12</div>
+<div class="text-sm md:text-base font-medium text-gray-300">University Chapters</div>
+</div>
+<div class="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+<div class="text-5xl font-display font-extrabold text-primary mb-2">50+</div>
+<div class="text-sm md:text-base font-medium text-gray-300">Leadership Events</div>
+</div>
+<div class="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+<div class="text-5xl font-display font-extrabold text-white mb-2">100%</div>
+<div class="text-sm md:text-base font-medium text-gray-300">Commitment</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-24 bg-background-light dark:bg-background-dark" id="services">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col lg:flex-row gap-16">
+<div class="w-full lg:w-1/2">
+<div class="mb-10">
+<span class="text-primary font-bold tracking-widest uppercase text-sm">Our Focus Areas</span>
+<h2 class="font-display text-3xl md:text-4xl font-bold text-secondary dark:text-white mt-2">What We Do</h2>
+<p class="mt-4 text-gray-600 dark:text-gray-400">We focus on holistic development through structured programs designed to challenge and inspire.</p>
+</div>
+<div class="space-y-4">
+<div class="group border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-surface-dark overflow-hidden transition-all hover:shadow-md">
+<details class="group p-4" open="">
+<summary class="flex justify-between items-center font-display font-bold cursor-pointer list-none text-lg text-gray-800 dark:text-white">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-secondary dark:text-blue-300">
+<span class="material-icons">school</span>
+</div>
+                                        Leadership Development
+                                    </div>
+<span class="transition group-open:rotate-180">
+<span class="material-icons">expand_more</span>
+</span>
+</summary>
+<div class="text-gray-600 dark:text-gray-400 mt-4 pl-[3.5rem] leading-relaxed animate-fadeIn">
+                                    Comprehensive workshops and seminars aimed at cultivating the next generation of ethical and visionary leaders. We provide mentorship and real-world leadership scenarios.
+                                </div>
+</details>
+</div>
+<div class="group border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-surface-dark overflow-hidden transition-all hover:shadow-md">
+<details class="group p-4">
+<summary class="flex justify-between items-center font-display font-bold cursor-pointer list-none text-lg text-gray-800 dark:text-white">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-red-50 dark:bg-red-900/30 rounded-lg text-primary dark:text-red-300">
+<span class="material-icons">psychology</span>
+</div>
+                                        Personal Development
+                                    </div>
+<span class="transition group-open:rotate-180">
+<span class="material-icons">expand_more</span>
+</span>
+</summary>
+<div class="text-gray-600 dark:text-gray-400 mt-4 pl-[3.5rem] leading-relaxed">
+                                    Focusing on emotional intelligence, soft skills, and career readiness to ensure every youth can navigate the complexities of the modern world.
+                                </div>
+</details>
+</div>
+<div class="group border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-surface-dark overflow-hidden transition-all hover:shadow-md">
+<details class="group p-4">
+<summary class="flex justify-between items-center font-display font-bold cursor-pointer list-none text-lg text-gray-800 dark:text-white">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-300">
+<span class="material-icons">public</span>
+</div>
+                                        Social Impact Projects
+                                    </div>
+<span class="transition group-open:rotate-180">
+<span class="material-icons">expand_more</span>
+</span>
+</summary>
+<div class="text-gray-600 dark:text-gray-400 mt-4 pl-[3.5rem] leading-relaxed">
+                                    Community outreach programs where youths apply their skills to solve local problems, fostering a spirit of service and civic responsibility.
+                                </div>
+</details>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-1/2" id="donate">
+<div class="bg-surface-light dark:bg-surface-dark p-8 rounded-2xl shadow-xl border-t-4 border-primary">
+<div class="flex justify-between items-end mb-6">
+<div>
+<span class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase">Active Campaign</span>
+<h3 class="font-display text-2xl font-bold text-secondary dark:text-white mt-1">Boundless Generosity</h3>
+</div>
+<div class="bg-red-100 dark:bg-red-900/30 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase">Urgent</div>
+</div>
+<p class="text-gray-600 dark:text-gray-400 mb-8">
+                            Help us provide educational materials and scholarships to 500 underprivileged students in rural communities. Every donation counts towards building a brighter future.
+                        </p>
+<div class="mb-8">
+<div class="flex justify-between text-sm font-bold mb-2">
+<span class="text-secondary dark:text-gray-200">Raised: ₦1,250,000</span>
+<span class="text-gray-500 dark:text-gray-400">Goal: ₦2,000,000</span>
+</div>
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+<div class="bg-primary h-3 rounded-full relative" style="width: 62%">
+<span class="absolute right-0 -top-8 bg-primary text-white text-xs font-bold px-2 py-1 rounded">62%</span>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<div class="flex justify-between items-end mb-2">
+<h4 class="font-bold text-gray-800 dark:text-gray-200 text-sm">OAU Chapter Setup</h4>
+<span class="text-xs text-gray-500 dark:text-gray-400">85% Funded</span>
+</div>
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="flex-1 bg-primary hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md">
+                                Donate Now
+                            </button>
+<button class="flex-1 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold py-3 px-6 rounded-lg transition-colors">
+                                Share Campaign
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-24 bg-gray-50 dark:bg-black" id="stories">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<span class="text-secondary dark:text-blue-400 font-bold tracking-widest uppercase text-sm">Voices of Change</span>
+<h2 class="font-display text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-2">Stories from the Community</h2>
+<p class="mt-4 text-gray-600 dark:text-gray-400">Hear from the students, volunteers, and partners who make YTOP Global a transformative force.</p>
+</div>
+<div class="masonry-grid">
+<div class="masonry-item break-inside-avoid bg-white dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex items-center gap-4 mb-4">
+<img alt="Sarah J." class="w-12 h-12 rounded-full object-cover border-2 border-primary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzWTgNAW1WbEuLgS0-Kgt3LVUgj6MJpZkMVn-qlTrx-E7fqqaDSY1qyqG5bYpXWMRCZ3_kLfLe0bWSsTLVv0LCoEzTJDgree-5zGEzDQfXuaGV7C1F4l4YN4ETmwdHWUZe7rOecwcmt27BL4joolbhloJE9Hb-I4B-9iBxQFL_TOIh-k1kuqmL--7JyyQhtDq_4rvmXzIFuEnBGLQouEjruMEybe5BfjfTq_U9JZZMFqqVL7idxVJ7gkhnIB2t_AYg5p4S4t3lns0"/>
+<div>
+<h4 class="font-bold text-gray-900 dark:text-white">Sarah Johnson</h4>
+<p class="text-xs text-gray-500 uppercase tracking-wide">OAU Student</p>
+</div>
+</div>
+<p class="text-gray-600 dark:text-gray-300 italic">"The leadership bootcamp was a turning point for me. I learned that leadership isn't just about a title, it's about impact. YTOP gave me the confidence to start my own campus initiative."</p>
+<div class="mt-4 text-primary text-sm font-bold flex items-center">
+                        Read full story <span class="material-icons text-sm ml-1">arrow_forward</span>
+</div>
+</div>
+<div class="masonry-item break-inside-avoid bg-secondary dark:bg-gray-800 p-6 rounded-2xl shadow-md text-white">
+<span class="material-icons text-4xl text-white/20 mb-2">format_quote</span>
+<p class="text-lg font-medium mb-6">"Supporting YTOP Global has been one of the most fulfilling investments we've made. Their transparency and direct impact on youth development is unmatched."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold">DT</div>
+<div>
+<h4 class="font-bold">David Thompson</h4>
+<p class="text-xs text-blue-200 uppercase tracking-wide">Corporate Partner</p>
+</div>
+</div>
+</div>
+<div class="masonry-item break-inside-avoid bg-white dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex items-center gap-4 mb-4">
+<img alt="Michael O." class="w-12 h-12 rounded-full object-cover border-2 border-secondary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8f658qUmGJZy7gkSq8ZWsAd9BoPVUHGtqvwdw8CzENyHdQNBXmweSln8WmpYm_pDlsOCIGtBA5B8ys9HsM8XbaDaCoeFhkqFfRyerHAFJLIT4DhoANBgYfzhtiCSySuhGqp9G9DDtUtYfF8bY5wxAU4bq5367PUF8E4sSwUtljZHLrXAF447Gv-kKrJSntEGo7Yz6EWoia-VhYW84QSgaO4T8i5GP3cexIIOgeTqX_ljPgwphRWYJS3xla6Jdq9jWYgsnyiVRhgs"/>
+<div>
+<h4 class="font-bold text-gray-900 dark:text-white">Michael Okonkwo</h4>
+<p class="text-xs text-gray-500 uppercase tracking-wide">Volunteer</p>
+</div>
+</div>
+<p class="text-gray-600 dark:text-gray-300">"Volunteering with the outreach team taught me humility and service. Seeing the smiles on the faces of the children we helped is a memory I will cherish forever."</p>
+</div>
+<div class="masonry-item break-inside-avoid relative group rounded-2xl overflow-hidden shadow-lg h-64">
+<img alt="Students celebrating" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiIPp_0TAQqIlHNRsl9fzmFJGprqBo8LTIzLdiaPOaLApkEeHiwK_26wPxUkQXDDHGjz3slA_jxX0SGs26BTrNslcjXZ2e8NYhyYV7mn0-v8bNztCMNx85NTVCDCiUYIHIBDE7NOYTircE_H0Fx92nE9KWcL_KO8FvpjBVYMdS14GnFVWL-llkeXYYZw9Es1b86wHxfQMEQ2rFj9vP-jjr3v5JLBAD_O2dLMh4LuO1zAiOst4ctrukKZSHeZSOcbL5kv8YDRnfMQo"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
+<h4 class="text-white font-bold text-lg">Class of 2023</h4>
+<p class="text-gray-300 text-sm">Graduation Ceremony</p>
+</div>
+</div>
+<div class="masonry-item break-inside-avoid bg-white dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex items-center gap-4 mb-4">
+<img alt="Amina B." class="w-12 h-12 rounded-full object-cover border-2 border-primary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlBDx5IRir4QX4CSz6H7JSzgaPAaOxqzlWJ3ivtk9EZj-Ce4YXTRwvPMYrW2m_elwiY8qwFc3h7oGQ_0_LpL-HAGWH19OzXNTQPGfz0MOHRF4tOSYeyUSAFdI7CLnoEEwwDMKfU0xjxSc7rvNnZRrOnCDgaWZ8yWdB47Q6bLXR5Wv0BNna7p2ktd2x-fs4-YcM7NrmyR7kO4Ep9qd4U4q8Nv05Qi4wdXC_atDr9v-Dbwj95M0L5mQtM1zwnrhv_4KDDC8RqDubbgg"/>
+<div>
+<h4 class="font-bold text-gray-900 dark:text-white">Amina Bello</h4>
+<p class="text-xs text-gray-500 uppercase tracking-wide">Beneficiary</p>
+</div>
+</div>
+<p class="text-gray-600 dark:text-gray-300 italic">"I never thought I could speak in public until I joined YTOP. Now I advocate for others."</p>
+</div>
+</div>
+</div>
+</section>
+<footer class="bg-secondary dark:bg-gray-900 text-white pt-20 pb-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+<div class="col-span-1 lg:col-span-1">
+<div class="flex items-center gap-3 mb-6">
+<img alt="YTOP Global Logo" class="h-10 w-auto brightness-0 invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRoaN8Om5N_j7gmcMXzkGrdLyEIvAUM0SJVgVFKkM2mXqK_xpPHJTSAOQ44bMN_TNilAYlIh-d1WBPXqSIyqqCFUbxN7Baw_eVFHWas04YY8wfveISzgwuadEhYJgaRWThRyeGz2oUsB5YtUecHKEsjVG202-hfcpH_FhHiWcolhrGZE46PXuI2YlKAHElnMLIKVQi5CQ4W8Dr9GUUumUEiMgHx2BlAM3xNNcmJHxSN7Y5v7-xs--BOwlr9UNPdPDXas5h72pifLc"/>
+<div>
+<span class="block font-display font-bold text-white text-lg leading-none">YTOP</span>
+<span class="text-xs text-gray-400">RC179444</span>
+</div>
+</div>
+<p class="text-gray-300 text-sm leading-relaxed mb-6">
+                        Empowering youth to expand to that future through leadership, innovation, and community service.
+                    </p>
+<div class="flex space-x-4">
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><span class="material-icons">facebook</span></a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><img alt="X" class="w-6 h-6 invert opacity-60 hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZExAqxmWyVSyF3RTSWJ09_zqatX11uTVEWrTHPDjfnYm4Nssd1mdLBSKFnwptffU9gatJD2ju61tfx9eKOVd4cijU_SWfdI5thpxRshWmk3-QPkf2sWEgkde99beoG5sa2i5WiL_Xm46Nop3KIJKhGkg3eMaU3vY-My59hwQ1Rwck2s-qZu3B0syJd6InzRiX-A0HNcFWdbcWVZzcZ1qxim3dfsOvZv53ABsf4WLf-2aRHVbOjStDMhjjpir-sG4d7TspMP3JQ4Y"/></a> 
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><span class="material-icons">linked_camera</span></a> 
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><span class="material-icons">public</span></a> 
+</div>
+</div>
+<div>
+<h4 class="font-display font-bold text-lg mb-6">Quick Links</h4>
+<ul class="space-y-3 text-sm text-gray-300">
+<li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Our Programs</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Volunteer</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Blog &amp; News</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-display font-bold text-lg mb-6">Contact Us</h4>
+<ul class="space-y-4 text-sm text-gray-300">
+<li class="flex items-start gap-3">
+<span class="material-icons text-primary text-sm mt-0.5">location_on</span>
+<span>Ile-Ife, Osun State,<br/>Nigeria</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">email</span>
+<span>info@ytopglobal.org</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">phone</span>
+<span>+234 810 000 0000</span>
+</li>
+</ul>
+</div>
+<div>
+<h4 class="font-display font-bold text-lg mb-6">Stay Updated</h4>
+<p class="text-sm text-gray-300 mb-4">Join our newsletter to get updates on our impact and events.</p>
+<form class="flex flex-col gap-3">
+<input class="w-full bg-white/10 border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-gray-500" placeholder="Your email address" type="email"/>
+<button class="bg-primary hover:bg-red-700 text-white font-bold py-3 rounded-lg text-sm transition-colors" type="submit">Subscribe</button>
+</form>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+<p>© 2023 YTOP Global. All rights reserved.</p>
+<div class="flex space-x-6 mt-4 md:mt-0">
+<a class="hover:text-white" href="#">Privacy Policy</a>
+<a class="hover:text-white" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>

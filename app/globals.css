@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  /* Stitch-unified theme (primary red, secondary navy) */
+  --primary: #EF4444;
+  --primary-hover: #dc2626;
+  --secondary: #1E3A8A;
+  --secondary-hover: #1e40af;
+  --background-light: #f8f6f6;
+  --background-dark: #0F172A;
+  --surface-light: #F3F4F6;
+  --surface-dark: #1E293B;
+  /* YTOP brand (kept for compatibility) */
+  --ytop-red: #EF4444;
+  --ytop-red-hover: #dc2626;
+  --ytop-red-light: #fef2f2;
+  --ytop-blue: #1E3A8A;
+  --ytop-blue-hover: #1e40af;
+  --ytop-blue-light: #eff6ff;
+  --ytop-blue-dark: #1E3A8A;
+  --ytop-blue-darker: #172554;
+  --ytop-yellow: #eab308;
+  --ytop-yellow-light: #fefce8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Stitch design utilities */
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, var(--secondary), var(--primary));
+}
+
+/* Lighter gradient for hero text on dark backgrounds */
+.hero-text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, #93c5fd, #fca5a5);
+}
+
+.timeline-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: #E5E7EB;
+  transform: translateX(-50%);
+}
+
+.dark .timeline-line::before {
+  background-color: #374151;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .ytop-shadow {
+    box-shadow: 0 4px 14px 0 rgb(29 78 216 / 15%), 0 2px 6px 0 rgb(185 28 28 / 08%);
+  }
+  .ytop-shadow-lg {
+    box-shadow: 0 10px 40px -10px rgb(29 78 216 / 25%), 0 4px 12px -4px rgb(185 28 28 / 15%);
+  }
+}
+
+/* Modern Animations for Bold Design */
+@keyframes gradient-xy {
+  0%, 100% {
+    background-position: 0% 50%;
+    background-size: 400% 400%;
+  }
+  50% {
+    background-position: 100% 50%;
+    background-size: 400% 400%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(29, 78, 216, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(29, 78, 216, 0.8), 0 0 60px rgba(185, 28, 28, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-gradient-xy {
+  animation: gradient-xy 15s ease infinite;
+  background-size: 400% 400%;
+}
+
+.animate-float {
+  animation: float linear infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  background-size: 2000px 100%;
+}
+
+/* Focus visible states for accessibility */
+@layer base {
+  *:focus-visible {
+    outline: 2px solid var(--ytop-blue);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Selection color matching brand */
+  ::selection {
+    background-color: var(--ytop-blue-light);
+    color: var(--ytop-blue-dark);
+  }
+
+  ::-moz-selection {
+    background-color: var(--ytop-blue-light);
+    color: var(--ytop-blue-dark);
+  }
+}

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Rise of Warriors - YTOP Global</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+            extend: {
+                colors: {
+                "primary": "#ec1313",
+                "background-light": "#f8f6f6",
+                "background-dark": "#221010",
+                },
+                fontFamily: {
+                "display": ["Inter", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+            },
+        }
+    </script>
+<style>
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 15px;
+            width: 2px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-[#1a0b0b] border-b border-gray-100 dark:border-gray-800">
+<div class="px-6 md:px-10 py-4 flex items-center justify-between max-w-7xl mx-auto">
+<div class="flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">YTOP Global</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">About Us</a>
+<a class="text-sm font-bold text-primary" href="#">Projects</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Events</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Contact</a>
+</nav>
+<button class="hidden md:flex items-center justify-center rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-200 dark:shadow-none">
+                Donate
+            </button>
+<!-- Mobile Menu Icon -->
+<button class="md:hidden text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative w-full h-[600px] overflow-hidden flex items-center justify-center bg-gray-900">
+<div class="absolute inset-0 z-0 bg-cover bg-center" data-alt="Group of young diverse students cheering and celebrating outdoors" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuApA4ebBg4Yy2OGbJkW7TjIFKga3dWazE8M0rvLXQe9eoCaEeKyuG5J1ph2ZYekfPPh_LOMrrQpzPzaHEi4Sbx5dfRLpGBl4zClSKCrbFvind5OBxDJc5ymbRmuWBvQ6vsKcXwkU1RvGCWO2wZcWakyXv8lpDIP_ikWN9ontqXN6g3L936Md_k2K0EB-idv_Re-qkcQYK9MirESlx9UCRMOdbk-zJjLSwkIgol2-fTNpICyPrB_eaVwFuncrx0PNeAPNSvetHxslMI');">
+</div>
+<div class="absolute inset-0 z-10 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+<div class="relative z-20 max-w-7xl mx-auto px-6 md:px-10 w-full text-white">
+<div class="max-w-3xl">
+<span class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-wider uppercase bg-primary rounded-full">Project Spotlight</span>
+<h1 class="text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6">
+                        Rise of Warriors <span class="text-primary">(ROW)</span>
+</h1>
+<p class="text-lg md:text-xl text-gray-200 font-medium max-w-2xl mb-8 leading-relaxed">
+                        Unleashing the potential within. A high-energy journey to cultivate resilience, emotional intelligence, and leadership in the next generation of changemakers.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="h-12 px-8 bg-primary hover:bg-red-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-red-900/50 flex items-center gap-2">
+<span>Join the Movement</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<button class="h-12 px-8 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/30 font-bold rounded-lg transition-all">
+                            Watch Highlights
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- About The Program -->
+<section class="py-20 px-6 md:px-10 bg-white dark:bg-[#1a0b0b]">
+<div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+<div class="space-y-6">
+<h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Forging Resilient Leaders</h2>
+<div class="w-16 h-1 bg-primary rounded-full"></div>
+<p class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+<span class="font-bold text-slate-900 dark:text-white">Rise of Warriors (ROW)</span> is not just a seminar; it is an awakening. Designed as a high-intensity, community-focused program, ROW cultivates resilience, leadership, and personal development in young people.
+                    </p>
+<p class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Our mission is to empower the next generation to face life's challenges head-on. Through immersive workshops and mentorship, we equip participants with the tools to turn obstacles into stepping stones for success.
+                    </p>
+<div class="pt-4 flex items-center gap-8">
+<div>
+<p class="text-4xl font-black text-primary">7+</p>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Editions</p>
+</div>
+<div>
+<p class="text-4xl font-black text-primary">5k+</p>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Impacted</p>
+</div>
+<div>
+<p class="text-4xl font-black text-primary">10</p>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Campuses</p>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-gray-200">
+<img alt="Speaker presenting to a large audience of students in a hall" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" data-alt="Speaker presenting to a large audience of students in a hall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwHZmzBkvmeDTkZ1v-5PKRLSr4yG_k1msk9F6ncEijCsWtsBZh-tTuhZnGNcknHQt3ZnX1WTG1D6Jb7mQ3N_8OYtzIEZOC4ebLawBNNyB3HF5oLPpKE7RwN4-Z79zfXyCblqJ5I1srt7-NrJEGyxS6Cs9yBcYaoUoWeCAf4ruzh9PIbzhfqG4EAbleRLWAKcCAOU4RFMEX3or5t2ExOwiy92mKQt6QJEFaR0J-ow8h037TcLxVkN2d9SNTbzMpBwhE640pWtFFXLQ"/>
+</div>
+<div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl border-l-4 border-primary max-w-xs hidden md:block">
+<p class="text-slate-800 dark:text-slate-200 italic font-medium">"Resilience is the muscle we build in the gym of adversity."</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Journey Timeline -->
+<section class="py-20 px-6 md:px-10 bg-background-light dark:bg-background-dark">
+<div class="max-w-4xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Journey Through the Versions</h2>
+<p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">From our humble beginnings to a nationwide movement, trace the evolution of the warrior spirit.</p>
+</div>
+<div class="relative timeline-line space-y-12 pl-4">
+<!-- ROW 1.0 -->
+<div class="relative flex items-start gap-6 group">
+<div class="z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-gray-800 border-4 border-primary shrink-0 group-hover:scale-110 transition-transform">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="bg-white dark:bg-[#1a0b0b] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex-1 hover:shadow-md transition-shadow">
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">ROW 1.0: The Awakening</h3>
+<span class="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full w-fit mt-2 md:mt-0">2017</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm">The first gathering at University of Ibadan. 50 students, one classroom, and a spark that started a fire.</p>
+</div>
+</div>
+<!-- ROW 3.0 -->
+<div class="relative flex items-start gap-6 group">
+<div class="z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-gray-800 border-4 border-gray-300 dark:border-gray-600 shrink-0 group-hover:border-primary transition-colors"></div>
+<div class="bg-white dark:bg-[#1a0b0b] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex-1 hover:shadow-md transition-shadow">
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">ROW 3.0: Expansion</h3>
+<span class="text-sm font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full w-fit mt-2 md:mt-0">2019</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm">Expanding to three new campuses. The curriculum evolved to include intense leadership workshops.</p>
+</div>
+</div>
+<!-- ROW 5.0 -->
+<div class="relative flex items-start gap-6 group">
+<div class="z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-gray-800 border-4 border-gray-300 dark:border-gray-600 shrink-0 group-hover:border-primary transition-colors"></div>
+<div class="bg-white dark:bg-[#1a0b0b] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex-1 hover:shadow-md transition-shadow">
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">ROW 5.0: The Digital Pivot</h3>
+<span class="text-sm font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full w-fit mt-2 md:mt-0">2021</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm">Reaching thousands virtually during global challenges. Resilience in action.</p>
+</div>
+</div>
+<!-- ROW 7.0 -->
+<div class="relative flex items-start gap-6 group">
+<div class="z-10 flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white shrink-0 shadow-lg shadow-red-500/30 animate-pulse">
+<span class="material-symbols-outlined text-[16px]">star</span>
+</div>
+<div class="bg-white dark:bg-[#1a0b0b] p-6 rounded-xl shadow-md border-l-4 border-primary flex-1">
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">ROW 7.0: Global Reach</h3>
+<span class="text-sm font-semibold text-white bg-primary px-3 py-1 rounded-full w-fit mt-2 md:mt-0">Current</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm">The biggest edition yet. Multi-city simultaneous events and international speakers.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- What to Expect Grid -->
+<section class="py-24 px-6 md:px-10 bg-white dark:bg-[#1a0b0b]">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">What to Expect</h2>
+<p class="text-slate-600 dark:text-slate-400">Our curriculum is designed to challenge your limits and expand your horizons.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="group bg-background-light dark:bg-background-dark p-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-gray-100 dark:hover:border-gray-800">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">self_improvement</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Self-Discovery</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed">Uncover your core values, strengths, and purpose through guided introspection sessions.</p>
+</div>
+<!-- Card 2 -->
+<div class="group bg-background-light dark:bg-background-dark p-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-gray-100 dark:hover:border-gray-800">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">record_voice_over</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Communication</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed">Master the art of public speaking, persuasion, and effective storytelling.</p>
+</div>
+<!-- Card 3 -->
+<div class="group bg-background-light dark:bg-background-dark p-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-gray-100 dark:hover:border-gray-800">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">psychology</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Emotional Intelligence</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed">Learn to manage emotions, empathize with others, and navigate complex social dynamics.</p>
+</div>
+<!-- Card 4 -->
+<div class="group bg-background-light dark:bg-background-dark p-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-gray-100 dark:hover:border-gray-800">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">track_changes</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Goal Setting</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed">Develop actionable plans for your future with our proprietary strategic frameworks.</p>
+</div>
+<!-- Card 5 -->
+<div class="group bg-background-light dark:bg-background-dark p-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-gray-100 dark:hover:border-gray-800">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">hub</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Networking</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed">Connect with like-minded peers and mentors from various industries and backgrounds.</p>
+</div>
+<!-- Card 6 -->
+<div class="group bg-background-light dark:bg-background-dark p-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-gray-100 dark:hover:border-gray-800">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">public</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Social Impact</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed">Understand how to leverage your skills to create tangible change in your community.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Banner with Countdown -->
+<section class="bg-primary py-16 px-6 md:px-10 overflow-hidden relative">
+<!-- Decorative circles -->
+<div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-white opacity-5"></div>
+<div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-60 h-60 rounded-full bg-white opacity-5"></div>
+<div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
+<div class="text-center lg:text-left text-white max-w-2xl">
+<h2 class="text-3xl md:text-5xl font-black mb-4">Register for the Next Edition</h2>
+<p class="text-red-100 text-lg mb-8">Don't miss the opportunity to transform your leadership journey. Spots are filling up fast for ROW 8.0.</p>
+<button class="bg-white text-primary hover:bg-gray-100 text-lg font-bold py-4 px-10 rounded-lg shadow-xl transition-transform hover:scale-105 inline-flex items-center gap-2">
+<span>Secure Your Spot</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="flex flex-col items-center">
+<p class="text-white/80 uppercase text-sm font-bold tracking-widest mb-4">Registration Closes In</p>
+<div class="flex gap-4 text-center">
+<div class="bg-black/20 backdrop-blur-md rounded-lg p-4 w-20 md:w-24 border border-white/10">
+<div class="text-3xl md:text-4xl font-black text-white">05</div>
+<div class="text-xs text-white/70 uppercase mt-1">Days</div>
+</div>
+<div class="bg-black/20 backdrop-blur-md rounded-lg p-4 w-20 md:w-24 border border-white/10">
+<div class="text-3xl md:text-4xl font-black text-white">12</div>
+<div class="text-xs text-white/70 uppercase mt-1">Hours</div>
+</div>
+<div class="bg-black/20 backdrop-blur-md rounded-lg p-4 w-20 md:w-24 border border-white/10">
+<div class="text-3xl md:text-4xl font-black text-white">45</div>
+<div class="text-xs text-white/70 uppercase mt-1">Mins</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-24 px-6 md:px-10 bg-background-light dark:bg-background-dark">
+<div class="max-w-7xl mx-auto">
+<h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-16">Voices of Warriors</h2>
+<div class="grid md:grid-cols-3 gap-8">
+<!-- Testimonial 1 -->
+<div class="bg-white dark:bg-[#1a0b0b] p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full">
+<div class="text-primary mb-4">
+<span class="material-symbols-outlined text-4xl">format_quote</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 mb-8 flex-grow italic">"ROW changed my perspective on leadership entirely. I learned that true strength comes from vulnerability and service to others."</p>
+<div class="flex items-center gap-4 mt-auto">
+<div class="size-12 rounded-full overflow-hidden bg-gray-300">
+<img alt="Portrait of a female student smiling" class="w-full h-full object-cover" data-alt="Portrait of a female student smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf41iE-IAAMghzbwuOBblDMpmofuRwp07sgXIjhckJZTd_jYedVbjviPJe8mwkw1ZeZ1X9mnnIZ49u5wJhSTvFXcT16nqo5sloH0uDXYnvNtj0pY_AqmvT88jUyc1Uawz2TnTxbtg4piLYtSofUTIY_yq6_3o2yTzwg7f-Ajf1trMxIEXat8961fmkOFpiOVhbbbvN7blMKy3UzAZSuiYCxTnZ4l9M1hiIU6-EpF54yy6vmu2sWS7o0CsOPWyud_VOQ_m9lnhFlnE"/>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Adebayo Folake</h4>
+<p class="text-xs text-slate-500 font-medium">Student, OAU</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 2 -->
+<div class="bg-white dark:bg-[#1a0b0b] p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full">
+<div class="text-primary mb-4">
+<span class="material-symbols-outlined text-4xl">format_quote</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 mb-8 flex-grow italic">"The networking session at ROW 5.0 connected me with my current mentor. This program is a goldmine for anyone serious about growth."</p>
+<div class="flex items-center gap-4 mt-auto">
+<div class="size-12 rounded-full overflow-hidden bg-gray-300">
+<img alt="Portrait of a male student smiling" class="w-full h-full object-cover" data-alt="Portrait of a male student smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe_lfLdSbTqMp_m8aZHoRXD871jEOH8fKs91_R3lFFg27Wx1Me-QBL8RcS4tWk981E8C7KCMmy4wztJ9zdf73QZJDPP8xvW-jdQ_HmAauTTFGCBpi58ELD8a0eJHZvlAej9tikYkTMQdqWgqpPebKhKXB8ZiKq_ZKwV8A7Fnw5nFwU_2ilXxdVk_2jceRbd44Uf3BFQYr-ashefnYuOvn-v6Cg6H-HSaxCjx6jiPvDhuurnD1AafJuLapn2xNXfO9w0vg3_2PRTss"/>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Chinedu Okafor</h4>
+<p class="text-xs text-slate-500 font-medium">Alumni, UNILAG</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 3 -->
+<div class="bg-white dark:bg-[#1a0b0b] p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full">
+<div class="text-primary mb-4">
+<span class="material-symbols-outlined text-4xl">format_quote</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 mb-8 flex-grow italic">"Energy. Passion. Purpose. Those are the three words I'd use to describe my experience. It pushed me out of my comfort zone."</p>
+<div class="flex items-center gap-4 mt-auto">
+<div class="size-12 rounded-full overflow-hidden bg-gray-300">
+<img alt="Portrait of a female student looking confident" class="w-full h-full object-cover" data-alt="Portrait of a female student looking confident" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCND1xq4JrhBtawNzofn79QuaSBruAPmnS-qfaKJmgJyt6kcttACp3D-RdvNMRxlOX7bIlx_BPlqM8Iu4CPBH1cWD927uj6G6VsZa-IHPykfYczcrbe0Wqrhai9JFF3LrvyKM_eklPt0YlpqUt1T7q_GSeoavyOQT1HQNlQzTkmkMTsYzSbiKHjveuz2AYbnFNWZOJ7QtWL7QHFyxr7cY3Lmx6RKvErZj5dLYTK-w_ujoUSsdzd71wFy_zKdabo82VMTE16VvsPLEc"/>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Sarah Musa</h4>
+<p class="text-xs text-slate-500 font-medium">Student, ABU Zaria</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-[#1a0b0b] border-t border-gray-100 dark:border-gray-800 pt-16 pb-8 px-6 md:px-10">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-3 mb-6">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">YTOP Global</h2>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                        Empowering youth to become the leaders of tomorrow through resilience, innovation, and social impact.
+                    </p>
+<div class="flex gap-4">
+<a class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
+<i class="material-symbols-outlined text-sm">public</i>
+</a>
+<a class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
+<i class="material-symbols-outlined text-sm">alternate_email</i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white mb-6">Quick Links</h3>
+<ul class="space-y-4 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Our Projects</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Events</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white mb-6">Legal</h3>
+<ul class="space-y-4 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Cookie Policy</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white mb-6">Newsletter</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Stay updated with our latest news and events.</p>
+<div class="flex flex-col gap-2">
+<input class="h-10 px-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-primary" placeholder="Enter your email" type="email"/>
+<button class="h-10 bg-primary text-white text-sm font-bold rounded-lg hover:bg-red-700 transition-colors">Subscribe</button>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-xs text-slate-400 text-center md:text-left">© 2023 YTOP Global. All rights reserved.</p>
+<div class="flex gap-6 text-xs text-slate-400">
+<a class="hover:text-slate-900 dark:hover:text-white" href="#">Contact Support</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

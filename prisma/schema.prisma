@@ -1,0 +1,486 @@
+// Prisma Schema for YTOP Global Website
+// WordPress to Next.js + PostgreSQL Migration
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  AUTHOR
+  SUBSCRIBER
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  hashedPassword String?
+  role          UserRole  @default(AUTHOR)
+  image         String?
+  bio           String?   @db.Text
+
+  // Relations
+  posts         Post[]
+  pages         Page[]
+  comments      Comment[]
+  mediaUploads  Media[]   @relation("MediaUploads")
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([email])
+}
+
+// ============================================
+// BLOG SYSTEM
+// ============================================
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+}
+
+model Post {
+  id            String      @id @default(cuid())
+  title         String
+  slug          String      @unique
+  excerpt       String?     @db.Text
+  content       String      @db.Text
+  status        PostStatus  @default(DRAFT)
+
+  // Featured image
+  featuredImageId String?
+  featuredImage   Media?    @relation(fields: [featuredImageId], references: [id])
+
+  // Author
+  authorId      String
+  author        User        @relation(fields: [authorId], references: [id])
+
+  // Taxonomy
+  categories    Category[]
+  tags          Tag[]
+
+  // Relations
+  comments      Comment[]
+
+  // SEO
+  metaTitle     String?
+  metaDescription String?  @db.Text
+  metaKeywords  String?
+
+  // Analytics
+  viewCount     Int         @default(0)
+
+  // Timestamps
+  publishedAt   DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([slug])
+  @@index([status, publishedAt])
+  @@index([authorId])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+
+  // Relations
+  posts       Post[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+
+  // Relations
+  posts     Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+
+  // Author (can be logged in user or guest)
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorName String? // For guest comments
+  authorEmail String? // For guest comments
+
+  // Post relation
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  // Nested comments (replies)
+  parentId  String?
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+
+  // Moderation
+  isApproved Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId])
+  @@index([parentId])
+}
+
+// ============================================
+// PAGES & MEDIA
+// ============================================
+
+model Page {
+  id          String     @id @default(cuid())
+  title       String
+  slug        String     @unique
+  content     String     @db.Text
+  status      PostStatus @default(DRAFT)
+
+  // Author
+  authorId    String
+  author      User       @relation(fields: [authorId], references: [id])
+
+  // SEO
+  metaTitle   String?
+  metaDescription String? @db.Text
+
+  // Parent page (for hierarchical pages)
+  parentId    String?
+  parent      Page?      @relation("PageHierarchy", fields: [parentId], references: [id])
+  children    Page[]     @relation("PageHierarchy")
+
+  // Order (for menu ordering)
+  order       Int        @default(0)
+
+  publishedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([slug])
+  @@index([status])
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  OTHER
+}
+
+model Media {
+  id          String    @id @default(cuid())
+  filename    String
+  originalName String
+  url         String
+  thumbnailUrl String?
+
+  // File info
+  mimeType    String
+  fileSize    Int       // in bytes
+  type        MediaType @default(IMAGE)
+
+  // Image specific
+  width       Int?
+  height      Int?
+
+  // Metadata
+  altText     String?
+  caption     String?   @db.Text
+  description String?   @db.Text
+
+  // WordPress reference (for migration)
+  wordpressId Int?
+
+  // Relations
+  posts       Post[]
+  teamMembers TeamMember[]
+  testimonials Testimonial[]
+  programs    Program[]
+  events      Event[]
+  campaigns   Campaign[]
+
+  // Upload info
+  uploadedById String?
+  uploadedBy   User?     @relation("MediaUploads", fields: [uploadedById], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([type])
+  @@index([wordpressId])
+}
+
+// ============================================
+// NGO SPECIFIC MODELS
+// ============================================
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  position    String
+  bio         String?  @db.Text
+
+  // Photo
+  photoId     String?
+  photo       Media?   @relation(fields: [photoId], references: [id])
+
+  // Social links
+  email       String?
+  phone       String?
+  linkedin    String?
+  twitter     String?
+  facebook    String?
+
+  // Display order
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([order])
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  position    String?  // e.g., "Program Participant", "Volunteer"
+  company     String?  // or organization
+  content     String   @db.Text
+
+  // Photo
+  photoId     String?
+  photo       Media?   @relation(fields: [photoId], references: [id])
+
+  // Rating (1-5)
+  rating      Int?     @default(5)
+
+  // Display
+  isFeatured  Boolean  @default(false)
+  order       Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isFeatured])
+  @@index([order])
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  shortDesc   String?  @db.Text
+
+  // Image
+  imageId     String?
+  image       Media?   @relation(fields: [imageId], references: [id])
+
+  // SDG alignment (UN Sustainable Development Goals)
+  sdgGoals    String[] // Array of SDG numbers, e.g., ["4", "8", "10"]
+
+  // Display
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+
+  // Date and location
+  startDate   DateTime
+  endDate     DateTime?
+  location    String?
+  isOnline    Boolean  @default(false)
+
+  // Featured image
+  imageId     String?
+  image       Media?   @relation(fields: [imageId], references: [id])
+
+  // Gallery images (stored as array of media IDs)
+  galleryImageIds String[]
+
+  // Event details
+  maxParticipants Int?
+  registrationUrl String?
+
+  // Related program
+  programId   String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([startDate])
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+
+  // Fundraising goals
+  goalAmount  Decimal  @db.Decimal(10, 2)
+  raisedAmount Decimal @db.Decimal(10, 2) @default(0)
+  currency    String   @default("USD")
+
+  // Image
+  imageId     String?
+  image       Media?   @relation(fields: [imageId], references: [id])
+
+  // Timeline
+  startDate   DateTime
+  endDate     DateTime
+
+  // Status
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([endDate])
+}
+
+// ============================================
+// SITE CONFIGURATION
+// ============================================
+
+model MenuItem {
+  id        String     @id @default(cuid())
+  label     String
+  url       String?
+
+  // Hierarchy
+  parentId  String?
+  parent    MenuItem?  @relation("MenuHierarchy", fields: [parentId], references: [id])
+  children  MenuItem[] @relation("MenuHierarchy")
+
+  // Display
+  order     Int        @default(0)
+  isExternal Boolean   @default(false)
+  openNewTab Boolean   @default(false)
+
+  // Menu location (header, footer, etc.)
+  location  String     @default("header")
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([location, order])
+  @@index([parentId])
+}
+
+model Settings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  group     String?  // For organizing settings (e.g., "general", "social", "email")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([group])
+}
+
+// ============================================
+// FORM SUBMISSIONS
+// ============================================
+
+enum FormType {
+  CONTACT
+  VOLUNTEER
+  NEWSLETTER
+  DONATION
+  PARTNERSHIP
+  OTHER
+}
+
+model FormSubmission {
+  id        String   @id @default(cuid())
+  type      FormType
+
+  // Submitter info
+  name      String?
+  email     String?
+  phone     String?
+
+  // Form data (stored as JSON)
+  data      Json
+
+  // Status tracking
+  isRead    Boolean  @default(false)
+  isProcessed Boolean @default(false)
+  notes     String?  @db.Text
+
+  // IP and user agent for spam prevention
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// ============================================
+// URL REDIRECTS (for WordPress migration)
+// ============================================
+
+model Redirect {
+  id        String   @id @default(cuid())
+  fromUrl   String   @unique
+  toUrl     String
+
+  // Tracking
+  hitCount  Int      @default(0)
+  lastHit   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fromUrl])
+}

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YTOP Global - Blog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221010",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1a0f0f] px-4 md:px-10 py-4 sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<span class="material-symbols-outlined text-3xl">diversity_2</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">YTOP Global</h2>
+</div>
+<div class="hidden lg:flex flex-1 justify-end gap-8 items-center">
+<nav class="flex items-center gap-9">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Home</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">About Us</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Gallery</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Events</a>
+<a class="text-primary font-bold text-sm leading-normal" href="#">Blog</a>
+</nav>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-red-700 transition-colors text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Donate</span>
+</button>
+</div>
+<button class="lg:hidden text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<main class="flex-grow">
+<div class="relative bg-white dark:bg-[#1a0f0f] pt-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-slate-100 dark:border-slate-800">
+<div class="max-w-7xl mx-auto">
+<div class="mb-10 text-center">
+<h1 class="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
+                    Insights &amp; <span class="text-primary">Stories</span>
+</h1>
+<p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                    Explore articles on leadership, personal development, and community impact from the YTOP Global team.
+                </p>
+</div>
+<div class="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer">
+<div class="absolute inset-0">
+<img alt="Featured post background showing a young leader speaking" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoDnPvOwtvrNV5mT_wcMWUivgtO9h5eAqfiPnR6vhlbAbKYVZ1cUhDf5wFkxnAxS_7UMwzO2i01GO31OjsXpLRSHS8yJMWvJ8d0KsdpWWxkVU5rdX5luH8dFOYgsdPcGdtcnTgi90W2HsrnsP9jfB8vAO_J7vzBxFGUZjstQCrQQN5Ndb8K_EzXUiUt0JbQFD8i5y9cxxzAMiCxgwar7EpK3GKphTvCN9NEY8XyUKoeV9_Id-UWdbqki1EbNJ2daRIHTp5Mch6r2w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+</div>
+<div class="relative p-6 md:p-12 lg:p-16 flex flex-col justify-end h-[500px] md:h-[600px] text-white">
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Featured Post</span>
+<span class="text-slate-200 text-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-base">calendar_today</span> Oct 24, 2023
+                        </span>
+</div>
+<h2 class="text-3xl md:text-5xl font-black leading-tight mb-4 group-hover:text-primary transition-colors duration-300">Purpose Is Built, Not Found</h2>
+<p class="text-slate-200 text-lg md:text-xl max-w-3xl mb-6 line-clamp-2 md:line-clamp-none">
+                        Many spend years searching for a hidden purpose, but true fulfillment comes from actively constructing a life of meaning through service and intentional action.
+                    </p>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden">
+<img alt="Author portrait" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnHFiiHgl-szyeKWE7_JxhQFPxlO9fzUzCBK2TIYcMwSH_gub2COnpPmNa0oGwfDd5u3Xou2_-6q2sWciWKCqeTcutExa8kjI_vHsM85zpQXikDKkns7djTkXGudYb3TsQNXXhyd6_Q1FsGHM1FhXCNBaYi4UJUIr8fVSl9d8aLSkp9mO0TT2GO6cpKJyxaE_FsvLrf1jliYvzmgiP-VuZYBaBlcKwtujUex5JxloZQPfFzEtgOz9guv95Wdv4wLsI_HydBmgbJPo"/>
+</div>
+<span class="font-bold text-white">Oluwadamilotun Bonita Falola</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sticky top-[73px] z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 py-4 px-4 overflow-x-auto hide-scrollbar">
+<div class="max-w-7xl mx-auto flex gap-3 min-w-max">
+<button class="group flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all bg-primary text-white shadow-md hover:shadow-lg">
+<span>All Posts</span>
+</button>
+<button class="group flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all bg-white dark:bg-[#2d1b1b] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary dark:hover:text-primary">
+<span>Personal Development</span>
+</button>
+<button class="group flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all bg-white dark:bg-[#2d1b1b] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary dark:hover:text-primary">
+<span>Leadership</span>
+</button>
+<button class="group flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all bg-white dark:bg-[#2d1b1b] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary dark:hover:text-primary">
+<span>Community</span>
+</button>
+<button class="group flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all bg-white dark:bg-[#2d1b1b] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary dark:hover:text-primary">
+<span>Career</span>
+</button>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<article class="flex flex-col bg-white dark:bg-[#1a0f0f] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 group">
+<div class="relative h-56 overflow-hidden">
+<img alt="Two people talking intimately" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgNniQCnAAPy3_VykFvjq91Mt7h12TfXantMBVc7-gAIH_jFFZvFPNaPxzJWYBQvcdf9QTbdMKAyls6HRvdOrWhm5GhY2BIwjhQ9-CVZCYL_z2R4tcwVRZVcJuBTLDQbYZFc6O8VHLHYR-H30Y5r99UDZXdP9p2Wo7i2MVQpiscD_D6KiuQQyhOqrMwA4qhwImd-6K28JwDnTj0hPx0kGYaehE5p-09zbAmXSkh0trBVkDZdRuWUcW0Kenf_hlND80qiM2re53LNk"/>
+<div class="absolute top-4 left-4">
+<span class="bg-white/90 backdrop-blur-sm dark:bg-black/80 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Relationships</span>
+</div>
+</div>
+<div class="flex flex-col flex-1 p-6">
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Oct 18, 2023</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>5 min read</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 leading-snug group-hover:text-primary transition-colors">
+                        Love, Dating, and Commitment
+                    </h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6 flex-1">
+                        Navigating relationships in the modern world requires more than just feelings. It demands intentionality, clear communication, and a shared vision for the future.
+                    </p>
+<div class="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Author" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyvhf3ztNhycwBdt58SeJwOpGHGqryhUi1JBxbnFLFALxlhaH6VFUe0hEKQF26zxQoz-gxP8ww3c2JkJnWWe0nDGFWKwFi_5B5LGqzdzSycWjA0cFtI9uEuppRE8mtm7RcQ2i9xdwZRkeiGC2upKVIeXT5cqNorKwy17-qvp2Je6Z6vJISHu4IEVthR-09aaNnmWo-V0HIhJv1G5wM1tnX61sry0ezqT8DvPCq0fUM-3TMOVFjir7Oa3f3epPWOgL4WHMHjYBWz-8"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Sarah Adebayo</span>
+</div>
+</div>
+</article>
+<article class="flex flex-col bg-white dark:bg-[#1a0f0f] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 group">
+<div class="relative h-56 overflow-hidden">
+<img alt="Team brainstorming with sticky notes" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLMLY9Rea60-K4AgXN4hY4oi9dACNXawu_GzDsjsliETD5iNCeOFx1EcxDihRx12hBQIjGoYv772XKdcyXULFP4C9UMR7AFCobWr4cpOmHhtMdSDZg3xnYEboXt6CurTsvJvV0th11byF3J_W0cmbPs9XJcSIesNsDlv6c6LKn1uEOH1Ikulvbh7y6Crs738hrzwNhNLaZLJ0fqo-cbQcsjaZWMhTb9IZcAsLmzhEKvj0VMRZLYB_yhggeRwGaTHBnIk84BPs8RvQ"/>
+<div class="absolute top-4 left-4">
+<span class="bg-white/90 backdrop-blur-sm dark:bg-black/80 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Personal Development</span>
+</div>
+</div>
+<div class="flex flex-col flex-1 p-6">
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Sep 29, 2023</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>7 min read</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 leading-snug group-hover:text-primary transition-colors">
+                        From Complaining to Contributing
+                    </h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6 flex-1">
+                        It's easy to point out what's wrong with society. The real challenge—and the real reward—lies in rolling up your sleeves and becoming part of the solution.
+                    </p>
+<div class="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Author" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnHFiiHgl-szyeKWE7_JxhQFPxlO9fzUzCBK2TIYcMwSH_gub2COnpPmNa0oGwfDd5u3Xou2_-6q2sWciWKCqeTcutExa8kjI_vHsM85zpQXikDKkns7djTkXGudYb3TsQNXXhyd6_Q1FsGHM1FhXCNBaYi4UJUIr8fVSl9d8aLSkp9mO0TT2GO6cpKJyxaE_FsvLrf1jliYvzmgiP-VuZYBaBlcKwtujUex5JxloZQPfFzEtgOz9guv95Wdv4wLsI_HydBmgbJPo"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Oluwadamilotun Bonita</span>
+</div>
+</div>
+</article>
+<article class="flex flex-col bg-white dark:bg-[#1a0f0f] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 group">
+<div class="relative h-56 overflow-hidden">
+<img alt="Group hike outdoors" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMAVK1x714QK0-Zn51MPfhETTAA2tPEJpTwj_pogalmBf331mvHfMl8tD8INg6D3eBkEebFdln0aWV0t_1oxUzFUX24Nsc68X8hQq2fAcbk1FP7qcYn4IBOaZ_tRR2FbXAC95JeFQxAUp9bgVerG5ItXTdzi88j0h6JRzjoHpfTybJmeSIDCaF0DOUWzkaT6aJKt9daudPl0urXvt_BflhhZqQLNqpwa8vKVZuGrQfVNvcixXsHxZm6f_binRBliVZEzOuD1uoUm8"/>
+<div class="absolute top-4 left-4">
+<span class="bg-white/90 backdrop-blur-sm dark:bg-black/80 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Wellness</span>
+</div>
+</div>
+<div class="flex flex-col flex-1 p-6">
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Sep 15, 2023</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>4 min read</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 leading-snug group-hover:text-primary transition-colors">
+                        The Healing Power of Nature
+                    </h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6 flex-1">
+                        Our annual Discovery Walk isn't just about exercise. It's about mental clarity, connecting with the earth, and finding peace amidst a chaotic schedule.
+                    </p>
+<div class="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Author" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHp9iyKVdV3yXImTc2DbaEZDun1O_8tMUkMX7jf41rfrY81as54nGRXDhCuPQN6LTWoPjEceGVuyLBTrFLcRyGBzf3Y-lBrrnPilVkq-MUKkO5YaxhkFdl5MqP9CbBzvxJGeFgji_Irbjfpg_K4EjgHJjDyFoq_Y5X_WkY_VkS-lhxA_UO0U0yVIl7J06al1IlIFgsS7jydY16lK5rpu84AwIJKhCfPa-PzM8wp8-pH1dcnzKDORbEIloz06iTyTVHMTzoO7hgx_Y"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">John Doe</span>
+</div>
+</div>
+</article>
+<article class="flex flex-col bg-white dark:bg-[#1a0f0f] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 group">
+<div class="relative h-56 overflow-hidden">
+<img alt="Large group sitting on grass" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhbcaTcz4QepsHjrsxR4dfIycB1TnoVrb74ogWeKzHeXA2ycdQ7YRgmfFHbgTw2abeUiVCaR8tfknfmgiq1eQt66U92V3BLJX7epknr9K5ddUUnhaNK0du2By1ur46GRUT3Crab3T-zjrnyiEwQaZuk-uDg_96FZff70OqE3OyRoIg1jGGVRDR6wcTJzvlILJUrU-gLIdPWnlVJMFtuqhyRLT4fhHKJzMU2h2k1YBXo5ZmdmMBfp2qIdvxUO2ykHzLH8JZauZU1ZI"/>
+<div class="absolute top-4 left-4">
+<span class="bg-white/90 backdrop-blur-sm dark:bg-black/80 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Community</span>
+</div>
+</div>
+<div class="flex flex-col flex-1 p-6">
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Aug 22, 2023</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>6 min read</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 leading-snug group-hover:text-primary transition-colors">
+                        Building Networks That Last
+                    </h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6 flex-1">
+                        Networking is not about collecting business cards. It's about building genuine relationships where mutual growth and support are the foundation.
+                    </p>
+<div class="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Author" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGJxXPSES0qanuEJAZ-G-7BnYWCh1ZdKcVCyUiglPnxvOwheuMLQ8WS_IvzXXxTPzuUQ4HA9zrwx4BydeBQG86OnVhH5FQ4t74eMtVkH4mzoZjAJ5i2h9fMKTr7uFQvSeyRNO5vGAXBWwjkWYtTi1EdcO_ZUaeSATCueGG7eUMjfWbgXGoLDvmLKHq-RX7OL21x_7g7z2Aep-wdpROySf_HljI6S6f8aEOHfgqkewz4jfvl6rki7FOtWYHYv1w2nDHb32ksBsG96o"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Mary Smith</span>
+</div>
+</div>
+</article>
+<article class="flex flex-col bg-white dark:bg-[#1a0f0f] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 group">
+<div class="relative h-56 overflow-hidden">
+<img alt="Volunteers planting trees" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjUshAWTsxIwb4SPm3ENPCtsToDn16240aoigRa9S6tDvMhEGhL6A8ajvyDK1DIDdYBGa9Id_C1T4X32_MCBOOZaipKRegTFUyR4vEMS-dbeg_zm78MWnJ0bEfGBLhPt2p2Xcofdo1nzvFqrtLqJfphFkTwQ9CaMuzv_sHcHDFcu0vp54ZaFJ5bsBfV0poc6x91cIUc9jxMOk4WuLa3pCqpTimDvA9NHQhZEBYgScxYXyXYPGOSwypBXsQOD3-HNA5g-SdycWBpxM"/>
+<div class="absolute top-4 left-4">
+<span class="bg-white/90 backdrop-blur-sm dark:bg-black/80 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Social Impact</span>
+</div>
+</div>
+<div class="flex flex-col flex-1 p-6">
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Jul 10, 2023</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>5 min read</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 leading-snug group-hover:text-primary transition-colors">
+                        Small Acts, Global Impact
+                    </h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6 flex-1">
+                        We often underestimate the power of a single act of kindness. Our community projects show how collective small efforts can transform neighborhoods.
+                    </p>
+<div class="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Author" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPYdcTHDFBkPmlZ5kwKCXpo1RGQFjE1gQHu1H8c2DmS9sAOsE1WH8lAEoQWjev7Vc4_HLCnDb_NU26zXjWq-bXu2cNRDr-D9MoG4ZBvvPml8pWxWnSlhpGuQ19x16wnpqH61ksiKgH-2dwPi_LaKGNFVOh1NFiZ2FSD9hQqUvsztXM87xcQOj3SVqtgYDO7nY3DT8pAwWWpMybhOm7l3IJ0D23TYQ38OpERH0a3BwwzDf1lJFXHuYMej0lnyT6pFb--396GBIiQ9s"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">David O.</span>
+</div>
+</div>
+</article>
+<article class="flex flex-col bg-white dark:bg-[#1a0f0f] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 group">
+<div class="relative h-56 overflow-hidden">
+<img alt="Award ceremony stage" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANJgRc19dkIK50t95R9szxPwxrmhESH7OhzFIOeGcXRWJdsEtJXLvDTKSbgNAHH8ySDutqb1tW18o1NFC4PTUCucu5KRkBxoeS0CP2larNVopSNhFo0KU8HlF9W20dsy-pvVqRUjdBkOnp3XyBWZ_qsnZ6TVUB1kwizpjUDddyAxYdQeTkfO3GsEiKTHkbh0ZU32waynR6J0o4oTHpFei8ftLN77fkgqN9W7lGRdrhPU37B_9IH-MO2GdAfEFwAJb3oaQG637xBcE"/>
+<div class="absolute top-4 left-4">
+<span class="bg-white/90 backdrop-blur-sm dark:bg-black/80 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Leadership</span>
+</div>
+</div>
+<div class="flex flex-col flex-1 p-6">
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Jun 05, 2023</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>8 min read</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 leading-snug group-hover:text-primary transition-colors">
+                        Defining Excellence in Leadership
+                    </h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6 flex-1">
+                        Leadership isn't about titles or accolades. It's about the responsibility to serve others and the courage to make difficult decisions for the greater good.
+                    </p>
+<div class="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Author" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyvhf3ztNhycwBdt58SeJwOpGHGqryhUi1JBxbnFLFALxlhaH6VFUe0hEKQF26zxQoz-gxP8ww3c2JkJnWWe0nDGFWKwFi_5B5LGqzdzSycWjA0cFtI9uEuppRE8mtm7RcQ2i9xdwZRkeiGC2upKVIeXT5cqNorKwy17-qvp2Je6Z6vJISHu4IEVthR-09aaNnmWo-V0HIhJv1G5wM1tnX61sry0ezqT8DvPCq0fUM-3TMOVFjir7Oa3f3epPWOgL4WHMHjYBWz-8"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Oluwadamilotun Bonita</span>
+</div>
+</div>
+</article>
+</div>
+<div class="mt-16 flex justify-center">
+<nav class="flex items-center gap-2">
+<a class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-primary hover:border-primary transition-colors" href="#">
+<span class="material-symbols-outlined">chevron_left</span>
+</a>
+<a class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold" href="#">1</a>
+<a class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors font-medium" href="#">2</a>
+<a class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors font-medium" href="#">3</a>
+<span class="w-10 h-10 flex items-center justify-center text-slate-400">...</span>
+<a class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-primary hover:border-primary transition-colors" href="#">
+<span class="material-symbols-outlined">chevron_right</span>
+</a>
+</nav>
+</div>
+</div>
+<section class="bg-primary py-20">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+<span class="material-symbols-outlined text-6xl mb-6 opacity-80">mark_email_unread</span>
+<h2 class="text-3xl md:text-4xl font-black mb-4">Never Miss an Update</h2>
+<p class="text-lg text-red-100 mb-8 max-w-2xl mx-auto">
+                Join 5,000+ subscribers receiving the best content on leadership, growth, and community impact directly to their inbox.
+            </p>
+<form class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+<input class="flex-1 px-6 py-4 rounded-xl bg-white/10 border border-white/20 placeholder-red-100 text-white focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/20 backdrop-blur-sm" placeholder="Enter your email address" type="email"/>
+<button class="px-8 py-4 rounded-xl bg-white text-primary font-bold hover:bg-red-50 transition-colors shadow-lg" type="button">
+                    Subscribe Now
+                </button>
+</form>
+<p class="text-xs text-red-200 mt-4">We respect your privacy. Unsubscribe at any time.</p>
+</div>
+</section>
+</main>
+<footer class="bg-white dark:bg-[#110808] border-t border-slate-200 dark:border-slate-800 pt-16 pb-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-2 mb-4 text-slate-900 dark:text-white">
+<span class="material-symbols-outlined text-3xl text-primary">diversity_2</span>
+<span class="font-bold text-xl">YTOP Global</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                    Empowering the next generation of leaders through mentorship, community, and action. Join the movement today.
+                </p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
+<span class="text-sm font-bold">IG</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
+<span class="text-sm font-bold">X</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
+<span class="text-sm font-bold">LN</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-6">Quick Links</h4>
+<ul class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Our Team</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Gallery</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-6">Programs</h4>
+<ul class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Rise of Warriors</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Discovery Walk</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Career Mentorship</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">School Tours</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-6">Stay Updated</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Subscribe to our newsletter for the latest updates.</p>
+<form class="flex flex-col gap-2">
+<input class="w-full px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Your email address" type="email"/>
+<button class="w-full px-4 py-2 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:opacity-90 transition-opacity" type="button">Subscribe</button>
+</form>
+</div>
+</div>
+<div class="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-500">
+<p>© 2024 YTOP Global. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>

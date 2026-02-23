@@ -1,0 +1,17 @@
+# Local PostgreSQL for development. Run: docker compose up -d
+# Then in .env use: DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ytopglobal?schema=public"
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ytopglobal
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

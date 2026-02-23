@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YTOP Global Donation Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221010",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+<div class="relative flex min-h-screen w-full flex-col group/design-root">
+<!-- Header -->
+<div class="border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 sm:px-10 py-3 sticky top-0 z-50">
+<header class="flex items-center justify-between whitespace-nowrap max-w-[1280px] mx-auto w-full">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">volunteer_activism</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">YTOP Global</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="hidden lg:flex items-center gap-9">
+<a class="text-slate-900 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-slate-900 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">About Us</a>
+<a class="text-slate-900 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Programs</a>
+<a class="text-slate-900 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Blog</a>
+<a class="text-slate-900 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<button class="hidden sm:flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-red-700 text-white text-sm font-bold shadow-sm transition-all">
+<span class="truncate">Donate Now</span>
+</button>
+<button class="lg:hidden text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+</div>
+<main class="flex flex-col items-center w-full">
+<!-- Hero Section -->
+<div class="w-full relative">
+<div class="absolute inset-0 bg-slate-900/50 z-10"></div>
+<div class="w-full h-[500px] bg-cover bg-center" data-alt="African children smiling and learning in a classroom setting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuApk15OvYDa-pTMvQiocsQ2e66p27sVSj4evI97NLqiq4Z_6iDzIIq693437LPLnPv39FgIJnCm_SBEVQEOIVANE4qxIzTSEiP318s_w6mU9Bl3WTWuDsy9-Khwyqq06FoRik7o5HVzZcypLudTqfYF0zq2I5797RuIoKnLVHno6Ft_8b8uZ3FXES5GbLbEDTZNqZLB6S5hoWOQzSMvuYfGVyBM1JUBXkBEc8JwqUWMkp0LoauMpkOeXg3kfucdvGallTOJvan2G94');"></div>
+<div class="absolute inset-0 z-20 flex items-center justify-center px-4">
+<div class="max-w-4xl w-full text-center flex flex-col items-center gap-6">
+<h1 class="text-white text-4xl sm:text-5xl md:text-6xl font-black leading-tight tracking-tight drop-shadow-lg">
+                            Empower a Dream Today
+                        </h1>
+<p class="text-white/90 text-lg sm:text-xl font-medium max-w-2xl leading-relaxed drop-shadow-md">
+                            Your contribution fuels the future of African youth. Join us in making a lasting impact through education and capacity building.
+                        </p>
+<button class="mt-4 h-12 px-8 bg-primary hover:bg-red-700 text-white text-base font-bold rounded-full shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
+<span>Start Donating</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Custom Donation Widget Section -->
+<div class="w-full max-w-[1280px] px-4 sm:px-10 -mt-16 z-30 relative mb-16">
+<div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-6 sm:p-10">
+<div class="flex flex-col lg:flex-row gap-10">
+<!-- Donation Inputs -->
+<div class="flex-1 flex flex-col gap-6">
+<h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">payments</span>
+                                Make a Custom Donation
+                            </h3>
+<!-- Frequency Toggles -->
+<div class="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-lg w-full sm:w-fit">
+<button class="flex-1 sm:flex-none px-6 py-2 rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary font-bold text-sm border border-slate-200 dark:border-slate-600">One-time</button>
+<button class="flex-1 sm:flex-none px-6 py-2 rounded-md text-slate-600 dark:text-slate-400 font-medium text-sm hover:text-slate-900 dark:hover:text-white transition-colors">Monthly</button>
+<button class="flex-1 sm:flex-none px-6 py-2 rounded-md text-slate-600 dark:text-slate-400 font-medium text-sm hover:text-slate-900 dark:hover:text-white transition-colors">Yearly</button>
+</div>
+<!-- Amount Selection -->
+<div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+<button class="border border-slate-200 dark:border-slate-600 rounded-lg py-3 text-slate-700 dark:text-slate-300 font-semibold hover:border-primary hover:text-primary dark:hover:text-primary transition-colors">$10</button>
+<button class="border border-slate-200 dark:border-slate-600 rounded-lg py-3 text-slate-700 dark:text-slate-300 font-semibold hover:border-primary hover:text-primary dark:hover:text-primary transition-colors">$25</button>
+<button class="bg-primary/10 border border-primary rounded-lg py-3 text-primary font-bold">$50</button>
+<button class="border border-slate-200 dark:border-slate-600 rounded-lg py-3 text-slate-700 dark:text-slate-300 font-semibold hover:border-primary hover:text-primary dark:hover:text-primary transition-colors">$100</button>
+<div class="col-span-3 sm:col-span-4 relative mt-2">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+<input class="w-full pl-8 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-transparent dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow" placeholder="Enter custom amount" type="number"/>
+</div>
+</div>
+</div>
+<!-- Payment & Summary -->
+<div class="flex-1 lg:max-w-md flex flex-col gap-6 lg:border-l lg:border-slate-100 lg:dark:border-slate-700 lg:pl-10">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Payment Method</h3>
+<div class="space-y-3">
+<label class="flex items-center gap-3 p-3 border border-primary bg-primary/5 rounded-lg cursor-pointer transition-colors">
+<input checked="" class="text-primary focus:ring-primary" name="payment" type="radio"/>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300">credit_card</span>
+<span class="font-medium text-slate-900 dark:text-white">Credit / Debit Card</span>
+</div>
+<div class="ml-auto flex gap-1 opacity-60">
+<div class="w-8 h-5 bg-slate-300 rounded overflow-hidden relative" data-alt="Visa logo abstraction">
+<div class="absolute inset-0 bg-blue-900"></div>
+</div>
+<div class="w-8 h-5 bg-slate-300 rounded overflow-hidden relative" data-alt="Mastercard logo abstraction">
+<div class="absolute inset-0 bg-red-600 opacity-50 rounded-full -ml-2"></div>
+<div class="absolute inset-0 bg-yellow-500 opacity-50 rounded-full ml-2"></div>
+</div>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 border border-slate-200 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+<input class="text-primary focus:ring-primary" name="payment" type="radio"/>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600">account_balance_wallet</span>
+<span class="font-medium text-slate-900 dark:text-white">PayPal</span>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 border border-slate-200 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+<input class="text-primary focus:ring-primary" name="payment" type="radio"/>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-600">account_balance</span>
+<span class="font-medium text-slate-900 dark:text-white">Bank Transfer</span>
+</div>
+</label>
+</div>
+<button class="w-full py-4 bg-primary hover:bg-red-700 text-white font-bold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2 mt-2">
+<span class="material-symbols-outlined text-sm">lock</span>
+                                Donate $50 Securely
+                            </button>
+<p class="text-xs text-center text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-xs">verified_user</span>
+                                256-bit SSL Encrypted Payment
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Active Fundraising Campaigns -->
+<div class="max-w-[1280px] w-full px-4 sm:px-10 pb-20">
+<div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+<div>
+<h2 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Active Campaigns</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-2 text-lg">Choose a cause that speaks to your heart.</p>
+</div>
+<a class="text-primary font-semibold hover:text-red-700 flex items-center gap-1 group" href="#">
+                        View all campaigns 
+                        <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1: Boundless Generosity -->
+<div class="flex flex-col rounded-xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow h-full">
+<div class="h-48 bg-cover bg-center" data-alt="Young child with disability engaging in play therapy" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCQftE7iPG8EejMAIzP5YSHlts2qvbqa1BJOjjedbChtkux1oIygbRv-COWqVLLDUnp-zbD92acZz8QMvIQai6KBwQ0St8d95DzfF50YVmaxpViy4p-gIMMveCOqwLa4bMF8hMJAgOjI-z3p5HNTiAsj9pW3OgLk2d1B7xy5PKFsNg4GoQVcEKNixVHiea8rbbLazfC-GmRiDqkUos9NvGJy4TVTogl7bvXoUyMptDmgzELuZxaYY6q_2VTtUm5S31wrlXN0ofbbL4');"></div>
+<div class="p-6 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-3">
+<span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs font-bold rounded uppercase tracking-wider">Disability Support</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Boundless Generosity</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm mb-6 flex-1">Supporting children with disabilities to access quality education and essential healthcare services.</p>
+<div class="mt-auto flex flex-col gap-4">
+<div>
+<div class="flex justify-between text-sm font-medium mb-2">
+<span class="text-slate-900 dark:text-white">$300 <span class="text-slate-500 font-normal">raised of $1,500</span></span>
+<span class="text-primary font-bold">20%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 20%"></div>
+</div>
+</div>
+<button class="w-full py-2.5 rounded-lg border border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all text-sm">
+                                    Donate Now
+                                </button>
+</div>
+</div>
+</div>
+<!-- Card 2: Indegene Sponsorship -->
+<div class="flex flex-col rounded-xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow h-full">
+<div class="h-48 bg-cover bg-center" data-alt="Students studying in a library environment" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDocCSsiAJykpUrGYzrcn10i4_itmtXpiaCpmH2IoLYGlWDpL8njKb1mhtkvmxBjD0BRjSHXSzAlqDloozd0x3iMj7xA-7c9OEb-ELT12IRV1QAIJikFFCtiTy7FqJR-J-XpQsy2IC0VJHyaXmrij1bWhsx8n51hwfahsV76PmsVOfKH12LG0YhDAp-xERs2tysoQg756IsHC6EQ2ho23-dg1RxLP-R4PIGb3BLlft9Yth6BJL9Jt1U6fX0z1Wc_43oF0whKGNDqmY');"></div>
+<div class="p-6 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-3">
+<span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 text-xs font-bold rounded uppercase tracking-wider">Education</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Indegene Sponsorship</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm mb-6 flex-1">Providing scholarships and learning materials to underprivileged indigenous youth for a brighter future.</p>
+<div class="mt-auto flex flex-col gap-4">
+<div>
+<div class="flex justify-between text-sm font-medium mb-2">
+<span class="text-slate-900 dark:text-white">$4,250 <span class="text-slate-500 font-normal">raised of $10,000</span></span>
+<span class="text-primary font-bold">42%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 42%"></div>
+</div>
+</div>
+<button class="w-full py-2.5 rounded-lg border border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all text-sm">
+                                    Donate Now
+                                </button>
+</div>
+</div>
+</div>
+<!-- Card 3: Youth Capacity Development -->
+<div class="flex flex-col rounded-xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow h-full">
+<div class="h-48 bg-cover bg-center" data-alt="Young adults participating in a coding workshop" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuANm6DJ6l7Z3Avv4CqU02LRfetsI4al-kO4NC0uhg3U7LMSKG0zeqwA9h_bu-5744W9xxlaEYwqXOKFEuBMSpFbFc1L2IuqOz8PQlqJXo2J7GSOjlOOiP32ydVOHuVlKO52pYFlUInfLoEsJU28yOoDbR8lI2K8fG0LtKdj9_CEotRmPn6sta_brpF6ABUFbq1xyrzqR0FvYqp9vIC_Lf6kNmnru2LhyJkEGOfOxsvozN4gh5d3_Xx3R4lN0f3SNcXEKGaERwtuFS4');"></div>
+<div class="p-6 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-3">
+<span class="px-2 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 text-xs font-bold rounded uppercase tracking-wider">Skill Development</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Youth Capacity Development</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm mb-6 flex-1">Empowering young adults with digital skills, leadership training, and vocational workshops.</p>
+<div class="mt-auto flex flex-col gap-4">
+<div>
+<div class="flex justify-between text-sm font-medium mb-2">
+<span class="text-slate-900 dark:text-white">$1,100 <span class="text-slate-500 font-normal">raised of $5,000</span></span>
+<span class="text-primary font-bold">22%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 22%"></div>
+</div>
+</div>
+<button class="w-full py-2.5 rounded-lg border border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all text-sm">
+                                    Donate Now
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Transparency Section -->
+<div class="w-full bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-16 px-4 sm:px-10">
+<div class="max-w-[1080px] mx-auto text-center">
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold mb-3">Transparency &amp; Accountability</h2>
+<p class="text-slate-500 dark:text-slate-400 mb-12 max-w-2xl mx-auto">We believe in complete transparency. Here's a breakdown of how every dollar you donate is utilized to maximize impact.</p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+<div class="flex flex-col items-center gap-4">
+<div class="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">volunteer_activism</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">85% Program Services</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400">Directly funding educational materials, workshops, and aid for children.</p>
+</div>
+<div class="flex flex-col items-center gap-4">
+<div class="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">trending_up</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">10% Growth &amp; Awareness</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400">Expanding our reach to help more communities and fundraising efforts.</p>
+</div>
+<div class="flex flex-col items-center gap-4">
+<div class="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">admin_panel_settings</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">5% Administrative</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400">Essential operations, management, and oversight to keep running efficiently.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full bg-background-light dark:bg-background-dark py-10 px-4 border-t border-slate-200 dark:border-slate-800">
+<div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">volunteer_activism</span>
+<span class="font-bold text-slate-900 dark:text-white">YTOP Global</span>
+</div>
+<div class="flex gap-6 text-sm text-slate-600 dark:text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Contact Support</a>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500">© 2023 YTOP Global. All rights reserved.</p>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

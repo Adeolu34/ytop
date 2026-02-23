@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YTOP Global - Expand to that future</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#E62B1E", // Red from the logo
+                        secondary: "#1A237E", // Deep Blue from the logo
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#121212",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1E1E1E",
+                        "text-light": "#1F2937",
+                        "text-dark": "#F3F4F6",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>.video-bg-overlay {
+    background: linear-gradient(rgba(26, 35, 126, 0.7), rgba(0, 0, 0, 0.6))
+    }
+.hero-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuA5M5-w-xww6kGERzlnxwRQazGlxyNUvoq-PaAFl3sSKbU1MWbmviJlKIjpZtsSgyYwoPCOhTmei0jLBYU0OMDTtlAbrCnXn8G6gRXPtrCD5HYgXcKTd1wnaz32bSoXliWjPv4MaNRqxaG5Nv18BdDBSHzT88IVYjrgWzKPAAGmPQJzViY6a9YvZivA8FBeUm04gXiwH0SoSHNJUq0SxoiN8bEdFE7mRTnWmAWRJDv5PfUflhPKiN1tD5H5ckpW6NTaN43jbZNg4vI);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed
+    }</style>
+</head>
+<body class="font-body bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
+<nav class="fixed w-full z-50 bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-20">
+<div class="flex-shrink-0 flex items-center gap-3">
+<img alt="YTOP Global Logo" class="h-12 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/60x60?text=YTOP';" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdjIUMAO2yWkHwh1ZrfudqT8pl3E1wbg9U2GlzSgZGZJm7Y_3xOflBbENJSZG1M9FitRde7cqcLIFPxBMSouNxcVny_mGoF69B0yrN6p2T4lKO2Gd8TYsqQel1RLUv0jUKY7xPpUVSAwm_koqMyLgACYK53myoBig-5SiMi5lt-nptg2bAcSxSekvYzuKr1Txg-cnwz_WAVEi2WYT7z6TcmLRv2ZhP6Ilzvzf-Ifc4JAj21gB-vXXWb71202KoOLD0e9fuQxygQqU"/>
+<span class="font-display font-bold text-xl text-secondary dark:text-white hidden md:block">YTOP Global</span>
+</div>
+<div class="hidden md:flex space-x-8 items-center">
+<a class="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">Home</a>
+<a class="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">About Us</a>
+<a class="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">Events</a>
+<a class="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">Blog</a>
+<a class="bg-primary hover:bg-red-700 text-white px-5 py-2.5 rounded-full font-semibold transition-all shadow-md transform hover:scale-105" href="#">
+                        Donate
+                    </a>
+</div>
+<div class="md:hidden flex items-center">
+<button class="text-text-light dark:text-text-dark hover:text-primary focus:outline-none" id="mobile-menu-btn">
+<span class="material-icons-outlined text-3xl">menu</span>
+</button>
+</div>
+</div>
+</div>
+<div class="hidden md:hidden bg-surface-light dark:bg-surface-dark border-t border-gray-200 dark:border-gray-800" id="mobile-menu">
+<div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+<a class="block px-3 py-2 rounded-md text-base font-medium text-text-light dark:text-text-dark hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">Home</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-text-light dark:text-text-dark hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">About Us</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-text-light dark:text-text-dark hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">Events</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-text-light dark:text-text-dark hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">Blog</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-primary font-bold" href="#">Donate</a>
+</div>
+</div>
+</nav>
+<section class="relative h-screen flex items-center justify-center overflow-hidden hero-bg">
+<div class="absolute inset-0 video-bg-overlay z-10"></div>
+<div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight animate-fade-in-up">
+                Empowering Youth,<br/> Expanding Futures
+            </h1>
+<p class="mt-4 max-w-2xl mx-auto text-xl text-gray-200 font-light mb-10">
+                Join a global community of young leaders dedicated to personal development, leadership, and creating lasting social impact.
+            </p>
+<div class="flex flex-col sm:flex-row justify-center gap-4">
+<a class="bg-primary hover:bg-red-700 text-white px-8 py-4 rounded-full text-lg font-bold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2" href="#">
+<span>Join Our Community</span>
+<span class="material-icons-outlined text-sm">arrow_forward</span>
+</a>
+<a class="bg-transparent border-2 border-white hover:bg-white hover:text-secondary text-white px-8 py-4 rounded-full text-lg font-bold transition-all flex items-center justify-center gap-2" href="#">
+<span>Become a Volunteer</span>
+<span class="material-icons-outlined text-sm">volunteer_activism</span>
+</a>
+</div>
+</div>
+<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
+<span class="material-icons-outlined text-white text-4xl">keyboard_arrow_down</span>
+</div>
+</section>
+<div class="relative bg-secondary dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+<div class="absolute inset-0 opacity-10 pattern-dots"></div> 
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
+<div class="mb-6 md:mb-0 text-center md:text-left">
+<h2 class="font-display text-3xl font-bold text-white mb-2">Support Our Mission</h2>
+<p class="text-blue-100 max-w-xl">Your contribution helps us organize 'Rise of Warriors' events and mentor more young minds.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-white text-secondary font-bold py-3 px-8 rounded shadow hover:bg-gray-100 transition-colors">
+                    N1,000
+                </button>
+<button class="bg-white text-secondary font-bold py-3 px-8 rounded shadow hover:bg-gray-100 transition-colors">
+                    N5,000
+                </button>
+<button class="bg-primary text-white font-bold py-3 px-8 rounded shadow hover:bg-red-700 transition-colors flex items-center gap-2">
+<span>Donate Now</span>
+<span class="material-icons-outlined text-sm">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<section class="py-20 bg-background-light dark:bg-background-dark">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="font-display text-4xl font-bold text-gray-900 dark:text-white mb-2">Insights &amp; Stories</h2>
+<p class="text-gray-600 dark:text-gray-400">Read the latest from our community of thinkers.</p>
+</div>
+<a class="hidden sm:flex items-center text-primary font-semibold hover:text-red-700 transition-colors" href="#">
+                    View All Posts <span class="material-icons-outlined ml-1">arrow_right_alt</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+<article class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden group border border-gray-100 dark:border-gray-800">
+<div class="relative h-64 overflow-hidden">
+<img alt="Group of people working together" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQqq7a7O6kCCYOpV7unYvsfYg4CEaMCr0T0D5BPyVWu3cd3L--qdhtwpjhyAZEBO6VVsdosFa9pU7daymYN42t8Jqk8eoo-ISLvpkfQaXxantAjSihdOXVWw8zBzZqVeOLBaaBawmXVCU1RO-V_XH0gsU5lY5jJnrLHUqndN0pru5uBN8tvU6xsLiglnzvcVYXe_T1oHC0TSfsySACik2_CjRbOdhsb8k2L_NvzQkBHuOKyDqWqul6UGyODODiopnoj8ffTMSYfaE"/>
+<div class="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">Leadership</div>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3 space-x-2">
+<span class="flex items-center"><span class="material-icons-outlined text-sm mr-1">calendar_today</span> Oct 24, 2023</span>
+<span>•</span>
+<span>5 min read</span>
+</div>
+<h3 class="font-display text-2xl font-bold text-gray-900 dark:text-white mb-3 hover:text-primary transition-colors cursor-pointer">
+                            Purpose Is Built, Not Found
+                        </h3>
+<p class="text-gray-600 dark:text-gray-300 mb-6 flex-1 line-clamp-3">
+                            Many wait for purpose to strike like lightning, but true purpose is crafted through action, resilience, and serving others. Here is how you can start building yours today.
+                        </p>
+<a class="inline-flex items-center font-bold text-primary hover:text-red-700 transition-colors" href="#">
+                            Read Article <span class="material-icons-outlined ml-1 text-sm">arrow_forward</span>
+</a>
+</div>
+</article>
+<article class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden group border border-gray-100 dark:border-gray-800">
+<div class="relative h-64 overflow-hidden">
+<img alt="Students in discussion" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA9KUAsNEpjV45kEY8AjMGXhcy6CZ9Jy26_1Ezsd4b_6HWK_q360_LYyPB_khAyISFQacfqiaz1yGUDQfh0t-lFaDBWq-Ac0CtLxnBKJpXDGkNKvWtlD_tzJGHlnoz_mVh-ZbG-b8TAMUqZzDEi8pokRIZ7OoTZ5reBgxZOZWtemFojM34n1qtYohjKXdptcnT-hHJI4qzm9pEz18fNEQ6YNQjRr-DYliPcnFrc0sF_adKXTTrKOd6Q-2c6uuZCwz5OWlbiEnDjYQ"/>
+<div class="absolute top-4 left-4 bg-secondary text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">Education</div>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3 space-x-2">
+<span class="flex items-center"><span class="material-icons-outlined text-sm mr-1">calendar_today</span> Sep 15, 2023</span>
+<span>•</span>
+<span>4 min read</span>
+</div>
+<h3 class="font-display text-2xl font-bold text-gray-900 dark:text-white mb-3 hover:text-primary transition-colors cursor-pointer">
+                            The Role of Mentorship in Growth
+                        </h3>
+<p class="text-gray-600 dark:text-gray-300 mb-6 flex-1 line-clamp-3">
+                            Navigating career and life choices can be daunting. Discover why having a mentor is the cheat code to avoiding common pitfalls.
+                        </p>
+<a class="inline-flex items-center font-bold text-primary hover:text-red-700 transition-colors" href="#">
+                            Read Article <span class="material-icons-outlined ml-1 text-sm">arrow_forward</span>
+</a>
+</div>
+</article>
+<article class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden group border border-gray-100 dark:border-gray-800">
+<div class="relative h-64 overflow-hidden">
+<img alt="Volunteer event" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBte4gJpYuzR6wZZOszLNdaNaQP2IOMkobv3-bARZYD24E6X8O9eyJ-zs-u8fekVansgdcplQJzBC6zdqN4eRdxK40Yrci7Opj5uIDF3xq8tw3ZzjLNX8-O6s51ZGN2nNJed4NiWYsl7nl79cThKHqc_abRZJJjPzzU97_tT-6jrQ3PEitC5na0MRXo0NkqJZ5na3_Hm8I5wV_PoHOLpggENZkTU9KD806KKJ14Gc97tVtZz1xyIfzABDUMcRuW6L4gQA665_PdfGQ"/>
+<div class="absolute top-4 left-4 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">Impact</div>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3 space-x-2">
+<span class="flex items-center"><span class="material-icons-outlined text-sm mr-1">calendar_today</span> Aug 02, 2023</span>
+<span>•</span>
+<span>6 min read</span>
+</div>
+<h3 class="font-display text-2xl font-bold text-gray-900 dark:text-white mb-3 hover:text-primary transition-colors cursor-pointer">
+                            Highlights: Rise of Warriors 2.0
+                        </h3>
+<p class="text-gray-600 dark:text-gray-300 mb-6 flex-1 line-clamp-3">
+                            A recap of our most recent flagship event where 500+ youths gathered to redefine their potential and challenge the status quo.
+                        </p>
+<a class="inline-flex items-center font-bold text-primary hover:text-red-700 transition-colors" href="#">
+                            Read Article <span class="material-icons-outlined ml-1 text-sm">arrow_forward</span>
+</a>
+</div>
+</article>
+</div>
+<div class="mt-8 text-center sm:hidden">
+<a class="inline-flex items-center text-primary font-semibold hover:text-red-700 transition-colors" href="#">
+                    View All Posts <span class="material-icons-outlined ml-1">arrow_right_alt</span>
+</a>
+</div>
+</div>
+</section>
+<section class="py-20 bg-gray-100 dark:bg-[#18181b]">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<span class="text-primary font-bold tracking-wider uppercase text-sm">Who We Are</span>
+<h2 class="font-display text-4xl font-bold text-gray-900 dark:text-white mt-2">Meet The Team</h2>
+<div class="w-24 h-1 bg-primary mx-auto mt-4 rounded"></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="group relative bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2">
+<div class="aspect-w-3 aspect-h-4 relative">
+<img alt="Ekundayo Oluwadamilare" class="object-cover w-full h-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfakM1IK1ntUImScBABBue8JrnGWXTD7HjQtcsNWhuzXceK9zEOCmNDdzc125g0X1Tukcjl5arZAsp5rIi1fbU-NBpEhl-PvEKrHoHXfzzVa4c8FRLgx7VLS9XNnnVEHyrJti32Evy6PefsfpZX49lX6lz4VdhXyk9pk2rkEk4F4hb3ytuXl6lk_BR-6jz5F92ImBahMzKIUglfrIOLr_pSjCt8Fp5kobm3hBEWnK2fnxOeZPQQ_ojkMyT_2kRZc7Bg4pQcQnFYvs"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+<div class="flex space-x-4 mb-2">
+<a class="text-white hover:text-primary" href="#"><i class="material-icons-outlined">share</i></a>
+</div>
+</div>
+</div>
+<div class="p-6 text-center border-t-4 border-primary">
+<h3 class="font-display text-xl font-bold text-gray-900 dark:text-white">Ekundayo Oluwadamilare</h3>
+<p class="text-sm text-primary font-medium mt-1">Founder &amp; Lead Visionary</p>
+</div>
+</div>
+<div class="group relative bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2">
+<div class="aspect-w-3 aspect-h-4 relative">
+<img alt="Sarah Johnson" class="object-cover w-full h-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIOC51E1_mM86LBIdg_HGPXvqNgRpWTabxzJvhRyfsEcMj7IT09SaXJdrrcYttTTEKTnxy4NYPq0cnWJvIVyEuymEV8eaH3TPl6UQv35GCgbJ2RyISzmMab0GXBkyZ43Ya9GBaOg0oUoKZEaZhhKW74aeHTjGsjFD7faKA4kPGotleIFaBqkhzV-XszgUXtNG4zanwC5Db4dQz016rxi5c1_yQNW9Qw1ohoKlIPek-ywXr77JlnNGtBQkrx6R__TkM6SgrRHpKdKw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+</div>
+</div>
+<div class="p-6 text-center border-t-4 border-transparent group-hover:border-primary transition-colors">
+<h3 class="font-display text-xl font-bold text-gray-900 dark:text-white">Sarah Johnson</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Director of Operations</p>
+</div>
+</div>
+<div class="group relative bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2">
+<div class="aspect-w-3 aspect-h-4 relative">
+<img alt="Michael Chen" class="object-cover w-full h-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn4UaWjQex-hI47dbgO9s70QzFn6cpzcTfaxVuVQuvjxOxrD8f31r1MLB6hkZYLSh57QrjgOdBzciYkuH088PwWx5Erlo3CJSjGEahKHAV9T9lTb9IMtXuuwD9RL56Xl7icYaukbChA38BsKFGKIGVAJzIB_VrRVhTM0kbAlTlg7SW0waQUBRGQ_0YTVUno8Trw8eMWJiFXOP7T-qkjNMp9woS-qaXGsc8WRJxuGbFyg0KIQqF_qwtOfuPctcg0tZ8PYLLR-P3cvo"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+</div>
+</div>
+<div class="p-6 text-center border-t-4 border-transparent group-hover:border-primary transition-colors">
+<h3 class="font-display text-xl font-bold text-gray-900 dark:text-white">Michael Chen</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Community Manager</p>
+</div>
+</div>
+<div class="group relative bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2">
+<div class="aspect-w-3 aspect-h-4 relative">
+<img alt="Amara Okeke" class="object-cover w-full h-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD87bN2SPJaskcEAVeGw5AYRiRKEuhXZmwChYGsb7azFMyHvrnPjl-RDR0eNHn6MmPPutR5yaHcXzhJ8TxXz6YTVIb5C2KPIzKmHfXYeUReqlq-KRISIcjnblUbW-F2-wChcnrTw3LNWYl0N4THINsf0KxvAL3X4BLIhkVte_iUC42s9HCMbyvTb7RHxyT5-L9uJtOfl3I2zf1s5OzCsUH7-hDt020qbZmGBYwcEAQ3f2-Jp4tnvANRYaRY9M_DuOs5ayIEw9b9ZBg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+</div>
+</div>
+<div class="p-6 text-center border-t-4 border-transparent group-hover:border-primary transition-colors">
+<h3 class="font-display text-xl font-bold text-gray-900 dark:text-white">Amara Okeke</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Head of Partnerships</p>
+</div>
+</div>
+</div>
+<div class="mt-12 text-center">
+<a class="inline-block border-b-2 border-primary text-primary font-bold pb-1 hover:text-secondary dark:hover:text-white hover:border-secondary dark:hover:border-white transition-all" href="#">View Full Team</a>
+</div>
+</div>
+</section>
+<section class="py-24 bg-surface-light dark:bg-surface-dark relative">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="bg-secondary rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row">
+<div class="lg:w-1/2 p-12 lg:p-16 flex flex-col justify-center">
+<h2 class="font-display text-3xl md:text-4xl font-bold text-white mb-6">Ready to make a difference?</h2>
+<p class="text-blue-100 text-lg mb-8">
+                        Whether you want to volunteer your time, partner with us, or simply join our events, there is a place for you at YTOP Global.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-colors text-center">
+                            Join YTOP Global
+                        </button>
+<button class="bg-transparent border border-white text-white hover:bg-white hover:text-secondary font-bold py-3 px-8 rounded-lg transition-colors text-center">
+                            Contact Us
+                        </button>
+</div>
+</div>
+<div class="lg:w-1/2 relative min-h-[300px]">
+<img alt="Community gathering" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1a_YVCB8VcGf4whRz-mNiFnVN2JQtTAZhb2qqVg28CCwdIRn4va5tMP7s7hYSWxhXqitAkltfRwdzcjAQA3Df2LXVc62OyMXQr7CSoZNDz3yPyWQl5HA5OzS48gh8d5YbwlooJvt04dUXKrYrEUQbW2L93jys8OJ_cXxONMu3nmqobxtAY4q0toRzl0Xlr9pKfITKlQw0T6fWT7_1mVTtMLpM3MaPzz8-KKhMHE4zYV68T3msyj2EdXWZqIginfeoNhdlsUT236s"/>
+<div class="absolute inset-0 bg-secondary opacity-30"></div>
+</div>
+</div>
+</div>
+</section>
+<footer class="bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-gray-800 pt-16 pb-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+<div class="space-y-4">
+<div class="flex items-center gap-2">
+<div class="h-10 w-10 bg-secondary text-white rounded-full flex items-center justify-center font-bold font-display text-xl">Y</div>
+<span class="font-display font-bold text-xl text-gray-900 dark:text-white">YTOP Global</span>
+</div>
+<p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                        ...expand to that future. We are building a generation of conscious leaders equipped to solve tomorrow's problems.
+                    </p>
+<div class="text-sm font-bold text-gray-500">Rc179444</div>
+</div>
+<div>
+<h3 class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-sm tracking-wider">Quick Links</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">About YTOP</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">Our Events</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">Volunteer</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">Donate</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-sm tracking-wider">Resources</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">Blog</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">Gallery</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">FAQ</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm" href="#">Contact Support</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-sm tracking-wider">Stay Connected</h3>
+<p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Join our newsletter for updates and opportunities.</p>
+<form class="flex flex-col gap-2">
+<input class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded px-4 py-2 focus:ring-primary focus:border-primary" placeholder="Your email address" type="email"/>
+<button class="bg-primary text-white text-sm font-bold py-2 px-4 rounded hover:bg-red-700 transition-colors" type="button">Subscribe</button>
+</form>
+</div>
+</div>
+<div class="border-t border-gray-200 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-gray-500 dark:text-gray-500 text-sm">© 2023 YTOP Global. All rights reserved.</p>
+<div class="flex space-x-6">
+<a class="text-gray-400 hover:text-primary transition-colors" href="#"><span class="sr-only">Facebook</span><i class="material-icons-outlined text-xl">facebook</i></a>
+<a class="text-gray-400 hover:text-primary transition-colors" href="#"><span class="sr-only">Twitter</span><i class="material-icons-outlined text-xl">tag</i></a> 
+<a class="text-gray-400 hover:text-primary transition-colors" href="#"><span class="sr-only">Instagram</span><i class="material-icons-outlined text-xl">camera_alt</i></a>
+<a class="text-gray-400 hover:text-primary transition-colors" href="#"><span class="sr-only">LinkedIn</span><i class="material-icons-outlined text-xl">work</i></a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+        // Simple dark mode toggle for demonstration purposes (optional interaction)
+        // Check for saved user preference, if any, on load
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+
+</body></html>
