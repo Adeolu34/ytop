@@ -18,10 +18,11 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params;
     const post = await getPrisma().post.findFirst({
-      where: { slug: params.slug, status: 'PUBLISHED' },
+      where: { slug, status: 'PUBLISHED' },
       select: {
         title: true,
         excerpt: true,
@@ -61,13 +62,14 @@ const postInclude = {
   featuredImage: { select: { url: true, altText: true, caption: true } },
 } as const;
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   let post: Awaited<ReturnType<ReturnType<typeof getPrisma>['post']['findFirst']>>;
   let relatedPosts: Awaited<ReturnType<ReturnType<typeof getPrisma>['post']['findMany']>> = [];
 
   const loadPost = () =>
     getPrisma().post.findFirst({
-      where: { slug: params.slug, status: 'PUBLISHED' },
+      where: { slug, status: 'PUBLISHED' },
       include: postInclude,
     });
 
