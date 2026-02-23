@@ -106,9 +106,10 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
     };
   }
 
-  let posts: Awaited<ReturnType<ReturnType<typeof getPrisma>['post']['findMany']>> = [];
+  type BlogPostItem = Awaited<ReturnType<typeof loadBlogData>>[0][number];
+  let posts: BlogPostItem[] = [];
   let totalCount = 0;
-  let categories: Awaited<ReturnType<ReturnType<typeof getPrisma>['category']['findMany']>> = [];
+  let categories: Awaited<ReturnType<typeof loadBlogData>>[2] = [];
   let draftCount = 0;
   let loadError: string | null = null;
 
@@ -201,10 +202,10 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                       </div>
                     ) : (
                       <div className="w-10 h-10 rounded-full border-2 border-primary bg-white/20 flex items-center justify-center">
-                        <span className="text-lg font-bold">{featuredPost.author.name.charAt(0)}</span>
+                        <span className="text-lg font-bold">{(featuredPost.author.name ?? ' ').charAt(0)}</span>
                       </div>
                     )}
-                    <span className="font-bold text-white">{featuredPost.author.name}</span>
+                    <span className="font-bold text-white">{featuredPost.author.name ?? 'Author'}</span>
                   </div>
                 )}
               </div>

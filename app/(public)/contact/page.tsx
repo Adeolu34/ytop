@@ -48,9 +48,9 @@ export default function ContactPage() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            fieldErrors[err.path[0].toString()] = err.message;
+        error.issues.forEach((err) => {
+          if (err.path[0] !== undefined) {
+            fieldErrors[String(err.path[0])] = err.message;
           }
         });
         setErrors(fieldErrors);

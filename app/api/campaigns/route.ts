@@ -32,7 +32,7 @@ export async function GET() {
     // Calculate progress percentage for each campaign
     const campaignsWithProgress = campaigns.map(campaign => ({
       ...campaign,
-      progressPercentage: campaign.goalAmount > 0
+      progressPercentage: Number(campaign.goalAmount) > 0
         ? Math.round((Number(campaign.raisedAmount) / Number(campaign.goalAmount)) * 100)
         : 0,
     }));

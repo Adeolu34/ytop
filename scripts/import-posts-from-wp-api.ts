@@ -15,6 +15,7 @@
  */
 
 import 'dotenv/config';
+import type { PostStatus } from '../app/generated/prisma';
 import prisma from '../lib/db';
 
 const WP_URL = (process.env.WORDPRESS_URL || process.env.WP_URL || '').replace(/\/$/, '');
@@ -196,7 +197,7 @@ async function main() {
       const title = stripHtml(p.title?.rendered || 'Untitled');
       const content = p.content?.rendered || '';
       const excerpt = p.excerpt?.rendered ? stripHtml(p.excerpt.rendered) : null;
-      const status = p.status === 'publish' ? 'PUBLISHED' : 'DRAFT';
+      const status: PostStatus = p.status === 'publish' ? 'PUBLISHED' : 'DRAFT';
       const publishedAt = p.status === 'publish' ? new Date(p.date) : null;
 
       // Always try to get featured image URL (from _embed or by fetching media by ID)
