@@ -64,14 +64,14 @@ const postInclude = {
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let post: Awaited<ReturnType<ReturnType<typeof getPrisma>['post']['findFirst']>>;
-  let relatedPosts: Awaited<ReturnType<ReturnType<typeof getPrisma>['post']['findMany']>> = [];
-
   const loadPost = () =>
     getPrisma().post.findFirst({
       where: { slug, status: 'PUBLISHED' },
       include: postInclude,
     });
+  type PostWithRelations = NonNullable<Awaited<ReturnType<typeof loadPost>>>;
+  let post: PostWithRelations | null = null;
+  let relatedPosts: Awaited<ReturnType<ReturnType<typeof getPrisma>['post']['findMany']>> = [];
 
   try {
     post = await loadPost();
