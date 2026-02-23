@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, User, ArrowLeft, Tag } from 'lucide-react';
+import type { Prisma } from '@/app/generated/prisma';
 import { getPrisma, resetPrismaConnection } from '@/lib/db';
 
 const DEFAULT_FEATURED_IMAGE = '/media/2021/10/IMG_9658-scaled.jpg';
@@ -74,7 +75,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       where: { slug, status: 'PUBLISHED' },
       include: postInclude,
     });
-  const loadRelatedPosts = (where: Parameters<ReturnType<typeof getPrisma>['post']['findMany']>[0]['where']) =>
+  const loadRelatedPosts = (where: Prisma.PostWhereInput) =>
     getPrisma().post.findMany({
       where,
       include: relatedPostsInclude,
