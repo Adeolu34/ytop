@@ -62,6 +62,11 @@ const postInclude = {
   featuredImage: { select: { url: true, altText: true, caption: true } },
 } as const;
 
+const relatedPostsInclude = {
+  featuredImage: { select: { url: true, altText: true } },
+  categories: { select: { name: true, slug: true } },
+} as const;
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const loadPost = () =>
@@ -69,9 +74,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       where: { slug, status: 'PUBLISHED' },
       include: postInclude,
     });
+  const loadRelatedPosts = (where: Parameters<ReturnType<typeof getPrisma>['post']['findMany']>[0]['where']) =>
+    getPrisma().post.findMany({
+      where,
+      include: relatedPostsInclude,
+      take: 3,
+      orderBy: { publishedAt: 'desc' },
+    });
   type PostWithRelations = NonNullable<Awaited<ReturnType<typeof loadPost>>>;
+  type RelatedPost = Awaited<ReturnType<typeof loadRelatedPosts>>[number];
   let post: PostWithRelations | null = null;
-  let relatedPosts: Awaited<ReturnType<ReturnType<typeof getPrisma>['post']['findMany']>> = [];
+  let relatedPosts: RelatedPost[] = [];
 
   try {
     post = await loadPost();
@@ -93,15 +106,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         ? { categories: { some: { id: { in: categoryIds } } } }
         : {}),
     };
-    relatedPosts = await getPrisma().post.findMany({
-      where: relatedWhere,
-      include: {
-        featuredImage: { select: { url: true, altText: true } },
-        categories: { select: { name: true, slug: true } },
-      },
-      take: 3,
-      orderBy: { publishedAt: 'desc' },
-    });
+    relatedPosts = await loadRelatedPosts(relatedWhere);
   } catch (err) {
     if (isConnectionError(err)) {
       resetPrismaConnection();
@@ -122,15 +127,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             ? { categories: { some: { id: { in: retryCategoryIds } } } }
             : {}),
         };
-        relatedPosts = await getPrisma().post.findMany({
-          where: retryRelatedWhere,
-          include: {
-            featuredImage: { select: { url: true, altText: true } },
-            categories: { select: { name: true, slug: true } },
-          },
-          take: 3,
-          orderBy: { publishedAt: 'desc' },
-        });
+        relatedPosts = await loadRelatedPosts(retryRelatedWhere);
       } catch (retryErr) {
         console.error('Blog post page error (after retry):', retryErr);
         return (
