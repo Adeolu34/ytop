@@ -14,7 +14,7 @@ export default function Project300Page() {
       {/* Hero */}
       <section className="relative w-full min-h-[500px] md:min-h-[600px] overflow-hidden flex items-center justify-center bg-gray-900">
         <Image
-          src="/media/2021/10/IMG_9658-scaled.jpg"
+          src="/media/2021/10/IMG_9622-scaled.jpg"
           alt="YTOP Global school outreach session"
           fill
           className="object-cover"

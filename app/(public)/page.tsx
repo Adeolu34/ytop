@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import HomeHeroSlideshow from '@/components/public/HomeHeroSlideshow';
+import prisma from '@/lib/db';
 import {
   GraduationCap,
   Megaphone,
@@ -72,7 +73,47 @@ const TESTIMONIALS = [
   { quote: 'Being part of the ROW initiative allowed me to give back to my community in a structured, impactful way.', name: 'N Ngozi', role: 'Beneficiary', image: '/media/2021/10/Stella-Sikemi-Arowolo-1.webp' },
 ];
 
-export default function HomePage() {
+function stripHtml(html: string | null | undefined): string {
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+export default async function HomePage() {
+  const [teamMembers, latestPosts] = await Promise.all([
+    prisma.teamMember.findMany({
+      where: { isActive: true },
+      include: {
+        photo: {
+          select: {
+            url: true,
+            altText: true,
+          },
+        },
+      },
+      orderBy: { order: 'asc' },
+      take: 3,
+    }),
+    prisma.post.findMany({
+      where: { status: 'PUBLISHED' },
+      include: {
+        featuredImage: {
+          select: {
+            url: true,
+            altText: true,
+          },
+        },
+        categories: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
+      },
+      orderBy: { publishedAt: 'desc' },
+      take: 3,
+    }),
+  ]);
+
   return (
     <>
       <HomeHeroSlideshow />
@@ -167,6 +208,131 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Featured Team */}
+      {teamMembers.length > 0 && (
+        <section className="py-20 bg-surface-light dark:bg-surface-dark">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-10">
+              <div>
+                <h2 className="font-display text-3xl md:text-4xl font-bold text-secondary dark:text-white mb-2">
+                  Meet Our Team
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  The people leading youth empowerment and mentorship across Nigeria and beyond.
+                </p>
+              </div>
+              <Link
+                href="/team"
+                className="inline-flex items-center text-primary font-semibold hover:opacity-90"
+              >
+                View Full Team <ArrowRight className="ml-1 w-5 h-5" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {teamMembers.map((member) => (
+                <div
+                  key={member.id}
+                  className="bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col items-center text-center"
+                >
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden mb-4 bg-secondary/10 dark:bg-secondary/30 flex items-center justify-center">
+                    {member.photo?.url ? (
+                      <Image
+                        src={member.photo.url}
+                        alt={member.photo.altText || member.name}
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                    ) : (
+                      <span className="text-2xl font-bold text-secondary">
+                        {member.name.charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-display text-lg font-bold text-gray-900 dark:text-white">
+                    {member.name}
+                  </h3>
+                  {member.position && (
+                    <p className="text-xs uppercase tracking-wide text-primary font-semibold mt-1">
+                      {member.position}
+                    </p>
+                  )}
+                  {member.bio && (
+                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                      {stripHtml(member.bio)}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Latest from the Blog */}
+      {latestPosts.length > 0 && (
+        <section className="py-20 bg-white dark:bg-background-dark">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-10">
+              <div>
+                <h2 className="font-display text-3xl md:text-4xl font-bold text-secondary dark:text-white mb-2">
+                  Latest from the Blog
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Insights on identity, leadership, career growth, and youth development.
+                </p>
+              </div>
+              <Link
+                href="/blog"
+                className="inline-flex items-center text-primary font-semibold hover:opacity-90"
+              >
+                View All Posts <ArrowRight className="ml-1 w-5 h-5" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {latestPosts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  className="group bg-surface-light dark:bg-surface-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col"
+                >
+                  <div className="relative h-52 bg-gray-200">
+                    {post.featuredImage?.url && (
+                      <Image
+                        src={post.featuredImage.url}
+                        alt={post.featuredImage.altText || post.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    {post.categories && post.categories.length > 0 && (
+                      <p className="text-xs font-semibold text-primary mb-1">
+                        {post.categories[0].name}
+                      </p>
+                    )}
+                    <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h3>
+                    {post.excerpt && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
+                        {stripHtml(post.excerpt)}
+                      </p>
+                    )}
+                    <span className="mt-auto inline-flex items-center text-sm font-semibold text-primary group-hover:underline">
+                      Read Article <ArrowRight className="ml-1 w-4 h-4" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Events */}
       <section className="py-20 bg-background dark:bg-background-dark">

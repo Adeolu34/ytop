@@ -74,14 +74,25 @@ export default async function ProgramsPage() {
                 </Link>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="rounded-xl bg-secondary/5 dark:bg-secondary/20 p-4">
-                <p className="text-2xl font-black text-secondary mb-1">300+</p>
-                <p className="text-xs text-slate-700 dark:text-slate-200">Secondary schools nationwide</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div className="relative h-40 sm:h-48 rounded-xl overflow-hidden shadow-md">
+                <Image
+                  src="/media/2021/10/IMG_9622-scaled.jpg"
+                  alt="Students during a Project 300 outreach session"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 240px, 50vw"
+                />
               </div>
-              <div className="rounded-xl bg-primary/5 dark:bg-primary/20 p-4">
-                <p className="text-2xl font-black text-primary mb-1">100k+</p>
-                <p className="text-xs text-slate-700 dark:text-slate-200">Students empowered</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-xl bg-secondary/5 dark:bg-secondary/20 p-4">
+                  <p className="text-2xl font-black text-secondary mb-1">300+</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-200">Secondary schools nationwide</p>
+                </div>
+                <div className="rounded-xl bg-primary/5 dark:bg-primary/20 p-4">
+                  <p className="text-2xl font-black text-primary mb-1">100k+</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-200">Students empowered</p>
+                </div>
               </div>
             </div>
           </div>

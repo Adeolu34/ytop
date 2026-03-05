@@ -13,6 +13,7 @@ const menuItems = [
     href: '/programs',
     children: [
       { label: 'All Programs', href: '/programs' },
+      { label: 'Project 300', href: '/programs/project-300' },
       { label: 'Rise of Warriors', href: '/programs/rise-of-warriors' },
       { label: 'Leadership Development', href: '/programs#leadership' },
       { label: 'Career Guidance', href: '/programs#career' },
