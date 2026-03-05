@@ -256,8 +256,22 @@ async function main() {
         updated++;
         console.log('  ↻', title.slice(0, 50) + (title.length > 50 ? '…' : ''), featuredImageId ? `| featured: ${featured!.source_url}` : '');
       } else {
-        await prisma.post.create({
-          data: postData,
+        await prisma.post.upsert({
+          where: { slug: p.slug },
+          update: {
+            title: postData.title,
+            excerpt: postData.excerpt,
+            content: postData.content,
+            status: postData.status,
+            publishedAt: postData.publishedAt,
+            featuredImageId: postData.featuredImageId,
+            metaTitle: postData.metaTitle,
+            metaDescription: postData.metaDescription,
+            metaKeywords: postData.metaKeywords,
+            categories: categoryIds.length ? { set: categoryIds.map((id) => ({ id })) } : undefined,
+            tags: tagIds.length ? { set: tagIds.map((id) => ({ id })) } : undefined,
+          },
+          create: postData,
         });
         created++;
         console.log('  ✓', title.slice(0, 50) + (title.length > 50 ? '…' : ''), featuredImageId ? `| featured: ${featured!.source_url}` : '');

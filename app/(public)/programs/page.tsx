@@ -41,6 +41,53 @@ export default async function ProgramsPage() {
         </div>
       </section>
 
+      {/* Project 300 highlight */}
+      <section className="py-12 bg-surface-light dark:bg-surface-dark border-b border-slate-200/60 dark:border-slate-800/60">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-[1.4fr_minmax(0,1fr)] gap-8 items-center rounded-2xl bg-white dark:bg-background-dark shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-8">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">
+                New Nationwide Initiative
+              </p>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">
+                Project 300 – Secondary School Outreach
+              </h2>
+              <p className="text-sm md:text-base text-slate-700 dark:text-slate-300 mb-4 max-w-xl">
+                A nationwide secondary school mentorship and identity development program reaching 300 schools and
+                over 100,000 students across Nigeria.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/programs/project-300"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition shadow-md"
+                >
+                  Learn More About Project 300
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="https://forms.gle/s9DnAf5aZsivRm7a6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-primary hover:text-primary transition"
+                >
+                  Apply to Volunteer
+                </Link>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="rounded-xl bg-secondary/5 dark:bg-secondary/20 p-4">
+                <p className="text-2xl font-black text-secondary mb-1">300+</p>
+                <p className="text-xs text-slate-700 dark:text-slate-200">Secondary schools nationwide</p>
+              </div>
+              <div className="rounded-xl bg-primary/5 dark:bg-primary/20 p-4">
+                <p className="text-2xl font-black text-primary mb-1">100k+</p>
+                <p className="text-xs text-slate-700 dark:text-slate-200">Students empowered</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Programs */}
       <section className="py-20 bg-white dark:bg-background-dark">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
