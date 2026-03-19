@@ -3,10 +3,12 @@
 import { startTransition, useActionState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminSubmitButton from '@/components/admin/forms/AdminSubmitButton';
-import {
-  INITIAL_COMMENT_FORM_STATE,
-  submitCommentAction,
-} from '@/app/(public)/blog/[slug]/comment-actions';
+import { submitCommentAction } from '@/app/(public)/blog/[slug]/comment-actions';
+
+const INITIAL_COMMENT_FORM_STATE = {
+  status: 'idle' as const,
+  message: null,
+};
 
 type CommentAuthor = {
   name: string | null;

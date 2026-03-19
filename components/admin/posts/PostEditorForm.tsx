@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
 import AdminSubmitButton from '@/components/admin/forms/AdminSubmitButton';
-import {
-  POST_EDITOR_INITIAL_STATE,
-  savePostAction,
-} from '@/app/admin/posts/actions';
+import { savePostAction } from '@/app/admin/posts/actions';
+
+const POST_EDITOR_INITIAL_STATE = {
+  error: null,
+};
 
 type PostEditorFormProps = {
   mode: 'create' | 'edit';

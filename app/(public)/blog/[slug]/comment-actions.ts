@@ -17,14 +17,9 @@ const commentSchema = z.object({
   website: z.string().max(200).optional(),
 });
 
-export type CommentFormState = {
+type CommentFormState = {
   status: 'idle' | 'approved' | 'review' | 'rejected' | 'error';
   message: string | null;
-};
-
-export const INITIAL_COMMENT_FORM_STATE: CommentFormState = {
-  status: 'idle',
-  message: null,
 };
 
 export async function submitCommentAction(

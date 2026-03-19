@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
 import AdminSubmitButton from '@/components/admin/forms/AdminSubmitButton';
-import {
-  createMediaAction,
-  MEDIA_EDITOR_INITIAL_STATE,
-  updateMediaAction,
-} from '@/app/admin/gallery/actions';
+import { createMediaAction, updateMediaAction } from '@/app/admin/gallery/actions';
+
+const MEDIA_EDITOR_INITIAL_STATE = {
+  error: null,
+};
 
 type MediaEditorFormProps = {
   mode: 'create' | 'edit';
