@@ -8,12 +8,8 @@ import { checkPermission, requireAuth } from '@/lib/auth-utils';
 import { buildPostDraft, slugifyValue } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
 
-export type PostEditorState = {
+type PostEditorState = {
   error: string | null;
-};
-
-export const POST_EDITOR_INITIAL_STATE: PostEditorState = {
-  error: null,
 };
 
 const POST_INDEX_PATH = '/admin/posts';

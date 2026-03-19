@@ -13,12 +13,8 @@ import {
 } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
 
-export type MediaEditorState = {
+type MediaEditorState = {
   error: string | null;
-};
-
-export const MEDIA_EDITOR_INITIAL_STATE: MediaEditorState = {
-  error: null,
 };
 
 const GALLERY_INDEX_PATH = '/admin/gallery';

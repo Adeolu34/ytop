@@ -9,12 +9,8 @@ import { requireAdmin } from '@/lib/auth-utils';
 import { buildUserDraft } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
 
-export type UserEditorState = {
+type UserEditorState = {
   error: string | null;
-};
-
-export const USER_EDITOR_INITIAL_STATE: UserEditorState = {
-  error: null,
 };
 
 const USER_INDEX_PATH = '/admin/users';
