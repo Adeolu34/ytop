@@ -2,86 +2,100 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  FileText,
-  File,
-  Users,
-  Image,
-  Star,
-  Briefcase,
-  Calendar,
-  DollarSign,
-  Settings,
-  Menu as MenuIcon,
-  Tag,
-} from 'lucide-react';
+import { ExternalLink, FileText, Images, LayoutDashboard, Users } from 'lucide-react';
 import clsx from 'clsx';
+import {
+  ADMIN_NAV_ITEMS,
+  type AdminIconKey,
+  isAdminNavItemActive,
+} from '@/lib/admin-shell';
 
-const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: '/admin' },
-  { icon: FileText, label: 'Posts', href: '/admin/posts' },
-  { icon: File, label: 'Pages', href: '/admin/pages' },
-  { icon: Image, label: 'Media', href: '/admin/media' },
-  { icon: Tag, label: 'Categories', href: '/admin/categories' },
-  { icon: Users, label: 'Team', href: '/admin/team' },
-  { icon: Star, label: 'Testimonials', href: '/admin/testimonials' },
-  { icon: Briefcase, label: 'Programs', href: '/admin/programs' },
-  { icon: Calendar, label: 'Events', href: '/admin/events' },
-  { icon: DollarSign, label: 'Campaigns', href: '/admin/campaigns' },
-  { icon: MenuIcon, label: 'Menus', href: '/admin/menus' },
-  { icon: Settings, label: 'Settings', href: '/admin/settings' },
-];
+const iconMap: Record<AdminIconKey, typeof LayoutDashboard> = {
+  dashboard: LayoutDashboard,
+  users: Users,
+  posts: FileText,
+  gallery: Images,
+};
 
 export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-gray-900 text-white flex-shrink-0 hidden lg:block">
-      <div className="p-6 border-b border-gray-800">
-        <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-lg font-bold">YG</span>
-          </div>
-          <div>
-            <div className="font-bold text-lg">YTOP Global</div>
-            <div className="text-xs text-gray-400">Admin Panel</div>
-          </div>
-        </Link>
-      </div>
+    <>
+      <aside className="admin-surface-panel fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col bg-[#f5f3f3] py-6 lg:flex">
+        <div className="px-6">
+          <Link href="/admin" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#ba0013] to-[#e31e24] text-white shadow-lg shadow-[#ba0013]/20">
+              <span className="admin-font-display text-lg font-extrabold">YG</span>
+            </div>
+            <div>
+              <div className="admin-font-display text-xl font-bold tracking-tight text-[#1b1c1c]">
+                YTOP Global
+              </div>
+              <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[#5d3f3c]">
+                Admin Console
+              </div>
+            </div>
+          </Link>
+        </div>
 
-      <nav className="p-4 space-y-1">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+        <nav className="mt-10 flex-1 space-y-1">
+          {ADMIN_NAV_ITEMS.map((item) => {
+            const Icon = iconMap[item.icon];
+            const isActive = isAdminNavItemActive(pathname, item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={clsx(
+                  'flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors duration-200',
+                  isActive
+                    ? 'border-l-4 border-[#e31e24] bg-[#ffdad6] font-semibold text-[#e31e24]'
+                    : 'text-[#5d3f3c] hover:bg-[#e4e2e2] hover:text-[#e31e24]'
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="mt-auto px-6">
+          <Link
+            href="/"
+            target="_blank"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-white px-4 py-3 text-sm font-semibold text-[#5d3f3c] shadow-sm transition-colors hover:bg-[#efeded] hover:text-[#1b1c1c]"
+          >
+            View Website
+            <ExternalLink className="h-4 w-4" />
+          </Link>
+        </div>
+      </aside>
+
+      <nav className="admin-surface-panel fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-[#e7bdb8]/40 bg-[#fbf9f8]/95 px-2 py-2 backdrop-blur lg:hidden">
+        {ADMIN_NAV_ITEMS.map((item) => {
+          const Icon = iconMap[item.icon];
+          const isActive = isAdminNavItemActive(pathname, item.href);
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={clsx(
-                'flex items-center gap-3 px-4 py-3 rounded-lg transition',
+                'flex flex-col items-center gap-1 rounded-lg px-2 py-2 text-[0.6875rem] font-semibold transition-colors',
                 isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  ? 'bg-[#ffdad6] text-[#e31e24]'
+                  : 'text-[#5d3f3c] hover:bg-[#efeded]'
               )}
             >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
+              <Icon className="h-4 w-4" />
+              <span className="text-center leading-tight">{item.label}</span>
             </Link>
           );
         })}
       </nav>
-
-      <div className="p-4 border-t border-gray-800 mt-auto">
-        <Link
-          href="/"
-          target="_blank"
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition text-sm"
-        >
-          View Website →
-        </Link>
-      </div>
-    </aside>
+    </>
   );
 }

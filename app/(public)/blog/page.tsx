@@ -68,6 +68,7 @@ async function loadBlogData(
       take: limit,
     }),
     prisma.post.count({ where }),
+    prisma.post.count({ where: { status: 'PUBLISHED' } }),
     prisma.category.findMany({
       include: {
         _count: {
@@ -109,28 +110,39 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
   type BlogPostItem = Awaited<ReturnType<typeof loadBlogData>>[0][number];
   let posts: BlogPostItem[] = [];
   let totalCount = 0;
-  let categories: Awaited<ReturnType<typeof loadBlogData>>[2] = [];
+  let totalPublishedCount = 0;
+  let categories: Awaited<ReturnType<typeof loadBlogData>>[3] = [];
   let draftCount = 0;
   let loadError: string | null = null;
 
   try {
-    const [postsResult, totalCountResult, categoriesResult, draftCountResult] = await loadBlogData(
-      where,
-      page,
-      limit
-    );
+    const [
+      postsResult,
+      totalCountResult,
+      totalPublishedCountResult,
+      categoriesResult,
+      draftCountResult,
+    ] = await loadBlogData(where, page, limit);
     posts = postsResult;
     totalCount = totalCountResult;
+    totalPublishedCount = totalPublishedCountResult;
     categories = categoriesResult;
     draftCount = draftCountResult;
   } catch (err) {
     if (isConnectionError(err)) {
       resetPrismaConnection();
       try {
-        const [postsResult, totalCountResult, categoriesResult, draftCountResult] =
+        const [
+          postsResult,
+          totalCountResult,
+          totalPublishedCountResult,
+          categoriesResult,
+          draftCountResult,
+        ] =
           await loadBlogData(where, page, limit);
         posts = postsResult;
         totalCount = totalCountResult;
+        totalPublishedCount = totalPublishedCountResult;
         categories = categoriesResult;
         draftCount = draftCountResult;
       } catch (retryErr) {
@@ -224,7 +236,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                 !categorySlug ? 'bg-primary text-white shadow-md' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary'
               }`}
             >
-              All Posts ({totalCount})
+              All Posts ({totalPublishedCount})
             </Link>
             {categories.map((category) => (
               <Link

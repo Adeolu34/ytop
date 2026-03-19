@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin, Phone } from 'lucide-react';
+import FooterNewsletterForm from './FooterNewsletterForm';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -135,19 +136,7 @@ export default function Footer() {
             </ul>
             <div>
               <h4 className="text-white font-semibold mb-2 text-sm">Newsletter</h4>
-              <form className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="flex-1 px-3 py-2.5 bg-white/10 border border-white/20 rounded-lg text-sm placeholder:text-gray-400 text-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/50 transition-all duration-200"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-hover transition-all duration-200 text-sm font-semibold cursor-pointer transform hover:scale-105 active:scale-95"
-                >
-                  Subscribe
-                </button>
-              </form>
+              <FooterNewsletterForm />
             </div>
           </div>
         </div>
@@ -162,7 +151,7 @@ export default function Footer() {
             <div className="flex gap-6">
               <Link href="/privacy" className="hover:text-white transition-colors duration-200 cursor-pointer">Privacy</Link>
               <Link href="/terms" className="hover:text-white transition-colors duration-200 cursor-pointer">Terms</Link>
-              <Link href="/sitemap" className="hover:text-white transition-colors duration-200 cursor-pointer">Sitemap</Link>
+              <Link href="/site-map" className="hover:text-white transition-colors duration-200 cursor-pointer">Sitemap</Link>
             </div>
           </div>
         </div>

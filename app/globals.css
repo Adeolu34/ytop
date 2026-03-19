@@ -39,6 +39,40 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.admin-theme {
+  --admin-background: #fbf9f8;
+  --admin-surface: #ffffff;
+  --admin-muted: #f5f3f3;
+  --admin-soft: #efeded;
+  --admin-text: #1b1c1c;
+  --admin-subtle: #5d3f3c;
+  --admin-border: #e7bdb8;
+  --admin-primary: #ba0013;
+  --admin-primary-strong: #e31e24;
+}
+
+.admin-font-display {
+  font-family: var(--font-admin-display), sans-serif;
+}
+
+.admin-font-body {
+  font-family: var(--font-admin-body), sans-serif;
+}
+
+.admin-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.admin-surface-card {
+  background: var(--admin-surface);
+  box-shadow: 0 32px 32px rgba(27, 28, 28, 0.02);
+}
+
+.admin-surface-panel {
+  box-shadow: 0 32px 32px rgba(27, 28, 28, 0.04);
+}
+
 /* Stitch design utilities */
 .text-gradient {
   background-clip: text;

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YTOP Global Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-container": "#700409",
+                        "on-tertiary-container": "#fbfcff",
+                        "primary": "#ba0013",
+                        "secondary-fixed": "#ffdad6",
+                        "primary-container": "#e31e24",
+                        "on-primary-fixed-variant": "#93000d",
+                        "outline-variant": "#e7bdb8",
+                        "surface-bright": "#fbf9f8",
+                        "on-surface-variant": "#5d3f3c",
+                        "background": "#fbf9f8",
+                        "on-background": "#1b1c1c",
+                        "surface-variant": "#e4e2e2",
+                        "inverse-on-surface": "#f2f0f0",
+                        "primary-fixed-dim": "#ffb4ab",
+                        "surface-container-high": "#e9e8e7",
+                        "inverse-primary": "#ffb4ab",
+                        "tertiary-container": "#007bb5",
+                        "secondary": "#ab332d",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#c00014",
+                        "primary-fixed": "#ffdad6",
+                        "on-primary-fixed": "#410002",
+                        "surface": "#fbf9f8",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#cbe6ff",
+                        "tertiary-fixed-dim": "#8ecdff",
+                        "surface-dim": "#dbdad9",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#efeded",
+                        "outline": "#926f6b",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#ffb4ab",
+                        "on-surface": "#1b1c1c",
+                        "surface-container-low": "#f5f3f3",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#006190",
+                        "surface-container-highest": "#e4e2e2",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#410002",
+                        "inverse-surface": "#303031",
+                        "on-primary-container": "#fffafa",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001e30",
+                        "secondary-container": "#ff7166",
+                        "on-secondary-fixed-variant": "#8a1b19",
+                        "on-tertiary-fixed-variant": "#004b71",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-metric { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav { backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5f3f3] dark:bg-neutral-900 flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">YTOP Global</h1>
+<p class="text-[0.6875rem] font-medium uppercase tracking-widest text-on-surface-variant mt-1">Admin Console</p>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active Navigation Logic: Dashboard -->
+<a class="flex items-center px-6 py-3 border-l-4 border-[#E31E24] bg-[#ffdad6] dark:bg-[#410002] text-[#E31E24] font-semibold transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="text-sm">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] hover:bg-[#e4e2e2] dark:hover:bg-neutral-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+<span class="text-sm">User Management</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] hover:bg-[#e4e2e2] dark:hover:bg-neutral-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="description">description</span>
+<span class="text-sm">Post Management</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] hover:bg-[#e4e2e2] dark:hover:bg-neutral-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="collections">collections</span>
+<span class="text-sm">Gallery Management</span>
+</a>
+</nav>
+<div class="px-6 mt-auto space-y-1">
+<a class="flex items-center py-2 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center py-2 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+<span class="text-sm font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-[#fbf9f8]/80 dark:bg-neutral-950/80 backdrop-blur-xl flex justify-between items-center px-8 h-16 shadow-[0_32px_32px_rgba(27,28,28,0.04)]">
+<div class="flex items-center flex-1">
+<div class="relative w-full max-w-md">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="search">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 bg-surface-container-low border-none rounded-lg text-sm focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Search analytics or items..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="text-sm font-medium">Support</span>
+</button>
+<button class="relative text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-primary border-2 border-surface-container-lowest"></span>
+</button>
+<div class="flex items-center space-x-3 ml-2 pl-6 border-l border-outline-variant/20">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface">Admin User</p>
+<p class="text-[10px] text-on-surface-variant">Super Administrator</p>
+</div>
+<img alt="Administrator Profile" class="h-9 w-9 rounded-full object-cover" data-alt="Close up professional portrait of a male administrator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpFs81XypzA45TuvxqiKa455OKPzW9ZYADKGhvRjBRBRwZor0blNApMRCAaFhHP2vAg3FmIRAFFTpwitotI_feSNnwjETepHHokcBebR4bDvBIyn441lzymmXSknOwkMnyAD3OeTI4a1AC2J67WT5LwG_aTU12c-S5CbOIDHWAhlDPBV2KHDHhubqcPlTZV5DlCPUcH040eeyZ-b0mwgNO3qimmb6fX01y-ro2W3QQKWBcdp8wxpFuqRnvmPwjRPPrOV26UDsuwlA"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-8 pb-12 min-h-screen">
+<div class="max-w-7xl mx-auto">
+<!-- Page Header -->
+<header class="mb-10 flex justify-between items-end">
+<div>
+<span class="text-[0.6875rem] font-bold tracking-[0.1em] text-on-surface-variant uppercase mb-2 block">System Overview</span>
+<h2 class="text-[1.5rem] font-bold text-on-surface leading-tight">YTOP Global Dashboard</h2>
+</div>
+<div class="flex space-x-3">
+<button class="px-5 py-2.5 bg-surface-container-high text-on-surface text-sm font-semibold rounded-md hover:bg-surface-variant transition-colors">Generate Report</button>
+<button class="px-5 py-2.5 bg-gradient-to-br from-[#ba0013] to-[#e31e24] text-white text-sm font-semibold rounded-md shadow-lg shadow-primary/20 hover:opacity-90 transition-all">Add New Post</button>
+</div>
+</header>
+<!-- Stat Cards Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<!-- Stat Card: Total Users -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_32px_rgba(27,28,28,0.02)] border-none relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-4xl" data-icon="group">group</span>
+</div>
+<div class="flex justify-between items-start mb-4">
+<p class="text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-wider">Total Users</p>
+<span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+12%</span>
+</div>
+<p class="text-[3.5rem] font-extrabold text-on-surface leading-none tracking-tighter">12.4k</p>
+<p class="mt-2 text-xs text-on-surface-variant font-medium">Across 14 active regions</p>
+</div>
+<!-- Stat Card: Total Posts -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_32px_rgba(27,28,28,0.02)] border-none relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-4xl" data-icon="description">description</span>
+</div>
+<div class="flex justify-between items-start mb-4">
+<p class="text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-wider">Total Posts</p>
+<span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+5.2%</span>
+</div>
+<p class="text-[3.5rem] font-extrabold text-on-surface leading-none tracking-tighter">842</p>
+<p class="mt-2 text-xs text-on-surface-variant font-medium">Published in last 30 days</p>
+</div>
+<!-- Stat Card: Total Gallery Items -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_32px_rgba(27,28,28,0.02)] border-none relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-4xl" data-icon="collections">collections</span>
+</div>
+<div class="flex justify-between items-start mb-4">
+<p class="text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-wider">Gallery Items</p>
+<span class="text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-full">-2.1%</span>
+</div>
+<p class="text-[3.5rem] font-extrabold text-on-surface leading-none tracking-tighter">3,109</p>
+<p class="mt-2 text-xs text-on-surface-variant font-medium">High-resolution media</p>
+</div>
+<!-- Stat Card: New Volunteers -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_32px_rgba(27,28,28,0.02)] border-none relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-4xl" data-icon="volunteer_activism">volunteer_activism</span>
+</div>
+<div class="flex justify-between items-start mb-4">
+<p class="text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-wider">New Volunteers</p>
+<span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+24%</span>
+</div>
+<p class="text-[3.5rem] font-extrabold text-on-surface leading-none tracking-tighter">156</p>
+<p class="mt-2 text-xs text-on-surface-variant font-medium">Pending verification</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Weekly Activity Chart Placeholder -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-xl shadow-[0_32px_32px_rgba(27,28,28,0.02)]">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="text-lg font-bold text-on-surface tracking-tight">Weekly System Activity</h3>
+<p class="text-xs text-on-surface-variant">Engagement trends across all platforms</p>
+</div>
+<div class="flex space-x-2">
+<span class="flex items-center text-[10px] font-bold text-on-surface-variant uppercase"><span class="w-2 h-2 rounded-full bg-primary mr-1.5"></span> Engagement</span>
+<span class="flex items-center text-[10px] font-bold text-on-surface-variant uppercase"><span class="w-2 h-2 rounded-full bg-surface-container-highest mr-1.5"></span> Impressions</span>
+</div>
+</div>
+<!-- Abstract Chart Representation -->
+<div class="h-64 flex items-end justify-between space-x-4">
+<div class="flex-1 flex flex-col justify-end items-center h-full space-y-2">
+<div class="w-full bg-surface-container-low rounded-t-sm h-[40%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[20%]"></div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-4">MON</p>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center h-full space-y-2">
+<div class="w-full bg-surface-container-low rounded-t-sm h-[55%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[35%]"></div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-4">TUE</p>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center h-full space-y-2">
+<div class="w-full bg-surface-container-low rounded-t-sm h-[75%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[50%]"></div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-4">WED</p>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center h-full space-y-2">
+<div class="w-full bg-surface-container-low rounded-t-sm h-[60%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[45%]"></div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-4">THU</p>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center h-full space-y-2">
+<div class="w-full bg-surface-container-low rounded-t-sm h-[85%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[70%]"></div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-4">FRI</p>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center h-full space-y-2">
+<div class="w-full bg-surface-container-low rounded-t-sm h-[40%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[25%]"></div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-4">SAT</p>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center h-full space-y-2">
+<div class="w-full bg-surface-container-low rounded-t-sm h-[30%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[15%]"></div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-4">SUN</p>
+</div>
+</div>
+</div>
+<!-- Recent Activity Feed -->
+<div class="bg-surface-container-low p-8 rounded-xl">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-lg font-bold text-on-surface tracking-tight">Recent Activity</h3>
+<button class="text-[10px] font-bold text-primary uppercase tracking-wider">View All</button>
+</div>
+<div class="space-y-6">
+<!-- Activity Item 1 -->
+<div class="flex space-x-4">
+<div class="flex-shrink-0 h-10 w-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="person_add">person_add</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface leading-snug">New user registration <span class="text-on-surface-variant font-normal">Sarah Jenkins joined from London.</span></p>
+<p class="text-[10px] text-on-surface-variant mt-1">2 minutes ago</p>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex space-x-4">
+<div class="flex-shrink-0 h-10 w-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="post_add">post_add</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface leading-snug">New post published <span class="text-on-surface-variant font-normal">"Sustainability in Tech" by David K.</span></p>
+<p class="text-[10px] text-on-surface-variant mt-1">15 minutes ago</p>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex space-x-4">
+<div class="flex-shrink-0 h-10 w-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="report_problem">report_problem</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface leading-snug">System Alert <span class="text-on-surface-variant font-normal">Database backup completed successfully.</span></p>
+<p class="text-[10px] text-on-surface-variant mt-1">1 hour ago</p>
+</div>
+</div>
+<!-- Activity Item 4 -->
+<div class="flex space-x-4">
+<div class="flex-shrink-0 h-10 w-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="photo_library">photo_library</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface leading-snug">Gallery Updated <span class="text-on-surface-variant font-normal">12 new assets added to 'Event 2024'.</span></p>
+<p class="text-[10px] text-on-surface-variant mt-1">4 hours ago</p>
+</div>
+</div>
+</div>
+<!-- CTA Promo Card -->
+<div class="mt-10 p-5 rounded-lg bg-gradient-to-br from-primary to-primary-container text-white">
+<p class="text-[0.6875rem] font-bold uppercase tracking-widest opacity-80 mb-1">Weekly Digest</p>
+<p class="text-sm font-bold mb-4">Your administrative overview is ready for review.</p>
+<button class="w-full py-2 bg-white/20 backdrop-blur-md rounded font-bold text-[10px] uppercase hover:bg-white/30 transition-all">Download PDF</button>
+</div>
+</div>
+</div>
+<!-- Management Preview Section -->
+<section class="mt-8">
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0_32px_32px_rgba(27,28,28,0.02)]">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-lg font-bold text-on-surface tracking-tight">Active Team Members</h3>
+<div class="flex items-center space-x-4">
+<div class="flex -space-x-3 overflow-hidden">
+<img alt="User 1" class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="Female team member portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ-YasmRR-uDHzq31UASNM43T9PgHzz6URKq3XRPRIQWYWPuHnnwVKAytrgTzUpjpmsSLa1DvyqET41mtSUQjj0UrNXJBXP8dZaZrQuM79hPKcXSqvBsZmANFy8Rrneqtgm2cUD8IngvSvd2qexz548QuFQikLUtSedm-W6HIFLt__oDiKI_gkkfxFmZzhPry_MSk1Uk-pIjhWEoBBpo_9s93iGE9mLK5AmKPoijpJEugV4hkxQ1gvnYV9TlvdRO_Nq32c8eL-Z64"/>
+<img alt="User 2" class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="Male team member portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_1l1tdSUZKo5XGsBRfhMb0yLucLPLs3n0wjcbXpfRDoYREkCzYBHs2wxlmJ-Ay3T9u84VljDN4ihZhd28KmGICBK5K_miN9zYWpA13it5QI2bVazy_xxdRMJI2G_iNB7KbP712PkpGkZSc-MyQSNw-Sb5ejzzkaEiF5m_fn_2rtgiaY_Oiosb0nKbMGoiYbzxC1Cv9URYB-UW-o-dw7NQM112bQ-f8NXBcqh9WqqmlC8SYy2pZnNrGM03ySlMbPKL5BW76eYuhu4"/>
+<img alt="User 3" class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="Male team member portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyZ_8f5TMGPG0C2EPRA2ayun9cP34-nfK3XmyOA9NtjWc3b1JwxCempJJhpfkQb0WSgoui_Jmve2Cfn70o9Oq1JXzCSS_S3GQ6iJ_Ayz3cD4pS9L3YMALwW8JlCFZhBr4gbyBkuAtCZC1mwxwrK1ghmLjoiURbJFACpfdjbrQRWLhGs7_NUXThStxuSQVQNJ9HnoycK7D2cff7YP8ziFruRU3uR2BnSsJ8XGxg-kUyzgy6Pq1E2XouUf8Ri0OTwKAdxg8ED4buujg"/>
+<div class="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-on-surface-variant">+8</div>
+</div>
+<button class="text-sm font-semibold text-primary">Manage Access</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-4 bg-surface-container-low rounded-lg flex items-center space-x-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="h-12 w-12 rounded bg-surface-container-lowest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Compliance</p>
+<p class="text-xs text-on-surface-variant">98.2% healthy status</p>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg flex items-center space-x-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="h-12 w-12 rounded bg-surface-container-lowest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="storage">storage</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Data Usage</p>
+<p class="text-xs text-on-surface-variant">42.5 GB of 100 GB</p>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg flex items-center space-x-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="h-12 w-12 rounded bg-surface-container-lowest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="api">api</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">API Status</p>
+<p class="text-xs text-on-surface-variant">99.9% uptime (24h)</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

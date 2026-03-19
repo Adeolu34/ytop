@@ -1,5 +1,10 @@
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import {
+  buildAdminLoginRedirectUrl,
+  isProtectedAdminPath,
+} from '@/lib/admin-route-guard';
 
 /**
  * Middleware for URL redirects (WordPress → Next.js)
@@ -126,6 +131,19 @@ export async function middleware(request: NextRequest) {
     pathname.match(/\.(ico|png|jpg|jpeg|gif|svg|webp|css|js|json|xml|txt)$/)
   ) {
     return NextResponse.next();
+  }
+
+  if (isProtectedAdminPath(pathname)) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+      return NextResponse.redirect(buildAdminLoginRedirectUrl(request.url), {
+        status: 307,
+      });
+    }
   }
 
   // Load URL mappings

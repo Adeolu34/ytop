@@ -1,20 +1,35 @@
 import { auth } from './auth';
 import { redirect } from 'next/navigation';
 
+type AuthenticatedUser = {
+  id: string;
+  role: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+};
+
 export async function getCurrentUser() {
   const session = await auth();
   return session?.user;
 }
 
-export async function requireAuth() {
+export async function requireAuth(): Promise<AuthenticatedUser> {
   const user = await getCurrentUser();
-  if (!user) {
+  if (!user?.id || !user.role) {
     redirect('/admin/login');
   }
-  return user;
+
+  return {
+    id: user.id,
+    role: user.role,
+    name: user.name,
+    email: user.email,
+    image: user.image,
+  };
 }
 
-export async function requireAdmin() {
+export async function requireAdmin(): Promise<AuthenticatedUser> {
   const user = await requireAuth();
   if (user.role !== 'ADMIN') {
     redirect('/admin');

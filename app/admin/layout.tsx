@@ -1,29 +1,42 @@
-'use client';
-
-import { SessionProvider } from 'next-auth/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'react-hot-toast';
+import type { ReactNode } from 'react';
+import { Inter, Manrope } from 'next/font/google';
 import AdminSidebar from '@/components/admin/layout/AdminSidebar';
 import AdminHeader from '@/components/admin/layout/AdminHeader';
-import { useState } from 'react';
+import AdminProviders from '@/components/admin/layout/AdminProviders';
+import { requireAuth } from '@/lib/auth-utils';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
+const adminDisplay = Manrope({
+  subsets: ['latin'],
+  variable: '--font-admin-display',
+  display: 'swap',
+});
+
+const adminBody = Inter({
+  subsets: ['latin'],
+  variable: '--font-admin-body',
+  display: 'swap',
+});
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  await requireAuth();
 
   return (
-    <SessionProvider>
-      <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen bg-gray-100 flex">
+    <div
+      className={`${adminDisplay.variable} ${adminBody.variable} admin-theme min-h-screen bg-[#fbf9f8] text-[#1b1c1c]`}
+    >
+      <AdminProviders>
+        <div className="min-h-screen bg-[#fbf9f8]">
           <AdminSidebar />
-          <div className="flex-1 flex flex-col">
-            <AdminHeader />
-            <main className="flex-1 p-8 overflow-auto">
-              {children}
-            </main>
-          </div>
+          <AdminHeader />
+          <main className="min-h-screen bg-[#fbf9f8] pt-16 lg:ml-64">
+            {children}
+          </main>
         </div>
-        <Toaster position="top-right" />
-      </QueryClientProvider>
-    </SessionProvider>
+      </AdminProviders>
+    </div>
   );
 }
