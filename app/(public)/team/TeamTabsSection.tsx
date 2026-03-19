@@ -227,7 +227,7 @@ function TeamTabsSection({ coreTeam, facultyMentors }: TeamTabsSectionProps) {
             </div>
             <div className="mt-4">
               <Link
-                href="/volunteer"
+                href="/get-involved"
                 className="inline-flex items-center px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition shadow-md"
               >
                 Become a volunteer
@@ -298,4 +298,3 @@ function TeamTabsSection({ coreTeam, facultyMentors }: TeamTabsSectionProps) {
 }
 
 export default TeamTabsSection;
-

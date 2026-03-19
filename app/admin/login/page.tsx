@@ -123,7 +123,7 @@ function LoginForm() {
         {/* Demo Credentials Note */}
         <div className="mt-4 p-4 bg-blue-50 bg-opacity-50 rounded-lg backdrop-blur-sm">
           <p className="text-xs text-white text-center">
-            Default credentials will be created during database setup
+            Admin access is created from the seed environment variables
           </p>
         </div>
       </div>

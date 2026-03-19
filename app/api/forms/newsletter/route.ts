@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@/app/generated/prisma';
 import { z } from 'zod';
 import prisma from '@/lib/db';
+import { normalizeSubscriberEmail } from '@/lib/newsletter';
 
 // Validation schema
 const newsletterSchema = z.object({
@@ -31,6 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = validationResult.data;
+    const normalizedEmail = normalizeSubscriberEmail(data.email);
 
     // Get IP and User Agent
     const ipAddress = request.headers.get('x-forwarded-for') ||
@@ -38,34 +41,34 @@ export async function POST(request: NextRequest) {
                       'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
-    // Check if email already exists
-    const existingSubmission = await prisma.formSubmission.findFirst({
-      where: {
-        type: 'NEWSLETTER',
-        email: data.email,
-      },
-    });
+    let submission;
 
-    if (existingSubmission) {
-      return NextResponse.json(
-        { error: 'This email is already subscribed to our newsletter.' },
-        { status: 400 }
-      );
-    }
-
-    // Save to database
-    const submission = await prisma.formSubmission.create({
-      data: {
-        type: 'NEWSLETTER',
-        name: data.name || null,
-        email: data.email,
+    try {
+      submission = await prisma.formSubmission.create({
         data: {
-          subscribedAt: new Date().toISOString(),
+          type: 'NEWSLETTER',
+          name: data.name || null,
+          email: normalizedEmail,
+          data: {
+            subscribedAt: new Date().toISOString(),
+          },
+          ipAddress,
+          userAgent,
         },
-        ipAddress,
-        userAgent,
-      },
-    });
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        return NextResponse.json(
+          { error: 'This email is already subscribed to our newsletter.' },
+          { status: 400 }
+        );
+      }
+
+      throw error;
+    }
 
     // TODO: Add to MailChimp
     // await addToMailChimp(data.email, data.name);

@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, User, ArrowLeft, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, MessageSquare, Tag, User } from 'lucide-react';
 import type { Prisma } from '@/app/generated/prisma';
+import CommentSection from '@/components/blog/CommentSection';
 import { getPrisma, resetPrismaConnection } from '@/lib/db';
 
 const DEFAULT_FEATURED_IMAGE = '/media/2021/10/IMG_9658-scaled.jpg';
@@ -61,6 +62,40 @@ const postInclude = {
   categories: { select: { id: true, name: true, slug: true } },
   tags: { select: { name: true, slug: true } },
   featuredImage: { select: { url: true, altText: true, caption: true } },
+  comments: {
+    where: {
+      isApproved: true,
+      parentId: null,
+    },
+    include: {
+      author: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+      replies: {
+        where: {
+          isApproved: true,
+        },
+        include: {
+          author: {
+            select: {
+              name: true,
+              image: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: 50,
+  },
 } as const;
 
 const relatedPostsInclude = {
@@ -183,6 +218,26 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     }
   }
 
+  const commentThreads = post.comments.map((comment) => ({
+    id: comment.id,
+    content: comment.content,
+    authorName: comment.authorName,
+    createdAt: comment.createdAt.toISOString(),
+    author: comment.author,
+    replies: comment.replies.map((reply) => ({
+      id: reply.id,
+      content: reply.content,
+      authorName: reply.authorName,
+      createdAt: reply.createdAt.toISOString(),
+      author: reply.author,
+    })),
+  }));
+
+  const commentCount = commentThreads.reduce(
+    (total, comment) => total + 1 + comment.replies.length,
+    0
+  );
+
   return (
     <div className="py-12">
       {/* Back Button */}
@@ -254,6 +309,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="flex items-center gap-2">
             <span>{post.viewCount} views</span>
           </div>
+
+          <Link
+            href="#comments"
+            className="flex items-center gap-2 transition hover:text-blue-600"
+          >
+            <MessageSquare className="w-5 h-5" />
+            <span>
+              {commentCount} comment{commentCount === 1 ? '' : 's'}
+            </span>
+          </Link>
         </div>
 
         {/* Featured Image – use post image or default */}
@@ -305,6 +370,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <p className="text-gray-700">{post.author.bio}</p>
           </div>
         )}
+
+        <CommentSection
+          postId={post.id}
+          postSlug={post.slug}
+          comments={commentThreads}
+        />
       </article>
 
       {/* Related Posts */}

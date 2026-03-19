@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gallery Management | YTOP Global</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-num { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-container": "#700409",
+                        "on-tertiary-container": "#fbfcff",
+                        "primary": "#ba0013",
+                        "secondary-fixed": "#ffdad6",
+                        "primary-container": "#e31e24",
+                        "on-primary-fixed-variant": "#93000d",
+                        "outline-variant": "#e7bdb8",
+                        "surface-bright": "#fbf9f8",
+                        "on-surface-variant": "#5d3f3c",
+                        "background": "#fbf9f8",
+                        "on-background": "#1b1c1c",
+                        "surface-variant": "#e4e2e2",
+                        "inverse-on-surface": "#f2f0f0",
+                        "primary-fixed-dim": "#ffb4ab",
+                        "surface-container-high": "#e9e8e7",
+                        "inverse-primary": "#ffb4ab",
+                        "tertiary-container": "#007bb5",
+                        "secondary": "#ab332d",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#c00014",
+                        "primary-fixed": "#ffdad6",
+                        "on-primary-fixed": "#410002",
+                        "surface": "#fbf9f8",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#cbe6ff",
+                        "tertiary-fixed-dim": "#8ecdff",
+                        "surface-dim": "#dbdad9",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#efeded",
+                        "outline": "#926f6b",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#ffb4ab",
+                        "on-surface": "#1b1c1c",
+                        "surface-container-low": "#f5f3f3",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#006190",
+                        "surface-container-highest": "#e4e2e2",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#410002",
+                        "inverse-surface": "#303031",
+                        "on-primary-container": "#fffafa",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001e30",
+                        "secondary-container": "#ff7166",
+                        "on-secondary-fixed-variant": "#8a1b19",
+                        "on-tertiary-fixed-variant": "#004b71",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5f3f3] dark:bg-neutral-900 flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container flex items-center justify-center rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">YTOP Global</h1>
+<p class="text-[0.6875rem] font-medium uppercase tracking-widest text-on-surface-variant">Admin Console</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] hover:bg-[#e4e2e2] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] hover:bg-[#e4e2e2] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">User Management</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] hover:bg-[#e4e2e2] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm font-medium">Post Management</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 border-l-4 border-[#E31E24] bg-[#ffdad6] dark:bg-[#410002] text-[#E31E24] font-semibold transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">collections</span>
+<span class="text-sm font-semibold">Gallery Management</span>
+</a>
+</nav>
+<div class="px-6 mt-auto space-y-1">
+<a class="flex items-center gap-3 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-[#E31E24] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:text-error transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-sm font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-[#fbf9f8]/80 dark:bg-neutral-950/80 backdrop-blur-xl h-16 flex justify-between items-center px-8 shadow-[0_32px_32px_rgba(27,28,28,0.04)]">
+<div class="flex items-center flex-1">
+<div class="relative w-full max-w-md">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+</div>
+<input class="block w-full pl-11 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-on-surface-variant/60" placeholder="Search gallery assets..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-all cursor-pointer">
+<span class="material-symbols-outlined">help</span>
+<span class="text-sm font-medium">Support</span>
+</div>
+<button class="relative p-2 text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface">Alex Rivera</p>
+<p class="text-[0.6875rem] text-on-surface-variant uppercase tracking-tighter">Administrator</p>
+</div>
+<img class="w-10 h-10 rounded-full object-cover border-2 border-primary/10" data-alt="Administrator Profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQcDl83856O4sksOVImEui_Dj8PkIwKbSLcX2ope5LGX9uHWtcj-7cIanrSAaLc6d_r-tFnrbJ02NpaJch8Pkd7oJAD5S_nGB50Bcfos0RSjNLkDbMQAAxQ4KzVFrMa-CqJmaV1im-RtqVcOii2eWSowykSFSEc7q3rXVDMeeBeNlBqAZ9g0Ax2JEhPKi_AiEaJHS-PMLKClv7baQtFQznxIZqrH9d9bZj4qDifV1NGPusHcPSG8nzjmjJHkXMLBMsD4ANNF98sxI"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 px-10 pb-16 min-h-screen">
+<!-- Breadcrumb & Header -->
+<div class="flex justify-between items-end mb-10">
+<div>
+<span class="text-[0.6875rem] font-bold text-primary uppercase tracking-[0.2em] mb-2 block">Visual Assets</span>
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface">Gallery Management</h2>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2.5 bg-surface-container-high text-on-surface font-semibold text-sm rounded-md flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+                    Filter
+                </button>
+<button class="px-6 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white font-semibold text-sm rounded-md flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined text-lg">upload</span>
+                    Upload New Image
+                </button>
+</div>
+</div>
+<!-- Bulk Action Bar (Contextual) -->
+<div class="mb-6 py-3 px-6 bg-surface-container-lowest rounded-xl flex items-center justify-between shadow-[0_8px_24px_rgba(0,0,0,0.02)] border-l-4 border-primary">
+<div class="flex items-center gap-4">
+<span class="flex h-6 w-6 items-center justify-center rounded bg-primary-fixed text-on-primary-fixed text-xs font-bold">12</span>
+<p class="text-sm font-medium text-on-surface">Items selected across all pages</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-sm font-semibold text-on-surface-variant hover:text-on-surface px-4">Move to Folder</button>
+<button class="text-sm font-semibold text-on-surface-variant hover:text-on-surface px-4">Edit Tags</button>
+<div class="h-4 w-[1px] bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 text-sm font-bold text-primary px-4 py-2 hover:bg-primary-fixed rounded-md transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+                    Delete Selected
+                </button>
+</div>
+</div>
+<!-- Gallery Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<!-- Asset Card 1 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Abstract red and white digital artwork" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwytR5mDCBW_ocfhXIPsYgOvbO-W0jTrV-Eg1AtzjMglXR9V36TIfUFbo_PbMmFGX1pMnpv-xmwdkhF0PPT6GrJIIydSnkaV-zuYVUdTRO5eKnVt6u6nNPAye5GDV4lnzGvCio2pUkMzc3A7NG7-r9KQjdDS9rClcJuiSVYxfh4fvnzkaapltAvNhXxLAwLTud4p9Nw0F92LEnANHwRzzRSVnBONpqPlfZrHY7BWVdCxwnwSVisZ1Xq6IVdVW8ceLidpc4rKIccuE"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">abstract_hero_red_01.jpg</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded">JPG</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>1.2 MB • 2400 × 1600</span>
+<span class="font-medium">2 hours ago</span>
+</div>
+</div>
+</div>
+<!-- Asset Card 2 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Mountain landscape with sunset hues" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4LamMlCxKKpb6wokwVDXgp6fiO9aSlj7ljCiPXI_nK5dz8-ELJfTgVRNtY6W1Iw_QPodNy17cT7dwYAgTiProxqqFhuTVh-jwGuomkneUcBtuNI2pZOPUEegKe5coOha5VYKptaimvBXrAckRGz6fRcDHWRqp1TKyUV2DejfScoG60G7NFkzh18p_v9L72N5WoOvrH7EKhqb4Eftm7q0kor4_YxXyUVtMebV5ViRhqJfxeIyskaz_-zN4_CDbjK577VQqVlpK54A"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">summit_peaks_main.webp</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded uppercase">WebP</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>450 KB • 1920 × 1080</span>
+<span class="font-medium">Yesterday</span>
+</div>
+</div>
+</div>
+<!-- Asset Card 3 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Modern tech workstation setup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBPLTDXk7JsbZ7YE2xTbdHCSv6N0i6drVsQPJrL0g4wnHNP2bcw33s_S04oJv_lgorcOo067Lo7GFOnmnwOQjVrptYf8CWa7FGEDi6f3StuQ8tmydpbUGSQ51bIWPljCzkHPWbH8BAra7WOq8YdvsidguGZF4WbZGBeRRxjPpt5XwRVfbQKU5WnsudLHS28uiROAJa8QJ-iKCwtCHOLOW9ogQn3niCQDJegaVlAk164xrXa8e8alUZLZgblir0VPNKbB1dQOuRPhg"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">office_tech_003.png</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded uppercase">PNG</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>3.8 MB • 3500 × 2400</span>
+<span class="font-medium">Sep 12, 2023</span>
+</div>
+</div>
+</div>
+<!-- Asset Card 4 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Global connectivity digital network pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-NSdvPgdPrUz67uvtFtSpyh4_ma03x3S9ZUwQIRjiqmOvapkT-_wnXjBzWmPOCkMljvgdwOO7uSXJjak2KYck1Rc3bxUu-OtmGXUD9OZdJZruIZAi7kQNly1Q-mZ8h7ke7eOldJHRJxzc4ZBjK7WNahuHM0l9v4Itiq8agfhPDbYcPOBPyAiGGvX83ERIDMBiDGwIEAX0_vdNVoAAY15N0IT14hqI4NXhpDWt4SU78KAf01vmth3Csc63WiL27tOklDJ5jC0SQP8"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">network_global_grid.jpg</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded uppercase">JPG</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>2.1 MB • 4000 × 3000</span>
+<span class="font-medium">Aug 28, 2023</span>
+</div>
+</div>
+</div>
+<!-- Asset Card 5 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Matrix style digital data rain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOQQ-0Bv70oVIF6-fDQuUBY11bpRSYGcMOAVr4ekV4pIsbQAZTnDZyIdN-WnxdUOKHZa56B7xqpACU3GDedcUPZJZbKyb3MQMEnfeqRl0XwyGGDHiTCdrOqAMIMIQN0i-zSmeKEuw-OUdmtqH6nim1p0gZruczX90qQcwBs7PdhvyApEZzqZ2rG2r30Lb5hDAPKd0I8c2GMkxCpn9MkK4QkWWxh8y0yBLFooL5ZKnPeSlhAfi8Emh7DVbEf1dogJT6usa5u-tn-tE"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">data_stream_bg.webp</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded uppercase">WebP</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>128 KB • 1280 × 720</span>
+<span class="font-medium">Aug 15, 2023</span>
+</div>
+</div>
+</div>
+<!-- Asset Card 6 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Red and pink vibrant abstract gradient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE77Zg7ImdKEBgXUo8Tav_erI4-xSzRwd2xhrju2btvCI-VZif7J6kdDB1AEOQgU3SB5h9vTle1gOVOZMTeTWc9Q-dECi687b5sCfpJdwC5rdvMolSmp7m-cutrsn4Fg98HZCJW6TKQt418DHxQxK2MH5XXLGHBxhc2eKBwwzAqhgtQMzPW9ZltZMGy9xH1JJJa-6L41TNI_oUHe-MQbWOMNRMOESetBBLexiSLN9yI-adaMW0-dJGACGs5h6ziR2VJsTPJaxKpDM"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">brand_gradient_v2.png</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded uppercase">PNG</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>5.4 MB • 5000 × 5000</span>
+<span class="font-medium">Jul 10, 2023</span>
+</div>
+</div>
+</div>
+<!-- Asset Card 7 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close up of digital financial charts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANcMmlSH6GRdYhJq5Ztvwzqg2wtTMOTC3fQrRix0EXOB1Se45hjbjRU7oWKj-YFfNTZk7yCVnClGv8G2tJW4s7MqStS6Ir_WEaRAKeIA2CZv_CrQnWCh9j5e7VBIhxhUSXwHkG1RTxFrX_iPKvpKrTtEGwfFAVpJXSczj-ViD_BiKbkFkzeBl-cvV0cWqisjA0rfxrQE5fJ6ZZ7N2HBVaMtyd9W4W03EJYfPrx3kc6Msjs_hqwrB8pyUotgFg4EPKlCfyQ-23Dq80"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">chart_analysis_yearly.jpg</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded uppercase">JPG</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>980 KB • 1920 × 1200</span>
+<span class="font-medium">Jun 30, 2023</span>
+</div>
+</div>
+</div>
+<!-- Asset Card 8 (Selected State View) -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Microchip circuitry close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhi2aabEtZR2d6St_fsqKksUOG34xG7UsaClxT0c0XEU16vn05dsk2hPvIaIlAGCRyVlTmNalQZjgrFmePfUbnbppCZ5bMPbAhaS2D5dhkxbkqOPxMRQ1Phl9Rx94XUp153BOiDSld9AdR9IpV_q-wW9rK6iNyY6UXegPDrMHKkPqGziBHnx3KQvfvaIs16QfVVkrrjMenHC7XJ7RtXCZuQXzDCyPiMV2qYiInT7vO1U0IcdPgTw_xSlwB3x01UJ_E6Tdt3vBgKtA"/>
+<div class="absolute top-3 left-3">
+<input checked="" class="w-5 h-5 rounded border-white/50 bg-white/20 backdrop-blur-md text-primary focus:ring-primary ring-offset-0" type="checkbox"/>
+</div>
+<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-white/90 backdrop-blur text-on-surface rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-sm font-bold text-on-surface truncate pr-4">circuit_board_macro.png</h3>
+<span class="px-2 py-0.5 bg-surface-container text-[0.625rem] font-bold rounded uppercase">PNG</span>
+</div>
+<div class="flex items-center justify-between text-[0.6875rem] text-on-surface-variant">
+<span>2.5 MB • 3000 × 2000</span>
+<span class="font-medium">Jun 15, 2023</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-12 flex items-center justify-between">
+<p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">Showing 8 of 142 Assets</p>
+<div class="flex items-center gap-1">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-sm">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high text-on-surface font-semibold text-sm transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high text-on-surface font-semibold text-sm transition-colors">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high text-on-surface font-semibold text-sm transition-colors">18</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Floating Action Feedback (Mock) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-on-surface text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 z-50 animate-pulse">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<p class="text-sm font-medium">12 items selected for bulk actions</p>
+<button class="text-[0.6875rem] font-bold uppercase tracking-widest text-primary hover:text-primary-fixed transition-colors ml-4">Clear selection</button>
+</div>
+</body></html>

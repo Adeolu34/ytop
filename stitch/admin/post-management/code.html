@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Post Management | YTOP Global</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-container": "#700409",
+              "on-tertiary-container": "#fbfcff",
+              "primary": "#ba0013",
+              "secondary-fixed": "#ffdad6",
+              "primary-container": "#e31e24",
+              "on-primary-fixed-variant": "#93000d",
+              "outline-variant": "#e7bdb8",
+              "surface-bright": "#fbf9f8",
+              "on-surface-variant": "#5d3f3c",
+              "background": "#fbf9f8",
+              "on-background": "#1b1c1c",
+              "surface-variant": "#e4e2e2",
+              "inverse-on-surface": "#f2f0f0",
+              "primary-fixed-dim": "#ffb4ab",
+              "surface-container-high": "#e9e8e7",
+              "inverse-primary": "#ffb4ab",
+              "tertiary-container": "#007bb5",
+              "secondary": "#ab332d",
+              "surface-container-lowest": "#ffffff",
+              "surface-tint": "#c00014",
+              "primary-fixed": "#ffdad6",
+              "on-primary-fixed": "#410002",
+              "surface": "#fbf9f8",
+              "on-secondary": "#ffffff",
+              "tertiary-fixed": "#cbe6ff",
+              "tertiary-fixed-dim": "#8ecdff",
+              "surface-dim": "#dbdad9",
+              "on-tertiary": "#ffffff",
+              "surface-container": "#efeded",
+              "outline": "#926f6b",
+              "on-error": "#ffffff",
+              "secondary-fixed-dim": "#ffb4ab",
+              "on-surface": "#1b1c1c",
+              "surface-container-low": "#f5f3f3",
+              "on-primary": "#ffffff",
+              "tertiary": "#006190",
+              "surface-container-highest": "#e4e2e2",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed": "#410002",
+              "inverse-surface": "#303031",
+              "on-primary-container": "#fffafa",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed": "#001e30",
+              "secondary-container": "#ff7166",
+              "on-secondary-fixed-variant": "#8a1b19",
+              "on-tertiary-fixed-variant": "#004b71",
+              "error": "#ba1a1a"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-text { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #ba0013 0%, #e31e24 100%);
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(251, 249, 248, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#f5f3f3] dark:bg-neutral-900 flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">YTOP Global</h1>
+<p class="text-[0.6875rem] font-medium text-on-surface-variant uppercase tracking-widest mt-1">Admin Console</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:bg-[#e4e2e2] transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-[#E31E24]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:bg-[#e4e2e2] transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-[#E31E24]">group</span>
+<span class="text-sm font-medium">User Management</span>
+</a>
+<!-- Active Tab: Post Management -->
+<a class="flex items-center px-6 py-3 border-l-4 border-[#E31E24] bg-[#ffdad6] dark:bg-[#410002] text-[#E31E24] font-semibold group" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="text-sm font-medium">Post Management</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:bg-[#e4e2e2] transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-[#E31E24]">collections</span>
+<span class="text-sm font-medium">Gallery Management</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/10">
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:bg-[#e4e2e2] transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-[#E31E24]">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#5d3f3c] dark:text-neutral-400 hover:bg-[#e4e2e2] transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-[#E31E24]">logout</span>
+<span class="text-sm font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-[#fbf9f8]/80 dark:bg-neutral-950/80 backdrop-blur-xl h-16 flex justify-between items-center px-8 shadow-[0_32px_32px_rgba(27,28,28,0.04)]">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg py-2 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="Search posts, authors, or tags..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<button class="text-on-surface-variant hover:text-primary transition-all flex items-center gap-1">
+<span class="text-sm font-semibold tracking-tight">Support</span>
+</button>
+<div class="relative">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-all">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border-2 border-surface"></span>
+</div>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant/20">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface leading-none">Admin User</p>
+<p class="text-[10px] text-on-surface-variant mt-1">Super Admin</p>
+</div>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/30" data-alt="Close up of a professional administrator portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCshKtBWi6weQJICgbalgH7512_rNrSFSBq8xtc_XyzXVKMN0FvBRXqmm5qxRPve2LszjXlCR0DH40KJfwdQ9z_Vhu6IK9slk-J8k4T4xDaXxKfjQsJUUFPefA5xPgADcQwiXoeEuYmfxck_P6aQt7_GbwptI-Ox87lMHOCluUzEwY_3A9cxCZdOjhSHg48vGeorhZUW6vflOTA4Z1QqyVTJu4ZDyExpjm2FdSAJlopiUcCi1wVLXydIygA6SUtHrA_DtpILwF1x3g"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 min-h-screen bg-surface">
+<div class="p-10 max-w-[1600px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+<div>
+<span class="text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-3 block">Content Management</span>
+<h2 class="text-[2.5rem] font-extrabold text-on-surface leading-tight tracking-tight">Post Management</h2>
+</div>
+<button class="btn-gradient text-white px-8 py-4 rounded-md font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                    New Post
+                </button>
+</div>
+<!-- Stats Layer (Asymmetric Bento) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">Total Engagement</p>
+<h3 class="text-5xl font-extrabold text-on-surface tracking-tighter mb-2">48.2k</h3>
+<div class="flex items-center gap-2 text-primary font-bold text-sm">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            +12% from last month
+                        </div>
+</div>
+<div class="absolute right-0 bottom-0 opacity-10 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'opsz' 48;">query_stats</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl">
+<p class="text-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">Published</p>
+<h3 class="text-4xl font-extrabold text-on-surface tracking-tighter">1,204</h3>
+<p class="text-xs text-on-surface-variant mt-2 font-medium">92 posts this week</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl">
+<p class="text-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">Drafts</p>
+<h3 class="text-4xl font-extrabold text-on-surface tracking-tighter">18</h3>
+<p class="text-xs text-on-surface-variant mt-2 font-medium">Awaiting review</p>
+</div>
+</div>
+<!-- Filters Bar -->
+<div class="flex flex-wrap items-center gap-4 mb-8">
+<button class="bg-surface-container-lowest px-4 py-2 text-sm font-semibold rounded-lg flex items-center gap-2 border border-outline-variant/10 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                    All Posts
+                </button>
+<button class="bg-surface-container-lowest px-4 py-2 text-sm font-semibold rounded-lg flex items-center gap-2 border border-outline-variant/10 hover:bg-surface-container-high transition-colors">
+                    Category: All
+                    <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<button class="bg-surface-container-lowest px-4 py-2 text-sm font-semibold rounded-lg flex items-center gap-2 border border-outline-variant/10 hover:bg-surface-container-high transition-colors">
+                    Status: Published
+                    <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<div class="ml-auto text-on-surface-variant text-xs font-medium">
+                    Showing 1-10 of 1,222 posts
+                </div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_32px_32px_rgba(27,28,28,0.02)]">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant">Title</th>
+<th class="px-6 py-5 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant">Author</th>
+<th class="px-6 py-5 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant">Category</th>
+<th class="px-6 py-5 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant">Date</th>
+<th class="px-6 py-5 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant">Status</th>
+<th class="px-8 py-5 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5">
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">The Future of Digital Governance in Asia</p>
+<p class="text-[10px] text-on-surface-variant mt-1 font-medium">ytop-global.com/insights/governance-2024</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full grayscale opacity-70" data-alt="User profile avatar small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCVaWyXjdFDOfDDZwAURKBohvWOeN_F0HIoGACXQZh6DoaI3S9OlsllsVqCcXIUt0WrCQqR778hz0xQToQmImmCzqOnuHUDCHLo2dKsISTBBYCJGIU6vOCmYuCokW9wnHET5B2uxSIFVXe62V6NohjYpbobKcu2QCxb5FEPR5QauVa6qhWXKba9Fwwe7JT_DMQ7UNmIfPP16SdCK0-Cry-KOgvxiPRhtzyCPWnagTpa0F81y0IJgW5WsfnrfZJJAqzr7CgpZFaVbo"/>
+<span class="text-sm font-medium text-on-surface">Alex Rivera</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-surface-container-high px-2 py-1 rounded text-[10px] font-bold text-on-surface-variant">Technology</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant font-medium">Oct 24, 2023</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold border border-green-100 uppercase">
+<span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                                    Published
+                                </span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5">
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Sustainable Logistics: A 2024 Strategy Guide</p>
+<p class="text-[10px] text-on-surface-variant mt-1 font-medium">ytop-global.com/insights/sustainable-logistics</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full grayscale opacity-70" data-alt="User profile avatar small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn7JphD1VoxZfKAzJlNc9K-vICTxRtFOEYYSGEeh88T-wV3mS_4ks4pqE68xvrqgQvcDCJL2JY0nqjbW0XeiId4Sn8dtfAkyPLPmA7ROmOtV3AWxnJ6gBUKZY4ui_V9gF9XL4DzXPMp15yNNtMj38LNiW47bHoIoeygL22YEts6h4lKB9I-HAL0djUNTJdaN8tsiccQuJ41PEo1_jGalyiJjhfA8FbjZiH4jF_KLRy9BtnKjIYPwnlooYAq65DjI18yH3ajDcKvw0"/>
+<span class="text-sm font-medium text-on-surface">Sarah Chen</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-surface-container-high px-2 py-1 rounded text-[10px] font-bold text-on-surface-variant">Logistics</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant font-medium">Oct 22, 2023</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-[10px] font-bold border border-outline-variant/20 uppercase">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                                    Draft
+                                </span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5">
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Global Trade Dynamics: Monthly Report</p>
+<p class="text-[10px] text-on-surface-variant mt-1 font-medium">ytop-global.com/reports/october-2023</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full grayscale opacity-70" data-alt="User profile avatar small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD5uNgerqKMm_uspJaTXAeEYoxZD-h__fCsrdppwe2r74zUL0Y_2MIbkok4H8LPEYxCADiSrbxuap2QuYsihyFmZhBIas6gbjVeLhQlHXvE7-T67eoJnciWujeytnX2YP0-JgDW-h0cGa-Huo3Ub_9vpYLrTlbgWglryYyX5ntJuUdt5FpBBP8AaLqvBEqlVx4V7z9DWUAPaHKTvGeAQvPneFfgVgyXDScQnZmrW_Uw1YIDEfvqArQO70nKVVMkRPbSd3n3Ab5MPc"/>
+<span class="text-sm font-medium text-on-surface">Marcus Thorne</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-surface-container-high px-2 py-1 rounded text-[10px] font-bold text-on-surface-variant">Economy</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant font-medium">Oct 19, 2023</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold border border-green-100 uppercase">
+<span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                                    Published
+                                </span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5">
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Expansion Plans: Brazil &amp; Latin American Hubs</p>
+<p class="text-[10px] text-on-surface-variant mt-1 font-medium">ytop-global.com/corporate/expansion-2024</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full grayscale opacity-70" data-alt="User profile avatar small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARwXLOyYYD7sGCqJJPZfjF8asAFYOLT_aBN3SX3vdTUB_lqmmM7Cmfoqu9-uvctQ7KVQUgL2wC16yTFZMDsPPsIoWmnF0FHZfHFtGb6lvXHG5WxdOB8-VRlwb_Tp455zGd2Uc7NGiZ81xIP8y9uYHky_atPU22ndkQ9ZcbuKwuyJFItdI1ohRhZGvRgHPrZPpnenNfignp8mxTpNqLKpQJVZL6lE5h2nDMAVMDJYqAZ2iY2SgPJg8URRE_6-C5Eq87FaS5MZSIdmQ"/>
+<span class="text-sm font-medium text-on-surface">Alex Rivera</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-surface-container-high px-2 py-1 rounded text-[10px] font-bold text-on-surface-variant">Corporate</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant font-medium">Oct 15, 2023</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold border border-green-100 uppercase">
+<span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                                    Published
+                                </span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5">
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Interview: CEO Jane Doe on Global Connectivity</p>
+<p class="text-[10px] text-on-surface-variant mt-1 font-medium">ytop-global.com/interviews/jane-doe</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full grayscale opacity-70" data-alt="User profile avatar small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnfXXQzE45M85FhXk5uqP32LiTsJyBN0Pq3ru78dQ31pIfU-XUw4jK1uzPX0qvdkQ_hrf_XHeYhBxU9aqTeKO1hazUBEWiIWiBmRW_S7oIJ6c2opfO12X9aWUPJ8lKgJtAerkZC6TU5nJEErLmJJQ5SvbAg0crGYk5Ni1UiIjVxRvBYctyLaRzwmr3g3QKuEPM6WA7iROwTBLp23WWD0eX0DYS_WVaGWzU6E3VpXp9mVZjTOgtL9FA9VYMgj-7HoU2bQnU3n27B7c"/>
+<span class="text-sm font-medium text-on-surface">Sarah Chen</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-surface-container-high px-2 py-1 rounded text-[10px] font-bold text-on-surface-variant">Interview</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant font-medium">Oct 12, 2023</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-[10px] font-bold border border-outline-variant/20 uppercase">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                                    Draft
+                                </span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-8 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-between">
+<button class="text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+                        Previous
+                    </button>
+<div class="flex gap-2">
+<span class="w-8 h-8 flex items-center justify-center text-xs font-bold bg-primary text-white rounded">1</span>
+<span class="w-8 h-8 flex items-center justify-center text-xs font-bold text-on-surface-variant hover:bg-surface-container-high rounded cursor-pointer transition-colors">2</span>
+<span class="w-8 h-8 flex items-center justify-center text-xs font-bold text-on-surface-variant hover:bg-surface-container-high rounded cursor-pointer transition-colors">3</span>
+</div>
+<button class="text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary flex items-center gap-1 transition-colors">
+                        Next
+                        <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Contextual Footer Help -->
+<div class="mt-20 border-t border-outline-variant/10 pt-10 grid grid-cols-1 md:grid-cols-3 gap-10">
+<div>
+<h4 class="text-sm font-bold text-on-surface mb-2">Publishing Guidelines</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Ensure all posts include at least one high-resolution header image and follow our global SEO standards for regional accessibility.</p>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface mb-2">Content Calendar</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Check the shared calendar for upcoming feature launches to align blog release dates with product marketing cycles.</p>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface mb-2">Support &amp; Feedback</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Facing issues with the editor? Contact the CMS support team via the internal Support link in the header.</p>
+</div>
+</div>
+</div>
+</main>
+</body></html>

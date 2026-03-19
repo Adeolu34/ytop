@@ -133,7 +133,7 @@ export default function TeamPage() {
               Join our team now
             </Link>
             <Link
-              href="/volunteer"
+              href="/get-involved/campus-ambassadors"
               className="inline-flex items-center justify-center px-8 py-4 bg-white/20 text-white font-bold rounded-xl border-2 border-white/50 hover:bg-white/30 transition-all duration-300"
             >
               Rise of Warriors

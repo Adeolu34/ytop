@@ -55,7 +55,8 @@ export default function Navigation() {
             onMouseLeave={() => setOpenDropdown(null)}
           >
             {hasChildren ? (
-              <button
+              <Link
+                href={item.href}
                 className={clsx(
                   'flex items-center gap-1 px-4 py-2 text-sm font-semibold transition-colors duration-200 rounded-lg cursor-pointer',
                   isActive
@@ -68,7 +69,7 @@ export default function Navigation() {
                   'w-4 h-4 transition-transform duration-200',
                   openDropdown === item.label && 'rotate-180'
                 )} />
-              </button>
+              </Link>
             ) : (
               <Link
                 href={item.href}
