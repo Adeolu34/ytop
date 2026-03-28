@@ -9,7 +9,7 @@ import {
   readAdminFlashMessage,
   type SearchParamRecord,
 } from '@/lib/admin-feedback';
-import { approveCommentAction, deleteCommentAction } from '@/app/admin/comments/actions';
+import { approveCommentAction, deleteCommentAction } from '@/app/admin/(dashboard)/comments/actions';
 
 function getCommentAuthorLabel(comment: {
   authorName: string | null;

@@ -9,7 +9,7 @@ import {
   readAdminFlashMessage,
   type SearchParamRecord,
 } from '@/lib/admin-feedback';
-import { deleteUserAction } from '@/app/admin/users/actions';
+import { deleteUserAction } from '@/app/admin/(dashboard)/users/actions';
 
 function buildRoleHref(role: string, searchQuery: string): string {
   const searchParams = new URLSearchParams();
