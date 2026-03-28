@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
 import AdminSubmitButton from '@/components/admin/forms/AdminSubmitButton';
-import { createMediaAction, updateMediaAction } from '@/app/admin/gallery/actions';
+import { createMediaAction, updateMediaAction } from '@/app/admin/(dashboard)/gallery/actions';
 
 const MEDIA_EDITOR_INITIAL_STATE = {
   error: null,

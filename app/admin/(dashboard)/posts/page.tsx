@@ -11,7 +11,7 @@ import {
 import {
   deletePostAction,
   updatePostStatusAction,
-} from '@/app/admin/posts/actions';
+} from '@/app/admin/(dashboard)/posts/actions';
 
 function buildFilterHref(status: string, searchQuery: string): string {
   const searchParams = new URLSearchParams();

@@ -14,7 +14,7 @@ import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
 import {
   deleteMediaAction,
   deleteSelectedMediaAction,
-} from '@/app/admin/gallery/actions';
+} from '@/app/admin/(dashboard)/gallery/actions';
 
 type GalleryItem = {
   id: string;
