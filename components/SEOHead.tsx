@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { YTOP_SOCIAL_SAME_AS } from '@/lib/ytop-social-urls';
 
 interface SEOHeadProps {
   title: string;
@@ -127,12 +128,7 @@ export function generateOrganizationSchema() {
       contactType: 'customer service',
       email: 'info@ytopglobal.org',
     },
-    sameAs: [
-      'https://facebook.com/ytopglobal',
-      'https://twitter.com/ytopglobal',
-      'https://linkedin.com/company/ytopglobal',
-      'https://instagram.com/ytopglobal',
-    ],
+    sameAs: YTOP_SOCIAL_SAME_AS,
   };
 }
 

@@ -4,7 +4,7 @@ import PostEditorForm from '@/components/admin/posts/PostEditorForm';
 
 export default async function NewPostPage() {
   const currentUser = await requireAuth();
-  const [authors, featuredImages] = await Promise.all([
+  const [authors, mediaPickerInitialItems, folderRows] = await Promise.all([
     prisma.user.findMany({
       where: {
         role: {
@@ -26,9 +26,22 @@ export default async function NewPostPage() {
       select: {
         id: true,
         filename: true,
+        url: true,
+        folder: true,
+        altText: true,
+        mimeType: true,
       },
     }),
+    prisma.media.findMany({
+      where: { type: 'IMAGE', folder: { not: null } },
+      select: { folder: true },
+      distinct: ['folder'],
+    }),
   ]);
+
+  const imageFolders = folderRows
+    .map((row) => row.folder)
+    .filter((f): f is string => Boolean(f));
 
   return (
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8 lg:pb-10 lg:pt-10">
@@ -47,7 +60,8 @@ export default async function NewPostPage() {
       <PostEditorForm
         mode="create"
         authors={authors}
-        featuredImages={featuredImages}
+        mediaPickerInitialItems={mediaPickerInitialItems}
+        imageFolders={imageFolders}
         initialValues={{
           title: '',
           slug: '',

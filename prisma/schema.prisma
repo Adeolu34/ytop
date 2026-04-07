@@ -83,6 +83,9 @@ model Post {
   // Analytics
   viewCount     Int         @default(0)
 
+  // Newsletter broadcast (optional idempotency)
+  emailNotifiedAt DateTime?
+
   // Timestamps
   publishedAt   DateTime?
   createdAt     DateTime    @default(now())
@@ -217,6 +220,12 @@ model Media {
   // WordPress reference (for migration)
   wordpressId Int?
 
+  // Cloudinary (when uploads use Cloudinary; used for delete API)
+  cloudinaryPublicId String?
+
+  // Gallery grouping (null = uncategorized)
+  folder      String?
+
   // Relations
   posts       Post[]
   teamMembers TeamMember[]
@@ -234,6 +243,7 @@ model Media {
 
   @@index([type])
   @@index([wordpressId])
+  @@index([folder])
 }
 
 // ============================================
@@ -262,11 +272,15 @@ model TeamMember {
   order       Int      @default(0)
   isActive    Boolean  @default(true)
 
+  /** Public team page tab: core | faculty | volunteer | community */
+  teamSection String   @default("core")
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([slug])
   @@index([order])
+  @@index([teamSection])
 }
 
 model Testimonial {

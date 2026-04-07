@@ -11,6 +11,11 @@ import {
   buildMediaDraft,
   sanitizeStoredFilename,
 } from '@/lib/admin-crud';
+import {
+  isCloudinaryConfigured,
+  uploadBufferToCloudinary,
+  destroyCloudinaryAsset,
+} from '@/lib/cloudinary';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
 
 type MediaEditorState = {
@@ -43,21 +48,29 @@ export async function createMediaAction(
       mimeType: fileEntry.type,
       originalName: fileEntry.name,
     });
-    const url = await persistUploadedFile(fileEntry, mediaDraft.filename);
+    const persisted = await persistUploadedFile(fileEntry, mediaDraft.filename);
 
     await prisma.media.create({
       data: {
-        filename: path.basename(url),
+        filename: mediaDraft.filename,
         originalName: mediaDraft.originalName,
-        url,
+        url: persisted.url,
+        cloudinaryPublicId: persisted.cloudinaryPublicId,
         mimeType: mediaDraft.mimeType,
         fileSize: mediaDraft.fileSize,
         type: mediaDraft.type,
         altText: mediaDraft.altText,
         caption: mediaDraft.caption,
         description: mediaDraft.description,
-        width: readOptionalInteger(formData, 'width'),
-        height: readOptionalInteger(formData, 'height'),
+        folder: normalizeFolderField(formData, 'folder'),
+        width:
+          readOptionalInteger(formData, 'width') ??
+          persisted.width ??
+          null,
+        height:
+          readOptionalInteger(formData, 'height') ??
+          persisted.height ??
+          null,
         uploadedBy: { connect: { id: currentUser.id } },
       },
     });
@@ -93,6 +106,7 @@ export async function updateMediaAction(
         altText: nullableField(formData, 'altText'),
         caption: nullableField(formData, 'caption'),
         description: nullableField(formData, 'description'),
+        folder: normalizeFolderField(formData, 'folder'),
         width: readOptionalInteger(formData, 'width'),
         height: readOptionalInteger(formData, 'height'),
       },
@@ -143,12 +157,61 @@ export async function deleteMediaAction(formData: FormData): Promise<void> {
   }
 
   await prisma.media.delete({ where: { id: mediaId } });
-  await deleteStoredFileIfManaged(media.url);
+  await deleteStoredAsset({
+    url: media.url,
+    cloudinaryPublicId: media.cloudinaryPublicId,
+  });
   revalidateGallerySurfaces();
 
   redirect(
     createAdminRedirectUrl(GALLERY_INDEX_PATH, {
       notice: 'Media deleted successfully.',
+    })
+  );
+}
+
+export async function moveSelectedMediaToFolderAction(
+  formData: FormData
+): Promise<void> {
+  const currentUser = await requireAuth();
+
+  if (!checkPermission(currentUser.role, 'AUTHOR')) {
+    redirect(
+      createAdminRedirectUrl(GALLERY_INDEX_PATH, {
+        error: 'You do not have permission to move media.',
+      })
+    );
+  }
+
+  const mediaIds = parseSelectedMediaIds(readOptionalString(formData, 'mediaIds'));
+  const targetFolderRaw = readOptionalString(formData, 'targetFolder');
+
+  if (mediaIds.length === 0) {
+    redirect(
+      createAdminRedirectUrl(GALLERY_INDEX_PATH, {
+        error: 'Select at least one item to move.',
+      })
+    );
+  }
+
+  const folder =
+    targetFolderRaw == null || targetFolderRaw.trim() === ''
+      ? null
+      : targetFolderRaw.trim();
+
+  await prisma.media.updateMany({
+    where: { id: { in: mediaIds } },
+    data: { folder },
+  });
+
+  revalidateGallerySurfaces();
+
+  redirect(
+    createAdminRedirectUrl(GALLERY_INDEX_PATH, {
+      notice:
+        mediaIds.length === 1
+          ? 'Moved 1 item to the selected folder.'
+          : `Moved ${mediaIds.length} items to the selected folder.`,
     })
   );
 }
@@ -179,6 +242,7 @@ export async function deleteSelectedMediaAction(formData: FormData): Promise<voi
     select: {
       id: true,
       url: true,
+      cloudinaryPublicId: true,
       _count: {
         select: {
           posts: true,
@@ -217,7 +281,14 @@ export async function deleteSelectedMediaAction(formData: FormData): Promise<voi
     where: { id: { in: mediaIds } },
   });
 
-  await Promise.all(mediaItems.map((mediaItem) => deleteStoredFileIfManaged(mediaItem.url)));
+  await Promise.all(
+    mediaItems.map((mediaItem) =>
+      deleteStoredAsset({
+        url: mediaItem.url,
+        cloudinaryPublicId: mediaItem.cloudinaryPublicId,
+      })
+    )
+  );
   revalidateGallerySurfaces();
 
   redirect(
@@ -235,6 +306,7 @@ async function findMediaForDeletion(mediaId: string) {
     where: { id: mediaId },
     select: {
       url: true,
+      cloudinaryPublicId: true,
       _count: {
         select: {
           posts: true,
@@ -267,28 +339,65 @@ function countMediaDependencies(counts: {
   );
 }
 
+type PersistedUpload = {
+  url: string;
+  cloudinaryPublicId: string | null;
+  width?: number | null;
+  height?: number | null;
+};
+
 async function persistUploadedFile(
   file: File,
   suggestedFilename: string
-): Promise<string> {
+): Promise<PersistedUpload> {
+  const fileBuffer = Buffer.from(await file.arrayBuffer());
+
+  if (isCloudinaryConfigured()) {
+    const safeStem = `${Date.now()}-${sanitizeStoredFilename(suggestedFilename)}`;
+    const publicId = safeStem.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const uploaded = await uploadBufferToCloudinary(fileBuffer, {
+      publicId,
+    });
+    return {
+      url: uploaded.secureUrl,
+      cloudinaryPublicId: uploaded.publicId,
+      width: uploaded.width ?? null,
+      height: uploaded.height ?? null,
+    };
+  }
+
   const uploadDirectory = path.join(process.cwd(), 'public', 'uploads', 'admin');
   await mkdir(uploadDirectory, { recursive: true });
 
   const uniqueFilename = `${Date.now()}-${sanitizeStoredFilename(suggestedFilename)}`;
-  const fileBuffer = Buffer.from(await file.arrayBuffer());
   const destinationPath = path.join(uploadDirectory, uniqueFilename);
 
   await writeFile(destinationPath, fileBuffer);
 
-  return `/uploads/admin/${uniqueFilename}`;
+  return {
+    url: `/uploads/admin/${uniqueFilename}`,
+    cloudinaryPublicId: null,
+  };
 }
 
-async function deleteStoredFileIfManaged(url: string): Promise<void> {
-  if (!url.startsWith('/uploads/admin/')) {
+async function deleteStoredAsset(media: {
+  url: string;
+  cloudinaryPublicId: string | null;
+}): Promise<void> {
+  if (media.cloudinaryPublicId && isCloudinaryConfigured()) {
+    await destroyCloudinaryAsset(media.cloudinaryPublicId);
     return;
   }
 
-  const filePath = path.join(process.cwd(), 'public', ...url.split('/').filter(Boolean));
+  if (!media.url.startsWith('/uploads/admin/')) {
+    return;
+  }
+
+  const filePath = path.join(
+    process.cwd(),
+    'public',
+    ...media.url.split('/').filter(Boolean)
+  );
 
   try {
     await unlink(filePath);
@@ -313,6 +422,14 @@ function parseSelectedMediaIds(value: string | null): string[] {
 function nullableField(formData: FormData, key: string): string | null {
   const value = readOptionalString(formData, key);
   return value?.trim() ? value.trim() : null;
+}
+
+function normalizeFolderField(formData: FormData, key: string): string | null {
+  const value = readOptionalString(formData, key);
+  if (!value?.trim()) {
+    return null;
+  }
+  return value.trim();
 }
 
 function readOptionalInteger(formData: FormData, key: string): number | null {

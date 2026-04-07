@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import prisma from '@/lib/db';
 import { requireAuth } from '@/lib/auth-utils';
 import PostEditorForm from '@/components/admin/posts/PostEditorForm';
+import { getSiteBaseUrl } from '@/lib/email';
 
 function formatDateTimeLocal(value: Date | null): string {
   if (!value) {
@@ -22,7 +23,7 @@ export default async function EditPostPage({
   await requireAuth();
   const { postId } = await params;
 
-  const [post, authors, featuredImages] = await Promise.all([
+  const [post, authors, baseMedia, folderRows] = await Promise.all([
     prisma.post.findUnique({
       where: { id: postId },
       include: {
@@ -55,13 +56,49 @@ export default async function EditPostPage({
       select: {
         id: true,
         filename: true,
+        url: true,
+        folder: true,
+        altText: true,
+        mimeType: true,
       },
+    }),
+    prisma.media.findMany({
+      where: { type: 'IMAGE', folder: { not: null } },
+      select: { folder: true },
+      distinct: ['folder'],
     }),
   ]);
 
   if (!post) {
     notFound();
   }
+
+  let mediaPickerInitialItems = baseMedia;
+  if (
+    post.featuredImageId &&
+    !baseMedia.some((m) => m.id === post.featuredImageId)
+  ) {
+    const featured = await prisma.media.findUnique({
+      where: { id: post.featuredImageId },
+      select: {
+        id: true,
+        filename: true,
+        url: true,
+        folder: true,
+        altText: true,
+        mimeType: true,
+      },
+    });
+    if (featured) {
+      mediaPickerInitialItems = [featured, ...baseMedia];
+    }
+  }
+
+  const imageFolders = folderRows
+    .map((row) => row.folder)
+    .filter((f): f is string => Boolean(f));
+
+  const siteBaseUrl = getSiteBaseUrl();
 
   return (
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8 lg:pb-10 lg:pt-10">
@@ -80,7 +117,15 @@ export default async function EditPostPage({
       <PostEditorForm
         mode="edit"
         authors={authors}
-        featuredImages={featuredImages}
+        mediaPickerInitialItems={mediaPickerInitialItems}
+        imageFolders={imageFolders}
+        publishActions={{
+          slug: post.slug,
+          postTitle: post.title,
+          status: post.status,
+          emailNotifiedAt: post.emailNotifiedAt?.toISOString() ?? null,
+          siteBaseUrl,
+        }}
         initialValues={{
           id: post.id,
           title: post.title,

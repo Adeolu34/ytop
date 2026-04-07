@@ -24,6 +24,7 @@ type MediaEditorFormProps = {
     description: string;
     width: string;
     height: string;
+    folder: string;
   };
 };
 
@@ -94,6 +95,18 @@ export default function MediaEditorForm({
             )}
 
             <div className="mt-6 grid gap-5 md:grid-cols-2">
+              <label className="block md:col-span-2">
+                <span className="mb-2 block text-sm font-semibold text-[#1b1c1c]">
+                  Folder
+                </span>
+                <input
+                  name="folder"
+                  defaultValue={initialValues.folder}
+                  className="w-full rounded-xl border border-[#e7d6d4] bg-white px-4 py-3 text-sm text-[#1b1c1c] outline-none transition-colors focus:border-[#ba0013]"
+                  placeholder="e.g. blog, events — leave empty for uncategorized"
+                />
+              </label>
+
               <label className="block md:col-span-2">
                 <span className="mb-2 block text-sm font-semibold text-[#1b1c1c]">
                   Alt Text
@@ -169,9 +182,15 @@ export default function MediaEditorForm({
               Save
             </p>
             <p className="mt-3 text-sm leading-6 text-[#5d3f3c]">
-              New uploads are stored locally in the project under
-              public/uploads/admin. That works well for this repo today, but a
-              cloud storage backend is still the right follow-up for production.
+              When{' '}
+              <span className="font-semibold text-[#1b1c1c]">
+                CLOUDINARY_*{' '}
+              </span>
+              env vars are set, new files go to Cloudinary and the app stores
+              the HTTPS URL plus metadata in the database. Otherwise uploads go
+              to{' '}
+              <code className="rounded bg-white/80 px-1">public/uploads/admin</code>{' '}
+              on this server.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">

@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import HomeHeroSlideshow from '@/components/public/HomeHeroSlideshow';
-import prisma from '@/lib/db';
+import { getPrisma } from '@/lib/db';
+import { loadWithDatabaseFallback } from '@/lib/public-db';
+import { mongoListPublishedPosts, useMongoForPublicBlog } from '@/lib/mongo-blog';
 import {
   GraduationCap,
   Megaphone,
@@ -14,6 +16,9 @@ import {
   MapPin,
   Quote,
 } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const GOALS = [
   {
@@ -79,44 +84,97 @@ function stripHtml(html: string | null | undefined): string {
 }
 
 export default async function HomePage() {
-  const [teamMembers, latestPosts] = await Promise.all([
-    prisma.teamMember.findMany({
-      where: { isActive: true },
-      include: {
-        photo: {
-          select: {
-            url: true,
-            altText: true,
+  let isUsingFallbackData = false;
+
+  const [teamMembers, latestPosts] = await loadWithDatabaseFallback({
+    load: async () => {
+      const prisma = getPrisma();
+
+      const teamMembers = await prisma.teamMember.findMany({
+        where: { isActive: true },
+        include: {
+          photo: {
+            select: {
+              url: true,
+              altText: true,
+            },
           },
         },
-      },
-      orderBy: { order: 'asc' },
-      take: 3,
-    }),
-    prisma.post.findMany({
-      where: { status: 'PUBLISHED' },
-      include: {
-        featuredImage: {
-          select: {
-            url: true,
-            altText: true,
+        orderBy: { order: 'asc' },
+        take: 3,
+      });
+
+      let latestPosts: Awaited<ReturnType<typeof mongoListPublishedPosts>>['posts'];
+      if (useMongoForPublicBlog()) {
+        const { posts } = await mongoListPublishedPosts({
+          page: 1,
+          limit: 3,
+        });
+        latestPosts = posts;
+      } else {
+        const prismaPosts = await prisma.post.findMany({
+          where: { status: 'PUBLISHED' },
+          include: {
+            author: { select: { name: true, image: true } },
+            featuredImage: {
+              select: {
+                id: true,
+                url: true,
+                altText: true,
+              },
+            },
+            categories: {
+              select: {
+                name: true,
+                slug: true,
+              },
+            },
           },
-        },
-        categories: {
-          select: {
-            name: true,
-            slug: true,
+          orderBy: { publishedAt: 'desc' },
+          take: 3,
+        });
+        latestPosts = prismaPosts.map((p) => ({
+          id: p.id,
+          slug: p.slug,
+          title: p.title,
+          excerpt: p.excerpt,
+          publishedAt: p.publishedAt,
+          author: {
+            name: p.author?.name ?? null,
+            image: p.author?.image ?? null,
           },
-        },
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: 3,
-    }),
-  ]);
+          categories: p.categories.map((c) => ({ name: c.name, slug: c.slug })),
+          featuredImage: p.featuredImage
+            ? {
+                id: p.featuredImage.id,
+                url: p.featuredImage.url,
+                altText: p.featuredImage.altText,
+              }
+            : null,
+        }));
+      }
+
+      return [teamMembers, latestPosts] as const;
+    },
+    fallback: [[], []],
+    onError(error) {
+      isUsingFallbackData = true;
+      console.error('Homepage database queries failed after retry:', error);
+    },
+  });
 
   return (
     <>
       <HomeHeroSlideshow />
+
+      {isUsingFallbackData ? (
+        <section className="border-b border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900">
+          <div className="mx-auto max-w-7xl">
+            Live homepage content is temporarily unavailable. Core site content is
+            still online while the database reconnects.
+          </div>
+        </section>
+      ) : null}
 
       {/* Goals & Objectives */}
       <section className="py-20 bg-background dark:bg-background-dark">

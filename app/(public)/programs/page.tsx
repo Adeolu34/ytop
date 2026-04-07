@@ -1,7 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import prisma from '@/lib/db';
+import { getPrisma } from '@/lib/db';
+import { loadWithDatabaseFallback } from '@/lib/public-db';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: 'Our Programs - YTOP Global',
@@ -9,25 +13,44 @@ export const metadata = {
 };
 
 export default async function ProgramsPage() {
-  const programs = await prisma.program.findMany({
-    where: {
-      isActive: true,
-    },
-    include: {
-      image: {
-        select: {
-          url: true,
-          altText: true,
+  let isUsingFallbackPrograms = false;
+
+  const programs = await loadWithDatabaseFallback({
+    load: async () =>
+      getPrisma().program.findMany({
+        where: {
+          isActive: true,
         },
-      },
-    },
-    orderBy: {
-      order: 'asc',
+        include: {
+          image: {
+            select: {
+              url: true,
+              altText: true,
+            },
+          },
+        },
+        orderBy: {
+          order: 'asc',
+        },
+      }),
+    fallback: [],
+    onError(error) {
+      isUsingFallbackPrograms = true;
+      console.error('Programs page database query failed after retry:', error);
     },
   });
 
   return (
     <div>
+      {isUsingFallbackPrograms ? (
+        <section className="border-b border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900">
+          <div className="mx-auto max-w-6xl">
+            Program records are temporarily unavailable. Static program highlights
+            are still available while the database reconnects.
+          </div>
+        </section>
+      ) : null}
+
       {/* Hero - stitch style */}
       <section className="relative min-h-[50vh] flex items-center justify-center bg-secondary text-white py-20">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />

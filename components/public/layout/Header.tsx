@@ -3,12 +3,17 @@ import Navigation from './Navigation';
 import MobileMenu from './MobileMenu';
 import Logo from './Logo';
 
-export default function Header() {
+type HeaderProps = {
+  logoUrl?: string | null;
+  siteName?: string;
+};
+
+export default function Header({ logoUrl, siteName }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Logo />
+          <Logo logoUrl={logoUrl} siteName={siteName} />
 
           <div className="hidden lg:block">
             <Navigation />

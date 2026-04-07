@@ -1,4 +1,12 @@
-export type AdminIconKey = 'dashboard' | 'users' | 'posts' | 'gallery';
+export type AdminIconKey =
+  | 'dashboard'
+  | 'users'
+  | 'posts'
+  | 'gallery'
+  | 'settings'
+  | 'team'
+  | 'programs'
+  | 'comments';
 
 export type AdminNavItem = {
   href: string;
@@ -15,9 +23,13 @@ export type AdminPageMeta = {
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/admin/users', label: 'User Management', icon: 'users' },
-  { href: '/admin/posts', label: 'Post Management', icon: 'posts' },
-  { href: '/admin/gallery', label: 'Gallery Management', icon: 'gallery' },
+  { href: '/admin/settings', label: 'Site identity', icon: 'settings' },
+  { href: '/admin/users', label: 'Users', icon: 'users' },
+  { href: '/admin/posts', label: 'Posts', icon: 'posts' },
+  { href: '/admin/gallery', label: 'Gallery', icon: 'gallery' },
+  { href: '/admin/team', label: 'Team', icon: 'team' },
+  { href: '/admin/programs', label: 'Programs', icon: 'programs' },
+  { href: '/admin/comments', label: 'Comments', icon: 'comments' },
 ];
 
 const DASHBOARD_META: AdminPageMeta = {
@@ -56,7 +68,32 @@ const GALLERY_META: AdminPageMeta = {
   searchPlaceholder: 'Search gallery assets...',
 };
 
+const SETTINGS_META: AdminPageMeta = {
+  eyebrow: 'Configuration',
+  title: 'Site identity',
+  description: 'Logo, favicon, and brand colors for the public website.',
+  searchPlaceholder: 'Search settings...',
+};
+
+const TEAM_META: AdminPageMeta = {
+  eyebrow: 'People',
+  title: 'Team members',
+  description: 'Manage leadership and staff profiles shown on the site.',
+  searchPlaceholder: 'Search team...',
+};
+
+const PROGRAMS_META: AdminPageMeta = {
+  eyebrow: 'Programs',
+  title: 'Programs',
+  description: 'Create and edit program pages and imagery.',
+  searchPlaceholder: 'Search programs...',
+};
+
 export function getAdminPageMeta(pathname: string): AdminPageMeta {
+  if (pathname.startsWith('/admin/settings')) {
+    return SETTINGS_META;
+  }
+
   if (pathname.startsWith('/admin/users')) {
     return USER_META;
   }
@@ -67,6 +104,14 @@ export function getAdminPageMeta(pathname: string): AdminPageMeta {
 
   if (pathname.startsWith('/admin/comments')) {
     return COMMENTS_META;
+  }
+
+  if (pathname.startsWith('/admin/team')) {
+    return TEAM_META;
+  }
+
+  if (pathname.startsWith('/admin/programs')) {
+    return PROGRAMS_META;
   }
 
   if (

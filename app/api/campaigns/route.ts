@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import { getPostgresConnectionString } from '@/lib/db-config';
+
+/** Do not prerender; keeps `next build` from eagerly evaluating DB-backed handlers. */
+export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/campaigns
@@ -7,6 +10,12 @@ import prisma from '@/lib/db';
  * Get all active fundraising campaigns
  */
 export async function GET() {
+  if (!getPostgresConnectionString()) {
+    return NextResponse.json({ campaigns: [] });
+  }
+
+  const { default: prisma } = await import('@/lib/db');
+
   try {
     const now = new Date();
 
@@ -29,12 +38,14 @@ export async function GET() {
       },
     });
 
-    // Calculate progress percentage for each campaign
-    const campaignsWithProgress = campaigns.map(campaign => ({
+    const campaignsWithProgress = campaigns.map((campaign) => ({
       ...campaign,
-      progressPercentage: Number(campaign.goalAmount) > 0
-        ? Math.round((Number(campaign.raisedAmount) / Number(campaign.goalAmount)) * 100)
-        : 0,
+      progressPercentage:
+        Number(campaign.goalAmount) > 0
+          ? Math.round(
+              (Number(campaign.raisedAmount) / Number(campaign.goalAmount)) * 100
+            )
+          : 0,
     }));
 
     return NextResponse.json({ campaigns: campaignsWithProgress });

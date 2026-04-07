@@ -14,6 +14,7 @@ import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
 import {
   deleteMediaAction,
   deleteSelectedMediaAction,
+  moveSelectedMediaToFolderAction,
 } from '@/app/admin/(dashboard)/gallery/actions';
 
 type GalleryItem = {
@@ -26,6 +27,7 @@ type GalleryItem = {
   fileSize: number;
   width: number | null;
   height: number | null;
+  folder: string | null;
   createdAt: string;
 };
 
@@ -37,6 +39,8 @@ type GalleryManagementViewProps = {
   totalStorageLabel: string;
   searchQuery: string;
   typeFilter: string;
+  folderFilter: string;
+  folderNames: string[];
   flashMessage:
     | {
         type: 'notice' | 'error';
@@ -51,7 +55,11 @@ const fullDateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 });
 
-function buildTypeHref(type: string, searchQuery: string): string {
+function buildTypeHref(
+  type: string,
+  searchQuery: string,
+  folderFilter: string
+): string {
   const searchParams = new URLSearchParams();
 
   if (type !== 'ALL') {
@@ -60,6 +68,33 @@ function buildTypeHref(type: string, searchQuery: string): string {
 
   if (searchQuery) {
     searchParams.set('q', searchQuery);
+  }
+
+  if (folderFilter !== 'ALL') {
+    searchParams.set('folder', folderFilter);
+  }
+
+  const queryString = searchParams.toString();
+  return queryString ? `/admin/gallery?${queryString}` : '/admin/gallery';
+}
+
+function buildFolderHref(
+  folder: string,
+  searchQuery: string,
+  typeFilter: string
+): string {
+  const searchParams = new URLSearchParams();
+
+  if (typeFilter !== 'ALL') {
+    searchParams.set('type', typeFilter);
+  }
+
+  if (searchQuery) {
+    searchParams.set('q', searchQuery);
+  }
+
+  if (folder !== 'ALL') {
+    searchParams.set('folder', folder);
   }
 
   const queryString = searchParams.toString();
@@ -74,6 +109,8 @@ export default function GalleryManagementView({
   totalStorageLabel,
   searchQuery,
   typeFilter,
+  folderFilter,
+  folderNames,
   flashMessage,
 }: GalleryManagementViewProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -112,6 +149,9 @@ export default function GalleryManagementView({
           >
             {typeFilter !== 'ALL' ? (
               <input type="hidden" name="type" value={typeFilter} />
+            ) : null}
+            {folderFilter !== 'ALL' ? (
+              <input type="hidden" name="folder" value={folderFilter} />
             ) : null}
             <Filter className="h-4 w-4" />
             <input
@@ -198,7 +238,7 @@ export default function GalleryManagementView({
             {typeFilters.map((filter) => (
               <Link
                 key={filter}
-                href={buildTypeHref(filter, searchQuery)}
+                href={buildTypeHref(filter, searchQuery, folderFilter)}
                 className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                   typeFilter === filter
                     ? 'bg-[#ba0013] text-white'
@@ -210,7 +250,47 @@ export default function GalleryManagementView({
             ))}
           </div>
 
-          <p className="text-xs font-medium text-[#5d3f3c]">
+          <div className="mt-4 flex flex-wrap gap-2 border-t border-[#ead6d3] pt-4">
+            <span className="mr-2 text-xs font-bold uppercase tracking-wide text-[#5d3f3c]">
+              Folder
+            </span>
+            <Link
+              href={buildFolderHref('ALL', searchQuery, typeFilter)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                folderFilter === 'ALL'
+                  ? 'bg-[#1b1c1c] text-white'
+                  : 'border border-[#e7bdb8]/30 bg-white text-[#1b1c1c] hover:bg-[#efeded]'
+              }`}
+            >
+              All
+            </Link>
+            <Link
+              href={buildFolderHref('__uncategorized__', searchQuery, typeFilter)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                folderFilter === '__uncategorized__'
+                  ? 'bg-[#1b1c1c] text-white'
+                  : 'border border-[#e7bdb8]/30 bg-white text-[#1b1c1c] hover:bg-[#efeded]'
+              }`}
+            >
+              Uncategorized
+            </Link>
+            {folderNames.map((name) => (
+              <Link
+                key={name}
+                href={buildFolderHref(name, searchQuery, typeFilter)}
+                className={`max-w-[180px] truncate rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  folderFilter === name
+                    ? 'bg-[#1b1c1c] text-white'
+                    : 'border border-[#e7bdb8]/30 bg-white text-[#1b1c1c] hover:bg-[#efeded]'
+                }`}
+                title={name}
+              >
+                {name}
+              </Link>
+            ))}
+          </div>
+
+          <p className="mt-3 text-xs font-medium text-[#5d3f3c]">
             Showing {items.length} asset{items.length === 1 ? '' : 's'}
           </p>
         </div>
@@ -229,17 +309,41 @@ export default function GalleryManagementView({
             </p>
           </div>
 
-          <form action={deleteSelectedMediaAction} className="flex items-center gap-2">
-            <input type="hidden" name="mediaIds" value={selectedIds.join(',')} />
-            <button
-              type="submit"
-              disabled={selectedCount === 0}
-              className="inline-flex items-center gap-2 rounded-md px-4 py-2 font-bold text-[#ba0013] transition-colors enabled:hover:bg-[#ffdad6] disabled:cursor-not-allowed disabled:opacity-50"
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+            <form
+              action={moveSelectedMediaToFolderAction}
+              className="flex flex-wrap items-center gap-2"
             >
-              <Trash2 className="h-4 w-4" />
-              Delete Selected
-            </button>
-          </form>
+              <input type="hidden" name="mediaIds" value={selectedIds.join(',')} />
+              <label className="text-xs font-semibold text-[#5d3f3c]">
+                Move to folder
+                <input
+                  name="targetFolder"
+                  placeholder="Folder name or leave empty"
+                  className="ml-2 w-44 rounded-md border border-[#e7d6d4] bg-white px-2 py-1.5 text-xs text-[#1b1c1c] outline-none focus:border-[#ba0013]"
+                />
+              </label>
+              <button
+                type="submit"
+                disabled={selectedCount === 0}
+                className="inline-flex items-center gap-2 rounded-md border border-[#e7d6d4] bg-white px-4 py-2 text-sm font-bold text-[#1b1c1c] transition-colors enabled:hover:bg-[#efeded] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <FolderInput className="h-4 w-4" />
+                Move
+              </button>
+            </form>
+            <form action={deleteSelectedMediaAction} className="flex items-center gap-2">
+              <input type="hidden" name="mediaIds" value={selectedIds.join(',')} />
+              <button
+                type="submit"
+                disabled={selectedCount === 0}
+                className="inline-flex items-center gap-2 rounded-md px-4 py-2 font-bold text-[#ba0013] transition-colors enabled:hover:bg-[#ffdad6] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Selected
+              </button>
+            </form>
+          </div>
         </div>
       </section>
 
@@ -304,9 +408,20 @@ export default function GalleryManagementView({
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-[0.6875rem] font-semibold text-[#5d3f3c]">
-                  <ImageIcon className="h-3.5 w-3.5" />
-                  {item.type}
+                <div className="flex flex-wrap items-center gap-2 text-[0.6875rem] font-semibold text-[#5d3f3c]">
+                  <span className="inline-flex items-center gap-1">
+                    <ImageIcon className="h-3.5 w-3.5" />
+                    {item.type}
+                  </span>
+                  {item.folder ? (
+                    <span className="rounded bg-[#ffdad6]/50 px-1.5 py-0.5 text-[0.6rem] font-bold text-[#410002]">
+                      {item.folder}
+                    </span>
+                  ) : (
+                    <span className="text-[0.6rem] font-medium text-[#8b6d69]">
+                      Uncategorized
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap gap-2 pt-2">

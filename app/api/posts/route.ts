@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import {
+  mongoBlogDocumentToApiListPost,
+  mongoListPublishedPostDocuments,
+  useMongoForPublicBlog,
+} from '@/lib/mongo-blog';
 
 /**
  * GET /api/posts
@@ -20,8 +25,29 @@ export async function GET(request: NextRequest) {
     const tagSlug = searchParams.get('tag');
     const searchQuery = searchParams.get('search');
 
+    if (useMongoForPublicBlog()) {
+      const { documents, total } = await mongoListPublishedPostDocuments({
+        page,
+        limit,
+        categorySlug: categorySlug || undefined,
+        tagSlug: tagSlug || undefined,
+        searchQuery: searchQuery || undefined,
+      });
+      const posts = documents.map((doc) => mongoBlogDocumentToApiListPost(doc));
+      return NextResponse.json({
+        posts,
+        pagination: {
+          page,
+          limit,
+          totalCount: total,
+          totalPages: Math.ceil(total / limit),
+          hasMore: page * limit < total,
+        },
+      });
+    }
+
     // Build where clause
-    const where: any = {
+    const where: Record<string, unknown> = {
       status: 'PUBLISHED',
     };
 

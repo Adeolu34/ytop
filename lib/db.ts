@@ -3,8 +3,11 @@ import { Pool } from 'pg';
 import { PrismaClient } from '@/app/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-// Netlify injects NETLIFY_DATABASE_URL when Neon is connected; use it if DATABASE_URL is not set
-const connectionString = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
+// Prisma + PostgreSQL: admin, auth, campaigns, media rows, drafts, etc. Public blog *reads* can use MongoDB
+// when PUBLIC_BLOG_SOURCE=mongodb (see lib/mongo-blog.ts); that data is synced from Postgres on publish.
+import { getPostgresConnectionString } from './db-config';
+
+export { isDatabaseConfigured, getPostgresConnectionString } from './db-config';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -12,11 +15,14 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient(): PrismaClient {
-  if (!connectionString) {
+  // Read URL at client creation time — not at module load — so the first import of this file
+  // cannot freeze an empty string when another part of the build later sets DATABASE_URL.
+  const url = getPostgresConnectionString();
+  if (!url) {
     throw new Error('DATABASE_URL (or NETLIFY_DATABASE_URL on Netlify) is not set. Add it to .env or Netlify env to use blog, programs, and other database features.');
   }
   const pool = new Pool({
-    connectionString,
+    connectionString: url,
     max: 5,
     idleTimeoutMillis: 60_000, // 1 min – avoid dropping connections after short idle
     connectionTimeoutMillis: 15_000,
@@ -38,7 +44,21 @@ function getPrismaClient(): PrismaClient {
   return client;
 }
 
-export const prisma = getPrismaClient();
+/**
+ * Lazy Prisma singleton: do not connect at import time so `next build` can run when
+ * DATABASE_URL is only set at runtime (e.g. Netlify deploy preview without DB env).
+ * The first query (or getPrisma()) requires DATABASE_URL / NETLIFY_DATABASE_URL.
+ */
+const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    const client = getPrismaClient();
+    const value = Reflect.get(client as object, prop, receiver);
+    if (typeof value === 'function') {
+      return (value as (...args: unknown[]) => unknown).bind(client);
+    }
+    return value;
+  },
+});
 
 /** Reset the cached client so the next getPrisma() gets a fresh connection (use after connection errors). */
 export function resetPrismaConnection(): void {
@@ -57,4 +77,5 @@ export function getPrisma(): PrismaClient {
   return getPrismaClient();
 }
 
+export { prisma };
 export default prisma;

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { loadMongoBlogPostWithRelations, useMongoForPublicBlog } from '@/lib/mongo-blog';
 
 /**
  * GET /api/posts/[slug]
@@ -12,6 +13,76 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+
+    if (useMongoForPublicBlog()) {
+      const data = await loadMongoBlogPostWithRelations(slug);
+      if (!data) {
+        return NextResponse.json(
+          { error: 'Post not found' },
+          { status: 404 }
+        );
+      }
+      const { post, relatedPosts } = data;
+      return NextResponse.json({
+        post: {
+          id: post.id,
+          slug: post.slug,
+          title: post.title,
+          excerpt: post.excerpt,
+          content: post.content,
+          publishedAt: post.publishedAt,
+          viewCount: post.viewCount,
+          author: {
+            id: post.authorId,
+            name: post.author.name,
+            email: post.author.email,
+            image: post.author.image,
+            bio: post.author.bio,
+          },
+          categories: post.categories.map((c) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            description: null,
+          })),
+          tags: post.tags.map((t) => ({
+            id: t.id,
+            name: t.name,
+            slug: t.slug,
+          })),
+          featuredImage: post.featuredImage
+            ? {
+                id: post.featuredImageId ?? '',
+                url: post.featuredImage.url,
+                altText: post.featuredImage.altText,
+                caption: post.featuredImage.caption,
+                width: null,
+                height: null,
+              }
+            : null,
+          comments: post.comments,
+          metaTitle: post.metaTitle,
+          metaDescription: post.metaDescription,
+        },
+        relatedPosts: relatedPosts.map((rp) => ({
+          id: rp.id,
+          slug: rp.slug,
+          title: rp.title,
+          categories: rp.categories.map((c) => ({
+            id: c.slug,
+            name: c.name,
+            slug: c.slug,
+          })),
+          featuredImage: rp.featuredImage
+            ? {
+                id: null,
+                url: rp.featuredImage.url,
+                altText: rp.featuredImage.altText,
+              }
+            : null,
+        })),
+      });
+    }
 
     // Get the post
     const post = await prisma.post.findUnique({

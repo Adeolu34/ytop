@@ -2,6 +2,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, User, Tag, ArrowRight } from 'lucide-react';
 import { getPrisma, resetPrismaConnection } from '@/lib/db';
+import {
+  mongoAggregateCategories,
+  mongoListPublishedPosts,
+  useMongoForPublicBlog,
+} from '@/lib/mongo-blog';
 
 // When a post has no featured image, rotate through these so cards don’t all look the same
 const FALLBACK_FEATURED_IMAGES = [
@@ -116,38 +121,75 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
   let loadError: string | null = null;
 
   try {
-    const [
-      postsResult,
-      totalCountResult,
-      totalPublishedCountResult,
-      categoriesResult,
-      draftCountResult,
-    ] = await loadBlogData(where, page, limit);
-    posts = postsResult;
-    totalCount = totalCountResult;
-    totalPublishedCount = totalPublishedCountResult;
-    categories = categoriesResult;
-    draftCount = draftCountResult;
+    if (useMongoForPublicBlog()) {
+      const prisma = getPrisma();
+      const [mongoData, categoriesResult, draftCountResult] = await Promise.all([
+        mongoListPublishedPosts({
+          page,
+          limit,
+          categorySlug: categorySlug || undefined,
+        }),
+        mongoAggregateCategories(),
+        prisma.post.count({ where: { status: 'DRAFT' } }),
+      ]);
+      posts = mongoData.posts as BlogPostItem[];
+      totalCount = mongoData.total;
+      totalPublishedCount = mongoData.totalPublished;
+      categories = categoriesResult;
+      draftCount = draftCountResult;
+    } else {
+      const [
+        postsResult,
+        totalCountResult,
+        totalPublishedCountResult,
+        categoriesResult,
+        draftCountResult,
+      ] = await loadBlogData(where, page, limit);
+      posts = postsResult;
+      totalCount = totalCountResult;
+      totalPublishedCount = totalPublishedCountResult;
+      categories = categoriesResult;
+      draftCount = draftCountResult;
+    }
   } catch (err) {
     if (isConnectionError(err)) {
       resetPrismaConnection();
       try {
-        const [
-          postsResult,
-          totalCountResult,
-          totalPublishedCountResult,
-          categoriesResult,
-          draftCountResult,
-        ] =
-          await loadBlogData(where, page, limit);
-        posts = postsResult;
-        totalCount = totalCountResult;
-        totalPublishedCount = totalPublishedCountResult;
-        categories = categoriesResult;
-        draftCount = draftCountResult;
+        if (useMongoForPublicBlog()) {
+          const prisma = getPrisma();
+          const [mongoData, categoriesResult, draftCountResult] =
+            await Promise.all([
+              mongoListPublishedPosts({
+                page,
+                limit,
+                categorySlug: categorySlug || undefined,
+              }),
+              mongoAggregateCategories(),
+              prisma.post.count({ where: { status: 'DRAFT' } }),
+            ]);
+          posts = mongoData.posts as BlogPostItem[];
+          totalCount = mongoData.total;
+          totalPublishedCount = mongoData.totalPublished;
+          categories = categoriesResult;
+          draftCount = draftCountResult;
+        } else {
+          const [
+            postsResult,
+            totalCountResult,
+            totalPublishedCountResult,
+            categoriesResult,
+            draftCountResult,
+          ] = await loadBlogData(where, page, limit);
+          posts = postsResult;
+          totalCount = totalCountResult;
+          totalPublishedCount = totalPublishedCountResult;
+          categories = categoriesResult;
+          draftCount = draftCountResult;
+        }
       } catch (retryErr) {
         console.error('Blog page failed after retry:', retryErr);
-        loadError = 'The connection to the database was lost or timed out. Please refresh the page or try again in a moment.';
+        loadError =
+          'The connection to the database was lost or timed out. Please refresh the page or try again in a moment.';
       }
     } else {
       console.error('Blog page failed to load posts:', err);

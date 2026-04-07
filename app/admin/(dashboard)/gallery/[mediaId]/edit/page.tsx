@@ -25,6 +25,7 @@ export default async function EditMediaPage({
       description: true,
       width: true,
       height: true,
+      folder: true,
     },
   });
 
@@ -60,6 +61,7 @@ export default async function EditMediaPage({
           description: media.description || '',
           width: media.width?.toString() || '',
           height: media.height?.toString() || '',
+          folder: media.folder || '',
         }}
       />
     </div>

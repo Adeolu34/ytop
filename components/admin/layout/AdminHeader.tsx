@@ -27,6 +27,18 @@ function getSearchAction(pathname: string): string {
     return '/admin/comments';
   }
 
+  if (pathname.startsWith('/admin/settings')) {
+    return '/admin/settings';
+  }
+
+  if (pathname.startsWith('/admin/team')) {
+    return '/admin/team';
+  }
+
+  if (pathname.startsWith('/admin/programs')) {
+    return '/admin/programs';
+  }
+
   return '/admin';
 }
 
@@ -47,7 +59,7 @@ function shouldPreserveParam(pathname: string, key: string): boolean {
     pathname.startsWith('/admin/gallery') ||
     pathname.startsWith('/admin/media')
   ) {
-    return key === 'type';
+    return key === 'type' || key === 'folder';
   }
 
   return false;

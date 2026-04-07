@@ -26,6 +26,7 @@ export default async function NewMediaPage() {
           description: '',
           width: '',
           height: '',
+          folder: '',
         }}
       />
     </div>

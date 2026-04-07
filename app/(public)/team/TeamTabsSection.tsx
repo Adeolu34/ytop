@@ -11,18 +11,17 @@ type FacultyMentor = { name: string; role?: string; photo?: string };
 interface TeamTabsSectionProps {
   coreTeam: CoreTeamMember[];
   facultyMentors: FacultyMentor[];
+  volunteerTeam: CoreTeamMember[];
+  communityTeam: CoreTeamMember[];
 }
 
-function TeamTabsSection({ coreTeam, facultyMentors }: TeamTabsSectionProps) {
+function TeamTabsSection({
+  coreTeam,
+  facultyMentors,
+  volunteerTeam,
+  communityTeam,
+}: TeamTabsSectionProps) {
   const [activeTab, setActiveTab] = useState<'team' | 'faculty' | 'volunteers' | 'community'>('team');
-
-  const volunteerTeam = coreTeam.filter(
-    (member) =>
-      member.position.toLowerCase().includes('volunteer') ||
-      member.position.toLowerCase().includes('volunteering'),
-  );
-
-  const communityTeam = coreTeam.filter((member) => member.position.toLowerCase().includes('community'));
 
   return (
     <section className="py-20 md:py-24 bg-white">
@@ -192,7 +191,7 @@ function TeamTabsSection({ coreTeam, facultyMentors }: TeamTabsSectionProps) {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {(volunteerTeam.length > 0 ? volunteerTeam : coreTeam).map((member) => (
+              {(volunteerTeam.length > 0 ? volunteerTeam : coreTeam.slice(0, 3)).map((member) => (
                 <div
                   key={member.name}
                   className="group bg-white rounded-2xl shadow-ytop overflow-hidden border border-slate-100 hover:shadow-ytop-lg hover:border-ytop-blue/20 transition-all duration-300"
@@ -249,7 +248,7 @@ function TeamTabsSection({ coreTeam, facultyMentors }: TeamTabsSectionProps) {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {(communityTeam.length > 0 ? communityTeam : coreTeam).map((member) => (
+              {(communityTeam.length > 0 ? communityTeam : coreTeam.slice(0, 3)).map((member) => (
                 <div
                   key={member.name}
                   className="group bg-white rounded-2xl shadow-ytop overflow-hidden border border-slate-100 hover:shadow-ytop-lg hover:border-ytop-blue/20 transition-all duration-300"
