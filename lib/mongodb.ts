@@ -1,8 +1,11 @@
 /**
- * Optional MongoDB client. Primary app data (users, blog posts, media metadata, etc.)
- * lives in PostgreSQL via Prisma (`lib/db.ts`). Use MongoDB only for collections you
- * add explicitly (e.g. analytics, logs). Moving all Prisma models here would be a
- * separate migration project.
+ * MongoDB client for collections this app uses explicitly.
+ *
+ * **Public blog (when `PUBLIC_BLOG_SOURCE=mongodb`):** published posts are read from MongoDB
+ * (`blog_posts`), synced from PostgreSQL on publish. Comments for those posts still use Postgres.
+ *
+ * **PostgreSQL (Prisma):** remains the source of truth for admin, drafts, users, sessions,
+ * campaigns, media rows, and most APIs. Set `DATABASE_URL` for those features.
  */
 import { MongoClient, Db } from 'mongodb';
 
