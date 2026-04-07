@@ -30,15 +30,20 @@ const categories = ['All', 'Events', 'Programs', 'Community', 'Team'];
 type Row = { src: string; alt: string; category: string; key: string };
 
 export default function GalleryClient({
+  cloudinaryConfigured,
   cloudinaryImages,
+  galleryFolderHint,
 }: {
+  cloudinaryConfigured: boolean;
   cloudinaryImages: CloudinaryGalleryItem[];
+  /** Comma-separated folder prefixes (for empty-state copy). */
+  galleryFolderHint?: string;
 }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const rows: Row[] = useMemo(() => {
-    if (cloudinaryImages.length > 0) {
+    if (cloudinaryConfigured && cloudinaryImages.length > 0) {
       return cloudinaryImages.map((img) => ({
         src: img.src,
         alt: img.alt,
@@ -46,11 +51,14 @@ export default function GalleryClient({
         key: img.publicId,
       }));
     }
-    return STATIC_GALLERY.map((img, i) => ({
-      ...img,
-      key: `static-${i}-${img.src}`,
-    }));
-  }, [cloudinaryImages]);
+    if (!cloudinaryConfigured) {
+      return STATIC_GALLERY.map((img, i) => ({
+        ...img,
+        key: `static-${i}-${img.src}`,
+      }));
+    }
+    return [];
+  }, [cloudinaryConfigured, cloudinaryImages]);
 
   const filteredImages =
     selectedCategory === 'All'
@@ -100,6 +108,20 @@ export default function GalleryClient({
               ))}
             </div>
           </div>
+
+          {cloudinaryConfigured && rows.length === 0 && (
+            <div className="mb-10 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+              <p className="font-medium">Cloudinary is configured, but no images were returned for this site.</p>
+              <p className="mt-1 text-amber-900/90 dark:text-amber-100/90">
+                Upload images whose <strong className="font-semibold">public ID</strong> starts with{' '}
+                <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">
+                  {galleryFolderHint ?? 'ytop/gallery'}
+                </code>
+                , or set <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_PREFIX</code> to match your folder. Add{' '}
+                <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER=1</code> to also include the admin upload folder.
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredImages.map((image) => (

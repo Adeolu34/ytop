@@ -1,15 +1,21 @@
 import GalleryClient from '@/components/public/gallery/GalleryClient';
 import {
+  cloudinaryGalleryPrefixes,
   isCloudinaryConfigured,
   listGalleryImagesFromCloudinary,
 } from '@/lib/cloudinary';
+
+/** Always fetch fresh gallery list (Cloudinary env must exist at request time, not only at build). */
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function GalleryPage() {
   let cloudinaryImages: Awaited<
     ReturnType<typeof listGalleryImagesFromCloudinary>
   > = [];
 
-  if (isCloudinaryConfigured()) {
+  const configured = isCloudinaryConfigured();
+  if (configured) {
     try {
       cloudinaryImages = await listGalleryImagesFromCloudinary();
     } catch (e) {
@@ -17,5 +23,11 @@ export default async function GalleryPage() {
     }
   }
 
-  return <GalleryClient cloudinaryImages={cloudinaryImages} />;
+  return (
+    <GalleryClient
+      cloudinaryConfigured={configured}
+      cloudinaryImages={cloudinaryImages}
+      galleryFolderHint={cloudinaryGalleryPrefixes().join(', ')}
+    />
+  );
 }

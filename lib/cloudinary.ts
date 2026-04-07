@@ -90,9 +90,27 @@ export async function destroyCloudinaryAsset(
 
 /** Public gallery folder prefix (no leading/trailing slash). Tag assets with Events|Programs|Community|Team for filters. */
 export function cloudinaryGalleryPrefix(): string {
-  return (
-    process.env.CLOUDINARY_GALLERY_PREFIX?.trim() || 'ytop/gallery'
-  );
+  return cloudinaryGalleryPrefixes()[0] ?? 'ytop/gallery';
+}
+
+/**
+ * One or more comma-separated folder prefixes to list and merge (deduped by public_id).
+ * Default: `ytop/gallery`. If `CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER=1`, appends the admin upload folder (e.g. ytop/admin) so existing uploads appear without moving files.
+ */
+export function cloudinaryGalleryPrefixes(): string[] {
+  const raw = process.env.CLOUDINARY_GALLERY_PREFIX?.trim();
+  const parts = raw
+    ? raw.split(',').map((s) => s.trim().replace(/^\/+|\/+$/g, '')).filter(Boolean)
+    : ['ytop/gallery'];
+  const alsoUpload =
+    process.env.CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER?.trim() === '1' ||
+    process.env.CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER?.toLowerCase().trim() ===
+      'true';
+  const uploadFolder = cloudinaryUploadFolder().replace(/^\/+|\/+$/g, '');
+  if (alsoUpload && uploadFolder && !parts.includes(uploadFolder)) {
+    parts.push(uploadFolder);
+  }
+  return parts;
 }
 
 export type CloudinaryGalleryItem = {
@@ -114,10 +132,7 @@ function categoryFromResource(resource: {
       return c;
     }
   }
-  const pathParts = resource.public_id.split('/');
-  const idx = pathParts.findIndex((p) => p === 'gallery');
-  if (idx >= 0 && pathParts[idx + 1]) {
-    const seg = pathParts[idx + 1];
+  for (const seg of resource.public_id.split('/')) {
     if (GALLERY_CATEGORIES.includes(seg as (typeof GALLERY_CATEGORIES)[number])) {
       return seg;
     }
@@ -125,8 +140,99 @@ function categoryFromResource(resource: {
   return 'Events';
 }
 
+type GalleryResource = {
+  secure_url?: string;
+  /** Some API responses use `url` instead of `secure_url`. */
+  url?: string;
+  public_id: string;
+  tags?: string[];
+  context?: { custom?: { caption?: string; alt?: string } };
+};
+
+async function listResourcesByPrefixPaged(prefix: string): Promise<GalleryResource[]> {
+  const collected: GalleryResource[] = [];
+  let next_cursor: string | undefined;
+  for (let page = 0; page < 40; page++) {
+    const batch = (await cloudinary.api.resources({
+      type: 'upload',
+      resource_type: 'image',
+      prefix,
+      max_results: 500,
+      ...(next_cursor ? { next_cursor } : {}),
+    })) as { resources?: GalleryResource[]; next_cursor?: string };
+    const rows = batch.resources ?? [];
+    collected.push(...rows);
+    next_cursor = batch.next_cursor;
+    if (!next_cursor) break;
+  }
+  return collected;
+}
+
+/** Search API fallback when Admin `resources` returns nothing (e.g. DAM folder vs public_id mismatch). */
+async function listResourcesViaSearchPrefix(prefix: string): Promise<GalleryResource[]> {
+  // Quote public_id so paths like ytop/gallery are not parsed as nested fields.
+  const quoted = prefix.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const result = (await cloudinary.search
+    .expression(`resource_type:image AND public_id:"${quoted}*"`)
+    .max_results(500)
+    .execute()) as { resources?: GalleryResource[] };
+  return result.resources ?? [];
+}
+
+/** Some accounts organize by Media Library asset folder instead of public_id prefix. */
+async function listResourcesByAssetFolder(folder: string): Promise<GalleryResource[]> {
+  try {
+    const batch = (await cloudinary.api.resources_by_asset_folder(folder, {
+      resource_type: 'image',
+      max_results: 500,
+    })) as { resources?: GalleryResource[] };
+    return batch.resources ?? [];
+  } catch {
+    return [];
+  }
+}
+
+function resourceToGalleryItem(r: GalleryResource): CloudinaryGalleryItem {
+  const src = r.secure_url || r.url || '';
+  return {
+    src,
+    alt:
+      r.context?.custom?.alt ||
+      r.context?.custom?.caption ||
+      r.public_id.split('/').pop() ||
+      'Gallery image',
+    category: categoryFromResource(r),
+    publicId: r.public_id,
+  };
+}
+
+async function collectForPrefix(prefix: string): Promise<GalleryResource[]> {
+  const byId = new Map<string, GalleryResource>();
+
+  const addAll = (rows: GalleryResource[]) => {
+    for (const row of rows) {
+      const src = row.secure_url || row.url;
+      if (row.public_id && src) {
+        byId.set(row.public_id, { ...row, secure_url: src });
+      }
+    }
+  };
+
+  addAll(await listResourcesByPrefixPaged(prefix));
+
+  if (byId.size === 0) {
+    addAll(await listResourcesViaSearchPrefix(prefix));
+  }
+
+  if (byId.size === 0) {
+    addAll(await listResourcesByAssetFolder(prefix));
+  }
+
+  return [...byId.values()];
+}
+
 /**
- * List images under {@link cloudinaryGalleryPrefix} for the public /gallery page.
+ * List images under {@link cloudinaryGalleryPrefixes} for the public /gallery page.
  */
 export async function listGalleryImagesFromCloudinary(): Promise<
   CloudinaryGalleryItem[]
@@ -136,29 +242,18 @@ export async function listGalleryImagesFromCloudinary(): Promise<
     return [];
   }
 
-  const prefix = cloudinaryGalleryPrefix();
-  const result = (await cloudinary.api.resources({
-    type: 'upload',
-    resource_type: 'image',
-    prefix,
-    max_results: 500,
-  })) as {
-    resources: Array<{
-      secure_url: string;
-      public_id: string;
-      tags?: string[];
-      context?: { custom?: { caption?: string; alt?: string } };
-    }>;
-  };
+  const prefixes = cloudinaryGalleryPrefixes();
+  const merged = new Map<string, GalleryResource>();
 
-  return result.resources.map((r) => ({
-    src: r.secure_url,
-    alt:
-      r.context?.custom?.alt ||
-      r.context?.custom?.caption ||
-      r.public_id.split('/').pop() ||
-      'Gallery image',
-    category: categoryFromResource(r),
-    publicId: r.public_id,
-  }));
+  for (const prefix of prefixes) {
+    const rows = await collectForPrefix(prefix);
+    for (const r of rows) {
+      const src = r.secure_url || r.url;
+      if (r.public_id && src) {
+        merged.set(r.public_id, { ...r, secure_url: src });
+      }
+    }
+  }
+
+  return [...merged.values()].map(resourceToGalleryItem);
 }
