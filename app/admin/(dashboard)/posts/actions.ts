@@ -12,6 +12,11 @@ import {
   isEmailSendingConfigured,
   sendBulkNewsletterEmail,
 } from '@/lib/email';
+import {
+  removeBlogPostFromMongo,
+  syncPostToMongoById,
+  useMongoForPublicBlog,
+} from '@/lib/mongo-blog';
 
 type PostEditorState = {
   error: string | null;
@@ -66,15 +71,25 @@ export async function savePostAction(
       return { error: 'That post could not be found.' };
     }
 
+    let savedPostId: string;
     if (postId) {
       await prisma.post.update({
         where: { id: postId },
         data: buildPostUpdateData(draft, authorId, slug),
       });
+      savedPostId = postId;
     } else {
-      await prisma.post.create({
+      const created = await prisma.post.create({
         data: buildPostCreateData(draft, authorId, slug),
+        select: { id: true },
       });
+      savedPostId = created.id;
+    }
+
+    if (useMongoForPublicBlog()) {
+      await syncPostToMongoById(savedPostId).catch((e) =>
+        console.error('[mongo-blog sync]', e)
+      );
     }
 
     revalidatePostSurfaces(existingPost?.slug, slug);
@@ -111,6 +126,12 @@ export async function deletePostAction(formData: FormData): Promise<void> {
       createAdminRedirectUrl(POST_INDEX_PATH, {
         error: 'That post could not be found.',
       })
+    );
+  }
+
+  if (useMongoForPublicBlog()) {
+    await removeBlogPostFromMongo(postId).catch((e) =>
+      console.error('[mongo-blog delete]', e)
     );
   }
 
@@ -226,6 +247,12 @@ export async function notifyNewsletterSubscribersAction(
     data: { emailNotifiedAt: new Date() },
   });
 
+  if (useMongoForPublicBlog()) {
+    await syncPostToMongoById(postId).catch((e) =>
+      console.error('[mongo-blog sync]', e)
+    );
+  }
+
   revalidatePostSurfaces(post.slug);
   revalidatePath(`/admin/posts/${postId}/edit`);
 
@@ -287,6 +314,12 @@ export async function updatePostStatusAction(formData: FormData): Promise<void> 
             : currentPost.publishedAt,
     },
   });
+
+  if (useMongoForPublicBlog()) {
+    await syncPostToMongoById(postId).catch((e) =>
+      console.error('[mongo-blog sync]', e)
+    );
+  }
 
   revalidatePostSurfaces(currentPost.slug);
 

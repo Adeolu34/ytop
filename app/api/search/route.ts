@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { mongoSearchPosts, useMongoForPublicBlog } from '@/lib/mongo-blog';
 
 /**
  * GET /api/search
@@ -24,35 +25,38 @@ export async function GET(request: NextRequest) {
     }
 
     const searchTerm = query.trim();
+    const postTake = Math.floor(limit * 0.7); // 70% of limit for posts
 
-    // Search posts
-    const posts = await prisma.post.findMany({
-      where: {
-        status: 'PUBLISHED',
-        OR: [
-          { title: { contains: searchTerm, mode: 'insensitive' } },
-          { content: { contains: searchTerm, mode: 'insensitive' } },
-          { excerpt: { contains: searchTerm, mode: 'insensitive' } },
-        ],
-      },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        publishedAt: true,
-        featuredImage: {
-          select: {
-            url: true,
-            altText: true,
+    // Search posts (Mongo when public blog is configured to use it)
+    const posts = useMongoForPublicBlog()
+      ? await mongoSearchPosts(searchTerm, postTake)
+      : await prisma.post.findMany({
+          where: {
+            status: 'PUBLISHED',
+            OR: [
+              { title: { contains: searchTerm, mode: 'insensitive' } },
+              { content: { contains: searchTerm, mode: 'insensitive' } },
+              { excerpt: { contains: searchTerm, mode: 'insensitive' } },
+            ],
           },
-        },
-      },
-      take: Math.floor(limit * 0.7), // 70% of limit for posts
-      orderBy: {
-        publishedAt: 'desc',
-      },
-    });
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            excerpt: true,
+            publishedAt: true,
+            featuredImage: {
+              select: {
+                url: true,
+                altText: true,
+              },
+            },
+          },
+          take: postTake,
+          orderBy: {
+            publishedAt: 'desc',
+          },
+        });
 
     // Search pages
     const pages = await prisma.page.findMany({

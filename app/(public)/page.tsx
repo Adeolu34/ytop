@@ -3,6 +3,7 @@ import Image from 'next/image';
 import HomeHeroSlideshow from '@/components/public/HomeHeroSlideshow';
 import { getPrisma } from '@/lib/db';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
+import { mongoListPublishedPosts, useMongoForPublicBlog } from '@/lib/mongo-blog';
 import {
   GraduationCap,
   Megaphone,
@@ -89,25 +90,35 @@ export default async function HomePage() {
     load: async () => {
       const prisma = getPrisma();
 
-      return Promise.all([
-        prisma.teamMember.findMany({
-          where: { isActive: true },
-          include: {
-            photo: {
-              select: {
-                url: true,
-                altText: true,
-              },
+      const teamMembers = await prisma.teamMember.findMany({
+        where: { isActive: true },
+        include: {
+          photo: {
+            select: {
+              url: true,
+              altText: true,
             },
           },
-          orderBy: { order: 'asc' },
-          take: 3,
-        }),
-        prisma.post.findMany({
+        },
+        orderBy: { order: 'asc' },
+        take: 3,
+      });
+
+      let latestPosts: Awaited<ReturnType<typeof mongoListPublishedPosts>>['posts'];
+      if (useMongoForPublicBlog()) {
+        const { posts } = await mongoListPublishedPosts({
+          page: 1,
+          limit: 3,
+        });
+        latestPosts = posts;
+      } else {
+        const prismaPosts = await prisma.post.findMany({
           where: { status: 'PUBLISHED' },
           include: {
+            author: { select: { name: true, image: true } },
             featuredImage: {
               select: {
+                id: true,
                 url: true,
                 altText: true,
               },
@@ -121,8 +132,29 @@ export default async function HomePage() {
           },
           orderBy: { publishedAt: 'desc' },
           take: 3,
-        }),
-      ]);
+        });
+        latestPosts = prismaPosts.map((p) => ({
+          id: p.id,
+          slug: p.slug,
+          title: p.title,
+          excerpt: p.excerpt,
+          publishedAt: p.publishedAt,
+          author: {
+            name: p.author?.name ?? null,
+            image: p.author?.image ?? null,
+          },
+          categories: p.categories.map((c) => ({ name: c.name, slug: c.slug })),
+          featuredImage: p.featuredImage
+            ? {
+                id: p.featuredImage.id,
+                url: p.featuredImage.url,
+                altText: p.featuredImage.altText,
+              }
+            : null,
+        }));
+      }
+
+      return [teamMembers, latestPosts] as const;
     },
     fallback: [[], []],
     onError(error) {

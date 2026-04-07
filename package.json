@@ -13,7 +13,8 @@
     "reimport-posts-wp": "tsx scripts/import-posts-from-wp-api.ts --reimport",
     "db:seed": "tsx prisma/seed.ts",
     "migrate:cloudinary": "tsx scripts/migrate-media-to-cloudinary.ts",
-    "upload:public-media-cloudinary": "tsx scripts/upload-public-folder-to-cloudinary.ts"
+    "upload:public-media-cloudinary": "tsx scripts/upload-public-folder-to-cloudinary.ts",
+    "sync:blog-mongo": "tsx scripts/sync-published-posts-to-mongo.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

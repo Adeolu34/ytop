@@ -87,3 +87,78 @@ export async function destroyCloudinaryAsset(
   if (!isCloudinaryConfigured()) return;
   await cloudinary.uploader.destroy(publicId, { resource_type: 'auto' });
 }
+
+/** Public gallery folder prefix (no leading/trailing slash). Tag assets with Events|Programs|Community|Team for filters. */
+export function cloudinaryGalleryPrefix(): string {
+  return (
+    process.env.CLOUDINARY_GALLERY_PREFIX?.trim() || 'ytop/gallery'
+  );
+}
+
+export type CloudinaryGalleryItem = {
+  src: string;
+  alt: string;
+  category: string;
+  publicId: string;
+};
+
+const GALLERY_CATEGORIES = ['Events', 'Programs', 'Community', 'Team'] as const;
+
+function categoryFromResource(resource: {
+  tags?: string[];
+  public_id: string;
+}): string {
+  const tags = resource.tags ?? [];
+  for (const c of GALLERY_CATEGORIES) {
+    if (tags.some((t) => t.toLowerCase() === c.toLowerCase())) {
+      return c;
+    }
+  }
+  const pathParts = resource.public_id.split('/');
+  const idx = pathParts.findIndex((p) => p === 'gallery');
+  if (idx >= 0 && pathParts[idx + 1]) {
+    const seg = pathParts[idx + 1];
+    if (GALLERY_CATEGORIES.includes(seg as (typeof GALLERY_CATEGORIES)[number])) {
+      return seg;
+    }
+  }
+  return 'Events';
+}
+
+/**
+ * List images under {@link cloudinaryGalleryPrefix} for the public /gallery page.
+ */
+export async function listGalleryImagesFromCloudinary(): Promise<
+  CloudinaryGalleryItem[]
+> {
+  configure();
+  if (!isCloudinaryConfigured()) {
+    return [];
+  }
+
+  const prefix = cloudinaryGalleryPrefix();
+  const result = (await cloudinary.api.resources({
+    type: 'upload',
+    resource_type: 'image',
+    prefix,
+    max_results: 500,
+  })) as {
+    resources: Array<{
+      secure_url: string;
+      public_id: string;
+      tags?: string[];
+      context?: { custom?: { caption?: string; alt?: string } };
+    }>;
+  };
+
+  return result.resources.map((r) => ({
+    src: r.secure_url,
+    alt:
+      r.context?.custom?.alt ||
+      r.context?.custom?.caption ||
+      r.public_id.split('/').pop() ||
+      'Gallery image',
+    category: categoryFromResource(r),
+    publicId: r.public_id,
+  }));
+}
