@@ -1,10 +1,15 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
 import AdminSubmitButton from '@/components/admin/forms/AdminSubmitButton';
 import { savePostAction } from '@/app/admin/(dashboard)/posts/actions';
+import MediaPickerModal, {
+  type MediaPickerItem,
+} from '@/components/admin/media/MediaPickerModal';
+import PostPublishActions from '@/components/admin/posts/PostPublishActions';
 
 const POST_EDITOR_INITIAL_STATE = {
   error: null,
@@ -34,22 +39,40 @@ type PostEditorFormProps = {
     email: string;
     role: string;
   }>;
-  featuredImages: Array<{
-    id: string;
-    filename: string;
-  }>;
+  mediaPickerInitialItems: MediaPickerItem[];
+  imageFolders: string[];
+  publishActions?: {
+    slug: string;
+    postTitle: string;
+    status: string;
+    emailNotifiedAt: string | null;
+    siteBaseUrl: string;
+  };
 };
 
 export default function PostEditorForm({
   mode,
   initialValues,
   authors,
-  featuredImages,
+  mediaPickerInitialItems,
+  imageFolders,
+  publishActions,
 }: PostEditorFormProps) {
   const [state, formAction] = useActionState(
     savePostAction,
     POST_EDITOR_INITIAL_STATE
   );
+  const [featuredImageId, setFeaturedImageId] = useState(
+    initialValues.featuredImageId
+  );
+  const [featuredPreview, setFeaturedPreview] = useState<MediaPickerItem | null>(
+    () =>
+      mediaPickerInitialItems.find((m) => m.id === initialValues.featuredImageId) ??
+      null
+  );
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const selectedImage = featuredPreview;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -254,25 +277,62 @@ export default function PostEditorForm({
                 </select>
               </label>
 
-              <label className="block">
+              <div className="block">
                 <span className="mb-2 block text-sm font-semibold text-[#1b1c1c]">
                   Featured Image
                 </span>
-                <select
-                  name="featuredImageId"
-                  defaultValue={initialValues.featuredImageId}
-                  className="w-full rounded-xl border border-[#e7d6d4] bg-white px-4 py-3 text-sm text-[#1b1c1c] outline-none transition-colors focus:border-[#ba0013]"
-                >
-                  <option value="">No featured image</option>
-                  {featuredImages.map((image) => (
-                    <option key={image.id} value={image.id}>
-                      {image.filename}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <input type="hidden" name="featuredImageId" value={featuredImageId} />
+                <div className="flex flex-col gap-3 rounded-xl border border-[#e7d6d4] bg-white p-4">
+                  {selectedImage?.url ? (
+                    <div className="relative h-40 w-full overflow-hidden rounded-lg bg-[#efeded]">
+                      <Image
+                        src={selectedImage.url}
+                        alt={selectedImage.altText || selectedImage.filename}
+                        fill
+                        className="object-contain"
+                        sizes="320px"
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#5d3f3c]">No image selected.</p>
+                  )}
+                  <p className="text-xs text-[#5d3f3c]">
+                    {selectedImage
+                      ? selectedImage.filename
+                      : 'Choose an image from the gallery'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setPickerOpen(true)}
+                    className="rounded-xl bg-[#efeded] px-4 py-2.5 text-sm font-semibold text-[#1b1c1c] transition hover:bg-[#e4e2e2]"
+                  >
+                    Choose from gallery
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+
+          {mode === 'edit' &&
+          publishActions?.status === 'PUBLISHED' &&
+          initialValues.id ? (
+            publishActions.siteBaseUrl ? (
+              <PostPublishActions
+                key={`${initialValues.id}-${publishActions.emailNotifiedAt ?? 'pending'}`}
+                postId={initialValues.id}
+                slug={publishActions.slug}
+                postTitle={publishActions.postTitle}
+                siteBaseUrl={publishActions.siteBaseUrl}
+                emailNotifiedAt={publishActions.emailNotifiedAt}
+              />
+            ) : (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-950">
+                Set <code className="rounded bg-white/80 px-1">NEXT_PUBLIC_SITE_URL</code> or{' '}
+                <code className="rounded bg-white/80 px-1">NEXTAUTH_URL</code> to enable share links and
+                newsletter email.
+              </div>
+            )
+          ) : null}
 
           <div className="rounded-2xl bg-[#efeded] p-8">
             <p className="text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-[#5d3f3c]">
@@ -298,6 +358,18 @@ export default function PostEditorForm({
           </div>
         </aside>
       </div>
+
+      <MediaPickerModal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        folders={imageFolders}
+        initialItems={mediaPickerInitialItems}
+        selectedId={featuredImageId}
+        onSelect={(id, item) => {
+          setFeaturedImageId(id);
+          setFeaturedPreview(item ?? null);
+        }}
+      />
     </form>
   );
 }

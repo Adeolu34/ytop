@@ -4,19 +4,24 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 
-/** YTOP logo from downloaded media */
-const LOGO_SRC = '/media/2023/03/YTOP-PNGGG-2022.png';
+const DEFAULT_LOGO_SRC = '/media/2023/03/YTOP-PNGGG-2022.png';
 
-export default function Logo() {
+type LogoProps = {
+  logoUrl?: string | null;
+  siteName?: string;
+};
+
+export default function Logo({ logoUrl, siteName = 'YTOP Global' }: LogoProps) {
   const [failed, setFailed] = useState(false);
+  const src = logoUrl?.trim() || DEFAULT_LOGO_SRC;
 
   return (
     <Link href="/" className="flex items-center group">
       {!failed ? (
         <div className="relative h-12 w-[160px] flex-shrink-0">
           <Image
-            src={LOGO_SRC}
-            alt="YTOP Global"
+            src={src}
+            alt={siteName}
             fill
             className="object-contain object-left"
             sizes="160px"

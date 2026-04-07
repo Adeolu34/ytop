@@ -7,9 +7,19 @@ import prisma from '@/lib/db';
 import { checkPermission, requireAuth } from '@/lib/auth-utils';
 import { buildPostDraft, slugifyValue } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
+import {
+  getSiteBaseUrl,
+  isEmailSendingConfigured,
+  sendBulkNewsletterEmail,
+} from '@/lib/email';
 
 type PostEditorState = {
   error: string | null;
+};
+
+export type NotifySubscribersState = {
+  error: string | null;
+  ok?: boolean;
 };
 
 const POST_INDEX_PATH = '/admin/posts';
@@ -112,6 +122,122 @@ export async function deletePostAction(formData: FormData): Promise<void> {
       notice: 'Post deleted successfully.',
     })
   );
+}
+
+export async function notifyNewsletterSubscribersAction(
+  _previousState: NotifySubscribersState,
+  formData: FormData
+): Promise<NotifySubscribersState> {
+  const currentUser = await requireAuth();
+
+  if (!checkPermission(currentUser.role, 'EDITOR')) {
+    return { error: 'You do not have permission to email subscribers.' };
+  }
+
+  const postId = readOptionalString(formData, 'postId');
+  if (!postId) {
+    return { error: 'Post is required.' };
+  }
+
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      status: true,
+      emailNotifiedAt: true,
+    },
+  });
+
+  if (!post) {
+    return { error: 'That post could not be found.' };
+  }
+
+  if (post.status !== 'PUBLISHED') {
+    return { error: 'Only published posts can be emailed to subscribers.' };
+  }
+
+  if (post.emailNotifiedAt) {
+    return {
+      error:
+        'This post was already emailed to subscribers. Contact an admin if you need to resend.',
+    };
+  }
+
+  if (!isEmailSendingConfigured()) {
+    return {
+      error:
+        'Email is not configured (set SMTP_* for Microsoft 365, or Resend/SendGrid — see .env.example).',
+    };
+  }
+
+  const base = getSiteBaseUrl();
+  if (!base) {
+    return {
+      error:
+        'Site URL is not configured. Set NEXT_PUBLIC_SITE_URL or NEXTAUTH_URL.',
+    };
+  }
+
+  const postUrl = `${base}/blog/${post.slug}`;
+
+  const rows = await prisma.formSubmission.findMany({
+    where: { type: 'NEWSLETTER', email: { not: null } },
+    select: { email: true },
+    distinct: ['email'],
+  });
+
+  const emails = rows
+    .map((r) => r.email?.trim().toLowerCase())
+    .filter((e): e is string => Boolean(e));
+
+  if (emails.length === 0) {
+    return {
+      error:
+        'No newsletter subscribers found. Subscriptions appear when visitors use the newsletter form.',
+    };
+  }
+
+  const subject = `New on YTOP: ${post.title}`;
+  const html = `
+    <p>Hello,</p>
+    <p>We published a new story you might enjoy:</p>
+    <p><strong>${escapeHtml(post.title)}</strong></p>
+    <p><a href="${postUrl}">Read the post</a></p>
+    <p style="margin-top:24px;font-size:12px;color:#666;">You received this because you subscribed to YTOP Global updates.</p>
+  `;
+
+  try {
+    await sendBulkNewsletterEmail({
+      recipients: emails,
+      subject,
+      html,
+    });
+  } catch (e) {
+    return {
+      error:
+        e instanceof Error ? e.message : 'Failed to send newsletter emails.',
+    };
+  }
+
+  await prisma.post.update({
+    where: { id: postId },
+    data: { emailNotifiedAt: new Date() },
+  });
+
+  revalidatePostSurfaces(post.slug);
+  revalidatePath(`/admin/posts/${postId}/edit`);
+
+  return { error: null, ok: true };
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 export async function updatePostStatusAction(formData: FormData): Promise<void> {

@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import prisma from '../lib/db';
 import { resolveSeedAdminCredentials } from '../lib/seed-admin';
+import { YTOP_SOCIAL_URLS } from '../lib/ytop-social-urls';
 
 dotenv.config();
 
@@ -57,23 +58,58 @@ async function main() {
       { key: 'contact_phone', value: '+1 (234) 567-890', group: 'general' },
       {
         key: 'facebook_url',
-        value: 'https://facebook.com/ytopglobal',
+        value: YTOP_SOCIAL_URLS.facebook,
         group: 'social',
       },
       {
         key: 'twitter_url',
-        value: 'https://twitter.com/ytopglobal',
+        value: YTOP_SOCIAL_URLS.twitter,
         group: 'social',
       },
       {
         key: 'linkedin_url',
-        value: 'https://linkedin.com/company/ytopglobal',
+        value: YTOP_SOCIAL_URLS.linkedin,
         group: 'social',
       },
       {
         key: 'instagram_url',
-        value: 'https://instagram.com/ytopglobal',
+        value: YTOP_SOCIAL_URLS.instagram,
         group: 'social',
+      },
+      {
+        key: 'telegram_url',
+        value: YTOP_SOCIAL_URLS.telegram,
+        group: 'social',
+      },
+      {
+        key: 'youtube_url',
+        value: YTOP_SOCIAL_URLS.youtube,
+        group: 'social',
+      },
+      {
+        key: 'tiktok_url',
+        value: YTOP_SOCIAL_URLS.tiktok,
+        group: 'social',
+      },
+      {
+        key: 'site_logo_url',
+        value: '/media/2023/03/YTOP-PNGGG-2022.png',
+        group: 'branding',
+      },
+      {
+        key: 'site_favicon_url',
+        value: '/favicon.ico',
+        group: 'branding',
+      },
+      {
+        key: 'brand_primary_hex',
+        value: '#EF4444',
+        group: 'branding',
+      },
+      {
+        key: 'brand_secondary_hex',
+        value: '#1E3A8A',
+        group: 'branding',
       },
     ];
 

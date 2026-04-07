@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Users, Award } from 'lucide-react';
 import TeamTabsSection from './TeamTabsSection';
+import { getPrisma } from '@/lib/db';
+import { loadWithDatabaseFallback } from '@/lib/public-db';
 
 /**
  * Team page content aligned with https://ytopglobal.org/team/
@@ -55,7 +56,53 @@ export const metadata = {
   description: 'Meet the dedicated team and faculty behind YTOP Global. We are a happy team and we believe we can create a community of great minds.',
 };
 
-export default function TeamPage() {
+async function loadTeamTabsData() {
+  const members = await getPrisma().teamMember.findMany({
+    where: { isActive: true },
+    orderBy: [{ order: 'asc' }, { name: 'asc' }],
+    include: { photo: true },
+  });
+
+  if (members.length === 0) {
+    return null;
+  }
+
+  const toCore = (m: (typeof members)[0]) => ({
+    name: m.name,
+    position: m.position,
+    photo: m.photo?.url,
+  });
+
+  const coreTeam = members.filter((m) => m.teamSection === 'core').map(toCore);
+  const facultyMentors = members
+    .filter((m) => m.teamSection === 'faculty')
+    .map((m) => ({
+      name: m.name,
+      role: m.position || undefined,
+      photo: m.photo?.url,
+    }));
+  const volunteerTeam = members.filter((m) => m.teamSection === 'volunteer').map(toCore);
+  const communityTeam = members.filter((m) => m.teamSection === 'community').map(toCore);
+
+  return {
+    coreTeam: coreTeam.length ? coreTeam : members.map(toCore),
+    facultyMentors,
+    volunteerTeam,
+    communityTeam,
+  };
+}
+
+export default async function TeamPage() {
+  const fromDb = await loadWithDatabaseFallback({
+    load: loadTeamTabsData,
+    fallback: null,
+  });
+
+  const coreTeam = fromDb?.coreTeam ?? CORE_TEAM;
+  const facultyMentors = fromDb?.facultyMentors ?? FACULTY_MENTORS;
+  const volunteerTeam = fromDb?.volunteerTeam ?? [];
+  const communityTeam = fromDb?.communityTeam ?? [];
+
   return (
     <div>
       {/* Hero */}
@@ -85,7 +132,12 @@ export default function TeamPage() {
       </section>
 
       {/* Team tabs: core team, faculty, volunteers, community */}
-      <TeamTabsSection coreTeam={CORE_TEAM} facultyMentors={FACULTY_MENTORS} />
+      <TeamTabsSection
+        coreTeam={coreTeam}
+        facultyMentors={facultyMentors}
+        volunteerTeam={volunteerTeam}
+        communityTeam={communityTeam}
+      />
 
       {/* Team in action */}
       <section className="py-20 md:py-24 bg-white">

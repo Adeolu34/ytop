@@ -2,7 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ExternalLink, FileText, Images, LayoutDashboard, Users } from 'lucide-react';
+import {
+  ExternalLink,
+  FileText,
+  Images,
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
+  Users,
+  UsersRound,
+  Layers,
+} from 'lucide-react';
 import clsx from 'clsx';
 import {
   ADMIN_NAV_ITEMS,
@@ -15,6 +25,10 @@ const iconMap: Record<AdminIconKey, typeof LayoutDashboard> = {
   users: Users,
   posts: FileText,
   gallery: Images,
+  settings: Settings,
+  team: UsersRound,
+  programs: Layers,
+  comments: MessageSquare,
 };
 
 export default function AdminSidebar() {
@@ -74,7 +88,7 @@ export default function AdminSidebar() {
         </div>
       </aside>
 
-      <nav className="admin-surface-panel fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-[#e7bdb8]/40 bg-[#fbf9f8]/95 px-2 py-2 backdrop-blur lg:hidden">
+      <nav className="admin-surface-panel fixed inset-x-0 bottom-0 z-40 flex max-h-[5.5rem] flex-wrap justify-center gap-1 overflow-y-auto border-t border-[#e7bdb8]/40 bg-[#fbf9f8]/95 px-1 py-2 backdrop-blur lg:hidden">
         {ADMIN_NAV_ITEMS.map((item) => {
           const Icon = iconMap[item.icon];
           const isActive = isAdminNavItemActive(pathname, item.href);

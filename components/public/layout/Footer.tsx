@@ -1,10 +1,24 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 import FooterNewsletterForm from './FooterNewsletterForm';
+import SocialIconLinks from '../SocialIconLinks';
 
-export default function Footer() {
+const DEFAULT_LOGO = '/media/2023/03/YTOP-PNGGG-2022.png';
+
+type FooterProps = {
+  logoUrl?: string | null;
+  siteName?: string;
+  siteTagline?: string;
+};
+
+export default function Footer({
+  logoUrl,
+  siteName = 'YTOP Global',
+  siteTagline = 'Young Talented Optimistic and Potential Org.',
+}: FooterProps) {
   const currentYear = new Date().getFullYear();
+  const logoSrc = logoUrl?.trim() || DEFAULT_LOGO;
 
   return (
     <footer className="bg-secondary text-gray-300">
@@ -14,60 +28,23 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-5">
               <div className="relative h-11 w-[120px] flex-shrink-0">
                 <Image
-                  src="/media/2023/03/YTOP-PNGGG-2022.png"
-                  alt="YTOP Global"
+                  src={logoSrc}
+                  alt={siteName}
                   fill
                   className="object-contain object-left"
                   sizes="120px"
                 />
               </div>
               <div>
-                <div className="font-bold text-white text-lg">YTOP Global</div>
-                <div className="text-xs text-slate-400">Young Talented Optimistic and Potential Org.</div>
+                <div className="font-bold text-white text-lg">{siteName}</div>
+                <div className="text-xs text-slate-400">{siteTagline}</div>
               </div>
             </div>
             <p className="text-sm leading-relaxed mb-5">
               Empowering young people through leadership development, career guidance,
               and community impact initiatives.
             </p>
-            <div className="flex gap-3">
-              <a
-                href="https://facebook.com/ytopglobal"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110 hover:-rotate-6"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="https://twitter.com/ytopglobal"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110 hover:rotate-6"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="https://linkedin.com/company/ytopglobal"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110 hover:-rotate-6"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="https://instagram.com/ytopglobal"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110 hover:rotate-6"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-            </div>
+            <SocialIconLinks variant="footer" />
           </div>
 
           <div>
@@ -146,7 +123,7 @@ export default function Footer() {
         <div className="container mx-auto px-4 py-5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
             <div className="text-slate-400">
-              © {currentYear} YTOP Global. All rights reserved.
+              © {currentYear} {siteName}. All rights reserved.
             </div>
             <div className="flex gap-6">
               <Link href="/privacy" className="hover:text-white transition-colors duration-200 cursor-pointer">Privacy</Link>
