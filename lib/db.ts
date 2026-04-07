@@ -7,9 +7,6 @@ import { PrismaPg } from '@prisma/adapter-pg';
 // when PUBLIC_BLOG_SOURCE=mongodb (see lib/mongo-blog.ts); that data is synced from Postgres on publish.
 import { getPostgresConnectionString } from './db-config';
 
-// Netlify injects NETLIFY_DATABASE_URL when Neon is connected; use it if DATABASE_URL is not set
-const connectionString = getPostgresConnectionString();
-
 export { isDatabaseConfigured, getPostgresConnectionString } from './db-config';
 
 const globalForPrisma = globalThis as unknown as {
@@ -18,11 +15,14 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient(): PrismaClient {
-  if (!connectionString) {
+  // Read URL at client creation time — not at module load — so the first import of this file
+  // cannot freeze an empty string when another part of the build later sets DATABASE_URL.
+  const url = getPostgresConnectionString();
+  if (!url) {
     throw new Error('DATABASE_URL (or NETLIFY_DATABASE_URL on Netlify) is not set. Add it to .env or Netlify env to use blog, programs, and other database features.');
   }
   const pool = new Pool({
-    connectionString,
+    connectionString: url,
     max: 5,
     idleTimeoutMillis: 60_000, // 1 min – avoid dropping connections after short idle
     connectionTimeoutMillis: 15_000,
