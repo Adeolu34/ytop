@@ -5,15 +5,12 @@ import { PrismaPg } from '@prisma/adapter-pg';
 
 // Prisma + PostgreSQL: admin, auth, campaigns, media rows, drafts, etc. Public blog *reads* can use MongoDB
 // when PUBLIC_BLOG_SOURCE=mongodb (see lib/mongo-blog.ts); that data is synced from Postgres on publish.
-// Netlify injects NETLIFY_DATABASE_URL when Neon is connected; use it if DATABASE_URL is not set
-const connectionString = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
+import { getPostgresConnectionString } from './db-config';
 
-/** True when PostgreSQL URL is available (skip Prisma during `next build` if unset on CI). */
-export function isDatabaseConfigured(): boolean {
-  return Boolean(
-    process.env.DATABASE_URL?.trim() || process.env.NETLIFY_DATABASE_URL?.trim()
-  );
-}
+// Netlify injects NETLIFY_DATABASE_URL when Neon is connected; use it if DATABASE_URL is not set
+const connectionString = getPostgresConnectionString();
+
+export { isDatabaseConfigured, getPostgresConnectionString } from './db-config';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

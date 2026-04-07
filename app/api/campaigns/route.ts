@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma, { isDatabaseConfigured } from '@/lib/db';
+import { isDatabaseConfigured } from '@/lib/db-config';
 
 /**
  * GET /api/campaigns
@@ -10,6 +10,8 @@ export async function GET() {
   if (!isDatabaseConfigured()) {
     return NextResponse.json({ campaigns: [] });
   }
+
+  const { default: prisma } = await import('@/lib/db');
 
   try {
     const now = new Date();

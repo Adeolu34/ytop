@@ -1,5 +1,5 @@
 import { unstable_cache, revalidateTag } from 'next/cache';
-import prisma, { isDatabaseConfigured } from '@/lib/db';
+import { isDatabaseConfigured } from '@/lib/db-config';
 
 export type PublicSiteIdentity = {
   siteName: string;
@@ -44,6 +44,7 @@ async function loadIdentityFromDb(): Promise<PublicSiteIdentity> {
   ] as const;
 
   try {
+    const { default: prisma } = await import('@/lib/db');
     const rows = await prisma.settings.findMany({
       where: { key: { in: [...keys] } },
       select: { key: true, value: true },
