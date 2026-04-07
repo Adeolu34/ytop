@@ -14,6 +14,11 @@ export function isDatabaseConnectionError(error: unknown): boolean {
   );
 }
 
+function isMissingDatabaseUrlError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /DATABASE_URL \(or NETLIFY_DATABASE_URL.*\) is not set/i.test(message);
+}
+
 export async function loadWithDatabaseFallback<T>({
   load,
   fallback,
@@ -23,6 +28,11 @@ export async function loadWithDatabaseFallback<T>({
   try {
     return await load();
   } catch (error) {
+    if (isMissingDatabaseUrlError(error)) {
+      onError?.(error);
+      return fallback;
+    }
+
     if (!isDatabaseConnectionError(error)) {
       throw error;
     }
@@ -32,6 +42,10 @@ export async function loadWithDatabaseFallback<T>({
     try {
       return await load();
     } catch (retryError) {
+      if (isMissingDatabaseUrlError(retryError)) {
+        onError?.(retryError);
+        return fallback;
+      }
       if (!isDatabaseConnectionError(retryError)) {
         throw retryError;
       }

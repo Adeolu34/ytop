@@ -8,6 +8,13 @@ import { PrismaPg } from '@prisma/adapter-pg';
 // Netlify injects NETLIFY_DATABASE_URL when Neon is connected; use it if DATABASE_URL is not set
 const connectionString = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
 
+/** True when PostgreSQL URL is available (skip Prisma during `next build` if unset on CI). */
+export function isDatabaseConfigured(): boolean {
+  return Boolean(
+    process.env.DATABASE_URL?.trim() || process.env.NETLIFY_DATABASE_URL?.trim()
+  );
+}
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
   prismaPool: Pool | undefined;

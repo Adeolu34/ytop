@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import prisma, { isDatabaseConfigured } from '@/lib/db';
 
 /**
  * GET /api/campaigns
@@ -7,6 +7,10 @@ import prisma from '@/lib/db';
  * Get all active fundraising campaigns
  */
 export async function GET() {
+  if (!isDatabaseConfigured()) {
+    return NextResponse.json({ campaigns: [] });
+  }
+
   try {
     const now = new Date();
 
