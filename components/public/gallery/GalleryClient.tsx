@@ -113,12 +113,12 @@ export default function GalleryClient({
             <div className="mb-10 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
               <p className="font-medium">Cloudinary is configured, but no images were returned for this site.</p>
               <p className="mt-1 text-amber-900/90 dark:text-amber-100/90">
-                Upload images whose <strong className="font-semibold">public ID</strong> starts with{' '}
+                Upload images whose <strong className="font-semibold">public ID</strong> starts with one of:{' '}
                 <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">
-                  {galleryFolderHint ?? 'ytop/gallery'}
+                  {galleryFolderHint ?? 'ytop/gallery, ytop/admin'}
                 </code>
-                , or set <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_PREFIX</code> to match your folder. Add{' '}
-                <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER=1</code> to also include the admin upload folder.
+                . Set <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_PREFIX</code> to match your Cloudinary folder(s). If you disabled the admin folder with{' '}
+                <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER=0</code>, either move assets under the gallery prefix or turn that flag back on (default is on).
               </p>
             </div>
           )}

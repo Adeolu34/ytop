@@ -93,19 +93,25 @@ export function cloudinaryGalleryPrefix(): string {
   return cloudinaryGalleryPrefixes()[0] ?? 'ytop/gallery';
 }
 
+/** When unset, public /gallery also lists the admin upload folder so Media Library images appear. Set to 0/false/no/off to only use CLOUDINARY_GALLERY_PREFIX. */
+function galleryAlsoIncludeUploadFolder(): boolean {
+  const v = process.env.CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER?.trim();
+  if (v === undefined || v === '') return true;
+  const lower = v.toLowerCase();
+  return !['0', 'false', 'no', 'off'].includes(lower);
+}
+
 /**
  * One or more comma-separated folder prefixes to list and merge (deduped by public_id).
- * Default: `ytop/gallery`. If `CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER=1`, appends the admin upload folder (e.g. ytop/admin) so existing uploads appear without moving files.
+ * Default: `ytop/gallery` plus the admin upload folder (e.g. `ytop/admin`) unless
+ * `CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER` is set to 0/false/no/off.
  */
 export function cloudinaryGalleryPrefixes(): string[] {
   const raw = process.env.CLOUDINARY_GALLERY_PREFIX?.trim();
   const parts = raw
     ? raw.split(',').map((s) => s.trim().replace(/^\/+|\/+$/g, '')).filter(Boolean)
     : ['ytop/gallery'];
-  const alsoUpload =
-    process.env.CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER?.trim() === '1' ||
-    process.env.CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER?.toLowerCase().trim() ===
-      'true';
+  const alsoUpload = galleryAlsoIncludeUploadFolder();
   const uploadFolder = cloudinaryUploadFolder().replace(/^\/+|\/+$/g, '');
   if (alsoUpload && uploadFolder && !parts.includes(uploadFolder)) {
     parts.push(uploadFolder);
