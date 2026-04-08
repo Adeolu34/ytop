@@ -94,6 +94,86 @@ async function loadBlogData(
   ]);
 }
 
+type BlogPageData = {
+  posts: Awaited<ReturnType<typeof loadBlogData>>[0];
+  totalCount: number;
+  totalPublishedCount: number;
+  categories: Awaited<ReturnType<typeof loadBlogData>>[3];
+  draftCount: number;
+};
+
+async function loadBlogFromPostgres(
+  where: { status: 'PUBLISHED'; categories?: { some: { slug: string } } },
+  page: number,
+  limit: number
+): Promise<BlogPageData> {
+  const [
+    postsResult,
+    totalCountResult,
+    totalPublishedCountResult,
+    categoriesResult,
+    draftCountResult,
+  ] = await loadBlogData(where, page, limit);
+  return {
+    posts: postsResult,
+    totalCount: totalCountResult,
+    totalPublishedCount: totalPublishedCountResult,
+    categories: categoriesResult,
+    draftCount: draftCountResult,
+  };
+}
+
+/**
+ * Mongo path must not share Promise.all with Prisma — a failing draft count would abort the whole blog load.
+ */
+async function fetchBlogPageData(params: {
+  mongoPublicBlog: boolean;
+  where: { status: 'PUBLISHED'; categories?: { some: { slug: string } } };
+  page: number;
+  limit: number;
+  categorySlug: string | undefined;
+}): Promise<BlogPageData> {
+  const { mongoPublicBlog, where, page, limit, categorySlug } = params;
+
+  if (mongoPublicBlog) {
+    try {
+      const [mongoData, categoriesResult] = await Promise.all([
+        mongoListPublishedPosts({
+          page,
+          limit,
+          categorySlug: categorySlug || undefined,
+        }),
+        mongoAggregateCategories(),
+      ]);
+
+      let draftCount = 0;
+      if (isDatabaseConfigured()) {
+        try {
+          draftCount = await getPrisma().post.count({
+            where: { status: 'DRAFT' },
+          });
+        } catch {
+          /* optional stat for empty state; must not break public blog */
+        }
+      }
+
+      return {
+        posts: mongoData.posts as BlogPageData['posts'],
+        totalCount: mongoData.total,
+        totalPublishedCount: mongoData.totalPublished,
+        categories: categoriesResult,
+        draftCount,
+      };
+    } catch (mongoErr) {
+      if (!isDatabaseConfigured()) throw mongoErr;
+      console.error('Mongo blog read failed; falling back to Prisma:', mongoErr);
+      return loadBlogFromPostgres(where, page, limit);
+    }
+  }
+
+  return loadBlogFromPostgres(where, page, limit);
+}
+
 export default async function BlogPage({ searchParams }: { searchParams: SearchParams }) {
   const page = parseInt(searchParams.page || '1');
   const categorySlug = searchParams.category;
@@ -122,91 +202,34 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
   let loadError: string | null = null;
 
   try {
-    if (mongoPublicBlog) {
-      try {
-        const [mongoData, categoriesResult, draftCountResult] = await Promise.all([
-          mongoListPublishedPosts({
-            page,
-            limit,
-            categorySlug: categorySlug || undefined,
-          }),
-          mongoAggregateCategories(),
-          isDatabaseConfigured()
-            ? getPrisma().post.count({ where: { status: 'DRAFT' } })
-            : Promise.resolve(0),
-        ]);
-        posts = mongoData.posts as BlogPostItem[];
-        totalCount = mongoData.total;
-        totalPublishedCount = mongoData.totalPublished;
-        categories = categoriesResult;
-        draftCount = draftCountResult;
-      } catch (mongoErr) {
-        // If Mongo is temporarily unavailable but Postgres exists, keep blog online.
-        if (!isDatabaseConfigured()) throw mongoErr;
-        console.error('Mongo blog read failed; falling back to Prisma:', mongoErr);
-        const [
-          postsResult,
-          totalCountResult,
-          totalPublishedCountResult,
-          categoriesResult,
-          draftCountResult,
-        ] = await loadBlogData(where, page, limit);
-        posts = postsResult;
-        totalCount = totalCountResult;
-        totalPublishedCount = totalPublishedCountResult;
-        categories = categoriesResult;
-        draftCount = draftCountResult;
-      }
-    } else {
-      const [
-        postsResult,
-        totalCountResult,
-        totalPublishedCountResult,
-        categoriesResult,
-        draftCountResult,
-      ] = await loadBlogData(where, page, limit);
-      posts = postsResult;
-      totalCount = totalCountResult;
-      totalPublishedCount = totalPublishedCountResult;
-      categories = categoriesResult;
-      draftCount = draftCountResult;
-    }
+    const data = await fetchBlogPageData({
+      mongoPublicBlog,
+      where,
+      page,
+      limit,
+      categorySlug,
+    });
+    posts = data.posts as BlogPostItem[];
+    totalCount = data.totalCount;
+    totalPublishedCount = data.totalPublishedCount;
+    categories = data.categories;
+    draftCount = data.draftCount;
   } catch (err) {
     if (isConnectionError(err)) {
       resetPrismaConnection();
       try {
-        if (mongoPublicBlog) {
-          const [mongoData, categoriesResult, draftCountResult] =
-            await Promise.all([
-              mongoListPublishedPosts({
-                page,
-                limit,
-                categorySlug: categorySlug || undefined,
-              }),
-              mongoAggregateCategories(),
-              isDatabaseConfigured()
-                ? getPrisma().post.count({ where: { status: 'DRAFT' } })
-                : Promise.resolve(0),
-            ]);
-          posts = mongoData.posts as BlogPostItem[];
-          totalCount = mongoData.total;
-          totalPublishedCount = mongoData.totalPublished;
-          categories = categoriesResult;
-          draftCount = draftCountResult;
-        } else {
-          const [
-            postsResult,
-            totalCountResult,
-            totalPublishedCountResult,
-            categoriesResult,
-            draftCountResult,
-          ] = await loadBlogData(where, page, limit);
-          posts = postsResult;
-          totalCount = totalCountResult;
-          totalPublishedCount = totalPublishedCountResult;
-          categories = categoriesResult;
-          draftCount = draftCountResult;
-        }
+        const data = await fetchBlogPageData({
+          mongoPublicBlog,
+          where,
+          page,
+          limit,
+          categorySlug,
+        });
+        posts = data.posts as BlogPostItem[];
+        totalCount = data.totalCount;
+        totalPublishedCount = data.totalPublishedCount;
+        categories = data.categories;
+        draftCount = data.draftCount;
       } catch (retryErr) {
         console.error('Blog page failed after retry:', retryErr);
         loadError =
