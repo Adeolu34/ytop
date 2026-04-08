@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, User, Tag, ArrowRight } from 'lucide-react';
-import { getPrisma, resetPrismaConnection } from '@/lib/db';
+import { getPrisma, isDatabaseConfigured, resetPrismaConnection } from '@/lib/db';
 import {
   mongoAggregateCategories,
   mongoListPublishedPosts,
@@ -98,6 +98,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
   const page = parseInt(searchParams.page || '1');
   const categorySlug = searchParams.category;
   const limit = 12;
+  const mongoPublicBlog = useMongoForPublicBlog();
 
   // Build where clause for published posts only
   const where: { status: 'PUBLISHED'; categories?: { some: { slug: string } } } = {
@@ -121,8 +122,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
   let loadError: string | null = null;
 
   try {
-    if (useMongoForPublicBlog()) {
-      const prisma = getPrisma();
+    if (mongoPublicBlog) {
       const [mongoData, categoriesResult, draftCountResult] = await Promise.all([
         mongoListPublishedPosts({
           page,
@@ -130,7 +130,9 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
           categorySlug: categorySlug || undefined,
         }),
         mongoAggregateCategories(),
-        prisma.post.count({ where: { status: 'DRAFT' } }),
+        isDatabaseConfigured()
+          ? getPrisma().post.count({ where: { status: 'DRAFT' } })
+          : Promise.resolve(0),
       ]);
       posts = mongoData.posts as BlogPostItem[];
       totalCount = mongoData.total;
@@ -155,8 +157,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
     if (isConnectionError(err)) {
       resetPrismaConnection();
       try {
-        if (useMongoForPublicBlog()) {
-          const prisma = getPrisma();
+        if (mongoPublicBlog) {
           const [mongoData, categoriesResult, draftCountResult] =
             await Promise.all([
               mongoListPublishedPosts({
@@ -165,7 +166,9 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                 categorySlug: categorySlug || undefined,
               }),
               mongoAggregateCategories(),
-              prisma.post.count({ where: { status: 'DRAFT' } }),
+              isDatabaseConfigured()
+                ? getPrisma().post.count({ where: { status: 'DRAFT' } })
+                : Promise.resolve(0),
             ]);
           posts = mongoData.posts as BlogPostItem[];
           totalCount = mongoData.total;
@@ -313,7 +316,26 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
           <div className="text-center py-16 px-4">
             <div className="max-w-md mx-auto p-6 bg-white dark:bg-surface-dark rounded-2xl shadow-ytop border border-red-200 dark:border-red-900">
               <p className="text-slate-700 font-medium">{loadError}</p>
-              <p className="text-slate-500 text-sm mt-2">To use localhost: add <code className="bg-slate-100 px-1 rounded">DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ytopglobal?schema=public</code> to <code className="bg-slate-100 px-1 rounded">.env</code>, then run <code className="bg-slate-100 px-1 rounded">docker compose up -d</code> and <code className="bg-slate-100 px-1 rounded">npx prisma migrate dev</code>.</p>
+              <p className="text-slate-500 text-sm mt-2">
+                {mongoPublicBlog ? (
+                  <>
+                    If you intend to read posts from MongoDB, set{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MONGODB_URI</code> and{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">PUBLIC_BLOG_SOURCE=mongodb</code>
+                    , and ensure the <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">blog_posts</code> collection is synced. PostgreSQL (
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">DATABASE_URL</code>) is still required for admin, drafts, and comments—add it when you use those features (e.g. Neon or{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">docker compose</code>).
+                  </>
+                ) : (
+                  <>
+                    To use localhost: add{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ytopglobal?schema=public</code> to{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">.env</code>, then run{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">docker compose up -d</code> and{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">npx prisma migrate dev</code>.
+                  </>
+                )}
+              </p>
             </div>
           </div>
         )}

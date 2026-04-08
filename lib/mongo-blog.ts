@@ -3,6 +3,7 @@
  * Admin continues to use PostgreSQL (Prisma); saving a post syncs published content to Mongo.
  */
 import type { Prisma } from '@/app/generated/prisma';
+import { isDatabaseConfigured } from '@/lib/db-config';
 import prisma, { getPrisma } from '@/lib/db';
 import { getMongoDb, isMongoConfigured } from '@/lib/mongodb';
 
@@ -463,6 +464,9 @@ export function mongoBlogDocumentToApiListPost(doc: MongoBlogDocument) {
 
 /** Same comment tree as Prisma `postInclude.comments` for /blog/[slug]. */
 async function loadApprovedCommentsForPost(postId: string) {
+  if (!isDatabaseConfigured()) {
+    return [];
+  }
   return getPrisma().comment.findMany({
     where: {
       postId,
