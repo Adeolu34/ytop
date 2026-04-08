@@ -102,6 +102,22 @@ function galleryAlsoIncludeUploadFolder(): boolean {
 }
 
 /**
+ * List every image in the Cloudinary account (paginated Search API).
+ * Use when assets are not under ytop/gallery or ytop/admin (or your CLOUDINARY_GALLERY_PREFIX).
+ */
+function galleryListEntireAccount(): boolean {
+  const v = process.env.CLOUDINARY_GALLERY_ALL_IMAGES?.trim();
+  return v === '1' || v?.toLowerCase() === 'true' || v?.toLowerCase() === 'yes';
+}
+
+/** Max images to load for /gallery (avoids timeouts on huge accounts). */
+function galleryMaxImages(): number {
+  const raw = process.env.CLOUDINARY_GALLERY_MAX_IMAGES?.trim();
+  const n = raw ? parseInt(raw, 10) : 5000;
+  return Number.isFinite(n) && n > 0 ? Math.min(n, 20000) : 5000;
+}
+
+/**
  * One or more comma-separated folder prefixes to list and merge (deduped by public_id).
  * Default: `ytop/gallery` plus the admin upload folder (e.g. `ytop/admin`) unless
  * `CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER` is set to 0/false/no/off.
@@ -178,11 +194,49 @@ async function listResourcesByPrefixPaged(prefix: string): Promise<GalleryResour
 async function listResourcesViaSearchPrefix(prefix: string): Promise<GalleryResource[]> {
   // Quote public_id so paths like ytop/gallery are not parsed as nested fields.
   const quoted = prefix.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-  const result = (await cloudinary.search
-    .expression(`resource_type:image AND public_id:"${quoted}*"`)
-    .max_results(500)
-    .execute()) as { resources?: GalleryResource[] };
-  return result.resources ?? [];
+  const collected: GalleryResource[] = [];
+  let next_cursor: string | undefined;
+  const max = galleryMaxImages();
+  for (let page = 0; page < 80 && collected.length < max; page++) {
+    const q = cloudinary.search
+      .expression(`resource_type:image AND public_id:"${quoted}*"`)
+      .max_results(Math.min(500, max - collected.length))
+      .with_field(['tags', 'context']);
+    if (next_cursor) q.next_cursor(next_cursor);
+    const result = (await q.execute()) as {
+      resources?: GalleryResource[];
+      next_cursor?: string;
+    };
+    const rows = result.resources ?? [];
+    collected.push(...rows);
+    next_cursor = result.next_cursor;
+    if (!next_cursor || rows.length === 0) break;
+  }
+  return collected.slice(0, max);
+}
+
+/** Paginated account-wide image list (Search API). */
+async function listAllImagesSearchPaged(): Promise<GalleryResource[]> {
+  const collected: GalleryResource[] = [];
+  let next_cursor: string | undefined;
+  const max = galleryMaxImages();
+  for (let page = 0; page < 80 && collected.length < max; page++) {
+    const q = cloudinary.search
+      .expression('resource_type:image')
+      .max_results(Math.min(500, max - collected.length))
+      .sort_by('created_at', 'desc')
+      .with_field(['tags', 'context']);
+    if (next_cursor) q.next_cursor(next_cursor);
+    const batch = (await q.execute()) as {
+      resources?: GalleryResource[];
+      next_cursor?: string;
+    };
+    const rows = batch.resources ?? [];
+    collected.push(...rows);
+    next_cursor = batch.next_cursor;
+    if (!next_cursor || rows.length === 0) break;
+  }
+  return collected.slice(0, max);
 }
 
 /** Some accounts organize by Media Library asset folder instead of public_id prefix. */
@@ -248,6 +302,20 @@ export async function listGalleryImagesFromCloudinary(): Promise<
     return [];
   }
 
+  if (galleryListEntireAccount()) {
+    const rows = await listAllImagesSearchPaged();
+    const merged = new Map<string, GalleryResource>();
+    for (const r of rows) {
+      const src = r.secure_url || r.url;
+      if (r.public_id && src) {
+        merged.set(r.public_id, { ...r, secure_url: src });
+      }
+    }
+    return [...merged.values()]
+      .map(resourceToGalleryItem)
+      .slice(0, galleryMaxImages());
+  }
+
   const prefixes = cloudinaryGalleryPrefixes();
   const merged = new Map<string, GalleryResource>();
 
@@ -261,5 +329,15 @@ export async function listGalleryImagesFromCloudinary(): Promise<
     }
   }
 
-  return [...merged.values()].map(resourceToGalleryItem);
+  return [...merged.values()]
+    .map(resourceToGalleryItem)
+    .slice(0, galleryMaxImages());
+}
+
+/** Hint text for empty-state / docs: folder prefixes or entire-account mode. */
+export function cloudinaryGalleryFolderHintText(): string {
+  if (galleryListEntireAccount()) {
+    return 'entire Cloudinary account (CLOUDINARY_GALLERY_ALL_IMAGES)';
+  }
+  return cloudinaryGalleryPrefixes().join(', ');
 }

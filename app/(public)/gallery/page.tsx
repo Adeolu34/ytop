@@ -1,6 +1,6 @@
 import GalleryClient from '@/components/public/gallery/GalleryClient';
 import {
-  cloudinaryGalleryPrefixes,
+  cloudinaryGalleryFolderHintText,
   isCloudinaryConfigured,
   listGalleryImagesFromCloudinary,
 } from '@/lib/cloudinary';
@@ -27,7 +27,7 @@ export default async function GalleryPage() {
     <GalleryClient
       cloudinaryConfigured={configured}
       cloudinaryImages={cloudinaryImages}
-      galleryFolderHint={cloudinaryGalleryPrefixes().join(', ')}
+      galleryFolderHint={cloudinaryGalleryFolderHintText()}
     />
   );
 }

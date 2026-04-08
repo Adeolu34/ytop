@@ -117,8 +117,9 @@ export default function GalleryClient({
                 <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">
                   {galleryFolderHint ?? 'ytop/gallery, ytop/admin'}
                 </code>
-                . Set <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_PREFIX</code> to match your Cloudinary folder(s). If you disabled the admin folder with{' '}
-                <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_ALSO_UPLOAD_FOLDER=0</code>, either move assets under the gallery prefix or turn that flag back on (default is on).
+                . Set <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_PREFIX</code> to your public_id root(s), or{' '}
+                <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_ALL_IMAGES=1</code> to show every image in the account (up to{' '}
+                <code className="rounded bg-white/80 px-1 py-0.5 text-xs dark:bg-black/30">CLOUDINARY_GALLERY_MAX_IMAGES</code>).
               </p>
             </div>
           )}
