@@ -123,22 +123,40 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
 
   try {
     if (mongoPublicBlog) {
-      const [mongoData, categoriesResult, draftCountResult] = await Promise.all([
-        mongoListPublishedPosts({
-          page,
-          limit,
-          categorySlug: categorySlug || undefined,
-        }),
-        mongoAggregateCategories(),
-        isDatabaseConfigured()
-          ? getPrisma().post.count({ where: { status: 'DRAFT' } })
-          : Promise.resolve(0),
-      ]);
-      posts = mongoData.posts as BlogPostItem[];
-      totalCount = mongoData.total;
-      totalPublishedCount = mongoData.totalPublished;
-      categories = categoriesResult;
-      draftCount = draftCountResult;
+      try {
+        const [mongoData, categoriesResult, draftCountResult] = await Promise.all([
+          mongoListPublishedPosts({
+            page,
+            limit,
+            categorySlug: categorySlug || undefined,
+          }),
+          mongoAggregateCategories(),
+          isDatabaseConfigured()
+            ? getPrisma().post.count({ where: { status: 'DRAFT' } })
+            : Promise.resolve(0),
+        ]);
+        posts = mongoData.posts as BlogPostItem[];
+        totalCount = mongoData.total;
+        totalPublishedCount = mongoData.totalPublished;
+        categories = categoriesResult;
+        draftCount = draftCountResult;
+      } catch (mongoErr) {
+        // If Mongo is temporarily unavailable but Postgres exists, keep blog online.
+        if (!isDatabaseConfigured()) throw mongoErr;
+        console.error('Mongo blog read failed; falling back to Prisma:', mongoErr);
+        const [
+          postsResult,
+          totalCountResult,
+          totalPublishedCountResult,
+          categoriesResult,
+          draftCountResult,
+        ] = await loadBlogData(where, page, limit);
+        posts = postsResult;
+        totalCount = totalCountResult;
+        totalPublishedCount = totalPublishedCountResult;
+        categories = categoriesResult;
+        draftCount = draftCountResult;
+      }
     } else {
       const [
         postsResult,
