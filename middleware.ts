@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import type { NextAuthRequest } from 'next-auth';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import authConfig from '@/lib/auth.config';
 import {
@@ -11,7 +12,55 @@ import {
  * Edge-safe Auth.js client: no Prisma / pg (see lib/auth.config.ts).
  * Full login + adapter live in lib/auth.ts.
  */
-const { auth } = NextAuth(authConfig);
+const authSecretPresent = Boolean(
+  process.env.AUTH_SECRET?.trim() || process.env.NEXTAUTH_SECRET?.trim()
+);
+
+const nextAuth = authSecretPresent ? NextAuth(authConfig) : null;
+
+function runMiddleware(
+  request: NextRequest,
+  pathname: string,
+  hasUser: boolean
+): NextResponse {
+  // Skip middleware for static assets and API routes
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/static') ||
+    pathname.match(/\.(ico|png|jpg|jpeg|gif|svg|webp|css|js|json|xml|txt)$/)
+  ) {
+    return NextResponse.next();
+  }
+
+  if (isProtectedAdminPath(pathname)) {
+    if (!hasUser) {
+      return NextResponse.redirect(buildAdminLoginRedirectUrl(request.url), {
+        status: 307,
+      });
+    }
+  }
+
+  // Load URL mappings
+  // (currently empty, but kept to avoid changing behavior if you add mappings)
+  if (urlMappings.has(pathname)) {
+    const redirectTo = urlMappings.get(pathname)!;
+    void trackRedirect(pathname, redirectTo).catch(console.error);
+    const url = request.nextUrl.clone();
+    url.pathname = redirectTo;
+    return NextResponse.redirect(url, { status: 301 });
+  }
+
+  const patternRedirect = getRedirectUrl(pathname);
+  if (patternRedirect) {
+    void trackRedirect(pathname, patternRedirect).catch(console.error);
+    const url = request.nextUrl.clone();
+    url.pathname = patternRedirect;
+    return NextResponse.redirect(url, { status: 301 });
+  }
+
+  return NextResponse.next();
+}
 
 /**
  * WordPress → Next.js URL mappings (exact paths). Extend as needed.
@@ -60,44 +109,16 @@ function getRedirectUrl(pathname: string): string | null {
   return null;
 }
 
-export default auth((request: NextAuthRequest) => {
-  const { pathname } = request.nextUrl;
-
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/static') ||
-    pathname.match(/\.(ico|png|jpg|jpeg|gif|svg|webp|css|js|json|xml|txt)$/)
-  ) {
-    return NextResponse.next();
-  }
-
-  if (isProtectedAdminPath(pathname)) {
-    if (!request.auth?.user) {
-      return NextResponse.redirect(buildAdminLoginRedirectUrl(request.url), {
-        status: 307,
-      });
-    }
-  }
-
-  if (urlMappings.has(pathname)) {
-    const redirectTo = urlMappings.get(pathname)!;
-    void trackRedirect(pathname, redirectTo).catch(console.error);
-    const url = request.nextUrl.clone();
-    url.pathname = redirectTo;
-    return NextResponse.redirect(url, { status: 301 });
-  }
-
-  const patternRedirect = getRedirectUrl(pathname);
-  if (patternRedirect) {
-    void trackRedirect(pathname, patternRedirect).catch(console.error);
-    const url = request.nextUrl.clone();
-    url.pathname = patternRedirect;
-    return NextResponse.redirect(url, { status: 301 });
-  }
-
-  return NextResponse.next();
-});
+export default authSecretPresent && nextAuth
+  ? nextAuth.auth((request: NextAuthRequest) =>
+      runMiddleware(
+        request,
+        request.nextUrl.pathname,
+        Boolean(request.auth?.user)
+      )
+    )
+  : (request: NextRequest) =>
+      runMiddleware(request, request.nextUrl.pathname, false);
 
 export const config = {
   matcher: [
