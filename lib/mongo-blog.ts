@@ -9,11 +9,14 @@ import { getMongoDb, isMongoConfigured } from '@/lib/mongodb';
 
 const COLLECTION = 'blog_posts';
 
+/** Accepts `mongodb` or common typo `mangodb`. */
+function publicBlogSourceIsMongo(): boolean {
+  const v = process.env.PUBLIC_BLOG_SOURCE?.toLowerCase().trim();
+  return v === 'mongodb' || v === 'mangodb';
+}
+
 export function useMongoForPublicBlog(): boolean {
-  return (
-    process.env.PUBLIC_BLOG_SOURCE?.toLowerCase().trim() === 'mongodb' &&
-    isMongoConfigured()
-  );
+  return publicBlogSourceIsMongo() && isMongoConfigured();
 }
 
 export type MongoBlogAuthor = {
