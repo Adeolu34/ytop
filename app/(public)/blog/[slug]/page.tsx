@@ -143,8 +143,9 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const mongoPublicBlog = useMongoForPublicBlog();
 
-  if (useMongoForPublicBlog()) {
+  if (mongoPublicBlog) {
     const data = await loadMongoBlogPostWithRelations(slug);
     if (!data) notFound();
     return <BlogPostArticle post={data.post} relatedPosts={data.relatedPosts} />;
@@ -226,11 +227,19 @@ export default async function BlogPostPage({
                 yet.
               </p>
               <p className="text-slate-500 text-sm mb-6">
-                To fix: ensure PostgreSQL is running and{' '}
-                <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code>{' '}
-                in <code className="bg-slate-100 px-1 rounded">.env</code> is
-                correct. See the README for local or free cloud (Neon/Supabase)
-                setup.
+                Check your environment variables and data source availability.
+                {mongoPublicBlog ? (
+                  <>
+                    {' '}For Mongo public blog reads, confirm{' '}
+                    <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code>{' '}
+                    and <code className="bg-slate-100 px-1 rounded">PUBLIC_BLOG_SOURCE</code>.
+                  </>
+                ) : (
+                  <>
+                    {' '}For Prisma/PostgreSQL features, confirm{' '}
+                    <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code>.
+                  </>
+                )}
               </p>
               <Link
                 href="/blog"
@@ -260,11 +269,19 @@ export default async function BlogPostPage({
               yet.
             </p>
             <p className="text-slate-500 text-sm mb-6">
-              To fix: ensure PostgreSQL is running and{' '}
-              <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code>{' '}
-              in <code className="bg-slate-100 px-1 rounded">.env</code> is
-              correct. See the README for local or free cloud (Neon/Supabase)
-              setup.
+              Check your environment variables and data source availability.
+              {mongoPublicBlog ? (
+                <>
+                  {' '}For Mongo public blog reads, confirm{' '}
+                  <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code>{' '}
+                  and <code className="bg-slate-100 px-1 rounded">PUBLIC_BLOG_SOURCE</code>.
+                </>
+              ) : (
+                <>
+                  {' '}For Prisma/PostgreSQL features, confirm{' '}
+                  <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code>.
+                </>
+              )}
             </p>
             <Link
               href="/blog"

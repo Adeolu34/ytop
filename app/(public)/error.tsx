@@ -19,7 +19,7 @@ export default function PublicError({
       <div className="max-w-lg w-full bg-white rounded-2xl shadow-lg border border-slate-200 p-8 text-center">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Something went wrong</h1>
         <p className="text-slate-600 mb-4">
-          A server-side error occurred. This is often due to a missing or invalid database connection.
+          A server-side error occurred while loading this page.
         </p>
         {process.env.NODE_ENV === 'development' && error?.message && (
           <pre className="text-left text-sm bg-slate-100 p-4 rounded-lg overflow-auto max-h-40 text-red-700 mb-6">
@@ -44,7 +44,10 @@ export default function PublicError({
           </Link>
         </div>
         <p className="mt-6 text-sm text-slate-500">
-          If this keeps happening, check that <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code> is set in <code className="bg-slate-100 px-1 rounded">.env</code> and the database is running.
+          If this keeps happening, confirm your environment variables are set correctly for your data source (
+          <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code> for Mongo public blog and/or
+          <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code> for Prisma/PostgreSQL features), then
+          redeploy.
         </p>
       </div>
     </div>

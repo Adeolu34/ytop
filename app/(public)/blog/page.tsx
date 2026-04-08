@@ -328,11 +328,12 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                   </>
                 ) : (
                   <>
-                    To use localhost: add{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ytopglobal?schema=public</code> to{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">.env</code>, then run{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">docker compose up -d</code> and{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">npx prisma migrate dev</code>.
+                    Configure your data source environment variables and ensure the backing service is reachable.
+                    For Prisma/PostgreSQL features, verify{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">DATABASE_URL</code>. If you are
+                    using Mongo public blog reads, verify{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MONGODB_URI</code> and{' '}
+                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">PUBLIC_BLOG_SOURCE</code>.
                   </>
                 )}
               </p>
