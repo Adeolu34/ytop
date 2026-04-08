@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import { getPrismaOr503 } from '@/lib/api-prisma';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/testimonials
@@ -10,6 +12,12 @@ import prisma from '@/lib/db';
  */
 export async function GET(request: NextRequest) {
   try {
+    const pg = await getPrismaOr503();
+    if (!pg.ok) {
+      return pg.response;
+    }
+    const prisma = pg.prisma;
+
     const searchParams = request.nextUrl.searchParams;
     const featured = searchParams.get('featured') === 'true';
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10')));

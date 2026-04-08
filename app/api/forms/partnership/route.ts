@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import prisma from '@/lib/db';
+import { getPrismaOr503 } from '@/lib/api-prisma';
+
+export const dynamic = 'force-dynamic';
 
 // Validation schema
 const partnershipSchema = z.object({
@@ -21,6 +23,12 @@ const partnershipSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
+    const pg = await getPrismaOr503();
+    if (!pg.ok) {
+      return pg.response;
+    }
+    const prisma = pg.prisma;
+
     const body = await request.json();
 
     // Validate input

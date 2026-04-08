@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import { getPrismaOr503 } from '@/lib/api-prisma';
 import {
   mongoBlogDocumentToApiListPost,
   mongoListPublishedPostDocuments,
   useMongoForPublicBlog,
 } from '@/lib/mongo-blog';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/posts
@@ -45,6 +47,12 @@ export async function GET(request: NextRequest) {
         },
       });
     }
+
+    const pg = await getPrismaOr503();
+    if (!pg.ok) {
+      return pg.response;
+    }
+    const prisma = pg.prisma;
 
     // Build where clause
     const where: Record<string, unknown> = {

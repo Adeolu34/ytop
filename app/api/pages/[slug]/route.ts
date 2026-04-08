@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import { getPrismaOr503 } from '@/lib/api-prisma';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/pages/[slug]
@@ -12,6 +14,12 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+
+    const pg = await getPrismaOr503();
+    if (!pg.ok) {
+      return pg.response;
+    }
+    const prisma = pg.prisma;
 
     const page = await prisma.page.findUnique({
       where: {
