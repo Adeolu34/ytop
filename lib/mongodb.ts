@@ -39,7 +39,13 @@ export function getMongoClientPromise(): Promise<MongoClient> {
   const u = requireUri();
   const g = globalThis as GlobalWithMongo;
   if (!g._mongoClientPromise) {
-    g._mongoClientPromise = new MongoClient(u).connect();
+    g._mongoClientPromise = new MongoClient(u, {
+      // Keep serverless requests from hanging until platform timeout.
+      serverSelectionTimeoutMS: 8000,
+      connectTimeoutMS: 8000,
+      socketTimeoutMS: 10000,
+      maxPoolSize: 5,
+    }).connect();
   }
   return g._mongoClientPromise;
 }
