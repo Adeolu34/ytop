@@ -2,9 +2,9 @@ import type { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 /**
- * Shared Auth.js config without Prisma/Node-only imports.
+ * Shared Auth.js config without Node-only database imports.
  * Used by middleware (`NextAuth(authConfig)`) so the Edge bundle never loads `pg`/Prisma.
- * Real `authorize` + adapter live in `lib/auth.ts`.
+ * Real `authorize` logic lives in `lib/auth.ts`.
  */
 const authConfig = {
   // Required behind proxies/platform routers (Render/Netlify) so Auth.js trusts request host headers.
@@ -17,7 +17,7 @@ const authConfig = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      /** Stub — login uses the full `auth.ts` instance with Prisma. Middleware only decodes JWT. */
+      /** Stub — login uses the full `auth.ts` instance. Middleware only decodes JWT. */
       authorize: async () => null,
     }),
   ],

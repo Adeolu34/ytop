@@ -1,14 +1,12 @@
 import NextAuth from 'next-auth';
 import type { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcryptjs';
-import prisma from './db';
 import authConfig from './auth.config';
+import { findMongoAuthUserByEmail } from './mongo-auth';
 
 const authOptions: NextAuthConfig = {
   ...authConfig,
-  adapter: PrismaAdapter(prisma) as any,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -23,9 +21,7 @@ const authOptions: NextAuthConfig = {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        const user = await findMongoAuthUserByEmail(email);
 
         if (!user || !user.hashedPassword) {
           return null;

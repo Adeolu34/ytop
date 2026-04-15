@@ -1,11 +1,8 @@
 /**
  * MongoDB client for collections this app uses explicitly.
  *
- * **Public blog (when `PUBLIC_BLOG_SOURCE=mongodb`):** published posts are read from MongoDB
- * (`blog_posts`), synced from PostgreSQL on publish. Comments for those posts still use Postgres.
- *
- * **PostgreSQL (Prisma):** remains the source of truth for admin, drafts, users, sessions,
- * campaigns, media rows, and most APIs. Set `DATABASE_URL` for those features.
+ * **Public blog:** published posts are read from MongoDB (`blog_posts`).
+ * **Auth users:** credentials-based admin login reads `users` from MongoDB.
  */
 import { MongoClient, Db } from 'mongodb';
 

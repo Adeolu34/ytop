@@ -14,6 +14,8 @@
 
 import 'dotenv/config';
 import { MongoClient } from 'mongodb';
+import bcrypt from 'bcryptjs';
+import { randomUUID } from 'crypto';
 
 const uri = process.env.MONGODB_URI?.trim();
 const dbName = process.env.MONGODB_DB?.trim();
@@ -47,15 +49,26 @@ async function main() {
     programs.createIndex({ isActive: 1, order: 1 }),
   ]);
 
+  const adminEmail = (process.env.ADMIN_EMAIL || 'admin@ytopglobal.org').trim().toLowerCase();
+  const adminName = (process.env.ADMIN_NAME || 'Admin User').trim();
+  const adminPassword = process.env.ADMIN_PASSWORD?.trim() || 'Admin@1234';
+  const adminPasswordHash = await bcrypt.hash(adminPassword, 12);
+
   await users.updateOne(
-    { email: 'admin@ytopglobal.org' },
+    { email: adminEmail },
     {
       $set: {
-        name: 'Admin User',
+        name: adminName,
         role: 'ADMIN',
+        hashedPassword: adminPasswordHash,
         updatedAt: new Date(),
       },
-      $setOnInsert: { createdAt: new Date() },
+      $setOnInsert: {
+        id: randomUUID(),
+        image: null,
+        bio: null,
+        createdAt: new Date(),
+      },
     },
     { upsert: true }
   );
