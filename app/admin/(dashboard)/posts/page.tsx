@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { Eye, Filter, Plus } from 'lucide-react';
-import { PostStatus, type Prisma } from '@/app/generated/prisma';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
-import prisma from '@/lib/db';
 import {
   getSearchParamValue,
   readAdminFlashMessage,
@@ -12,6 +10,23 @@ import {
   deletePostAction,
   updatePostStatusAction,
 } from '@/app/admin/(dashboard)/posts/actions';
+import { getMongoDb } from '@/lib/mongodb';
+
+type AdminPost = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content?: string | null;
+  status: 'PUBLISHED' | 'DRAFT' | 'SCHEDULED';
+  viewCount?: number;
+  author?: {
+    name?: string | null;
+  } | null;
+  categories?: Array<{ name?: string } | string>;
+  createdAt?: Date | string;
+  publishedAt?: Date | string | null;
+};
 
 function buildFilterHref(status: string, searchQuery: string): string {
   const searchParams = new URLSearchParams();
@@ -38,46 +53,40 @@ export default async function AdminPostsPage({
   const searchQuery = getSearchParamValue(resolvedSearchParams.q)?.trim() || '';
   const statusFilter =
     getSearchParamValue(resolvedSearchParams.status)?.toUpperCase() || 'ALL';
+  const asDate = (value: unknown): Date => {
+    if (value instanceof Date) return value;
+    const parsed = new Date(String(value ?? ''));
+    return Number.isNaN(parsed.getTime()) ? new Date(0) : parsed;
+  };
 
-  const where: Prisma.PostWhereInput = {};
-
-  if (statusFilter !== 'ALL') {
-    where.status = statusFilter as PostStatus;
-  }
-
+  const db = await getMongoDb();
+  const postsCollection = db.collection<AdminPost>('blog_posts');
+  const where: Record<string, unknown> = {};
+  if (statusFilter !== 'ALL') where.status = statusFilter;
   if (searchQuery) {
-    where.OR = [
-      { title: { contains: searchQuery, mode: 'insensitive' } },
-      { slug: { contains: searchQuery, mode: 'insensitive' } },
-      { excerpt: { contains: searchQuery, mode: 'insensitive' } },
-      { content: { contains: searchQuery, mode: 'insensitive' } },
+    where.$or = [
+      { title: { $regex: searchQuery, $options: 'i' } },
+      { slug: { $regex: searchQuery, $options: 'i' } },
+      { excerpt: { $regex: searchQuery, $options: 'i' } },
+      { content: { $regex: searchQuery, $options: 'i' } },
     ];
   }
 
   const [posts, postCount, publishedCount, draftCount, engagement] =
     await Promise.all([
-      prisma.post.findMany({
-        where,
-        take: 20,
-        orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
-        include: {
-          author: {
-            select: { name: true },
-          },
-          categories: {
-            select: { name: true },
-            take: 1,
-          },
-        },
-      }),
-      prisma.post.count(),
-      prisma.post.count({ where: { status: 'PUBLISHED' } }),
-      prisma.post.count({ where: { status: 'DRAFT' } }),
-      prisma.post.aggregate({
-        _sum: {
-          viewCount: true,
-        },
-      }),
+      postsCollection
+        .find(where)
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .limit(20)
+        .toArray(),
+      postsCollection.countDocuments(),
+      postsCollection.countDocuments({ status: 'PUBLISHED' }),
+      postsCollection.countDocuments({ status: 'DRAFT' }),
+      postsCollection
+        .aggregate<{ totalViews: number }>([
+          { $group: { _id: null, totalViews: { $sum: { $ifNull: ['$viewCount', 0] } } } },
+        ])
+        .toArray(),
     ]);
 
   const statusFilters = ['ALL', 'PUBLISHED', 'DRAFT', 'SCHEDULED'];
@@ -121,7 +130,7 @@ export default async function AdminPostsPage({
               Total Engagement
             </p>
             <p className="admin-font-display mt-4 text-5xl font-extrabold tracking-tight text-[#1b1c1c]">
-              {(engagement._sum.viewCount || 0).toLocaleString()}
+              {(engagement[0]?.totalViews || 0).toLocaleString()}
             </p>
             <p className="mt-3 text-sm font-semibold text-[#ba0013]">
               Aggregated public post views across the blog
@@ -235,15 +244,17 @@ export default async function AdminPostsPage({
                     </p>
                   </td>
                   <td className="px-6 py-5 text-sm font-medium text-[#1b1c1c]">
-                    {post.author.name || 'Unknown author'}
+                    {post.author?.name || 'Unknown author'}
                   </td>
                   <td className="px-6 py-5">
                     <span className="rounded bg-[#efeded] px-2 py-1 text-[0.625rem] font-bold uppercase text-[#5d3f3c]">
-                      {post.categories[0]?.name || 'Uncategorized'}
+                      {(typeof post.categories?.[0] === 'string'
+                        ? post.categories?.[0]
+                        : post.categories?.[0]?.name) || 'Uncategorized'}
                     </span>
                   </td>
                   <td className="px-6 py-5 text-sm text-[#5d3f3c]">
-                    {(post.publishedAt || post.createdAt).toLocaleDateString()}
+                    {asDate(post.publishedAt || post.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-5">
                     <span

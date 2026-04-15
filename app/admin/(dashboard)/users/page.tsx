@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { Mail, Shield, UserPlus } from 'lucide-react';
-import { UserRole, type Prisma } from '@/app/generated/prisma';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
-import prisma from '@/lib/db';
 import { requireAdmin } from '@/lib/auth-utils';
 import {
   getSearchParamValue,
@@ -10,6 +8,18 @@ import {
   type SearchParamRecord,
 } from '@/lib/admin-feedback';
 import { deleteUserAction } from '@/app/admin/(dashboard)/users/actions';
+import { getMongoDb } from '@/lib/mongodb';
+
+type AdminUser = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: string;
+  hashedPassword?: string | null;
+  image?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+};
 
 function buildRoleHref(role: string, searchQuery: string): string {
   const searchParams = new URLSearchParams();
@@ -44,54 +54,34 @@ export default async function AdminUsersPage({
   const sixtyDaysAgo = new Date(now);
   sixtyDaysAgo.setDate(now.getDate() - 60);
 
-  const where: Prisma.UserWhereInput = {};
+  const db = await getMongoDb();
+  const usersCollection = db.collection<AdminUser>('users');
+  const asDate = (value: unknown): Date => {
+    if (value instanceof Date) return value;
+    const parsed = new Date(String(value ?? ''));
+    return Number.isNaN(parsed.getTime()) ? new Date(0) : parsed;
+  };
 
-  if (roleFilter !== 'ALL') {
-    where.role = roleFilter as UserRole;
-  }
-
+  const where: Record<string, unknown> = {};
+  if (roleFilter !== 'ALL') where.role = roleFilter;
   if (searchQuery) {
-    where.OR = [
-      { name: { contains: searchQuery, mode: 'insensitive' } },
-      { email: { contains: searchQuery, mode: 'insensitive' } },
+    where.$or = [
+      { name: { $regex: searchQuery, $options: 'i' } },
+      { email: { $regex: searchQuery, $options: 'i' } },
     ];
   }
 
   const [users, totalUsers, adminUsers, contentUsers, newUsersThisMonth] =
     await Promise.all([
-      prisma.user.findMany({
-        where,
-        take: 20,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          hashedPassword: true,
-          image: true,
-          createdAt: true,
-          updatedAt: true,
-          _count: {
-            select: {
-              posts: true,
-              pages: true,
-              comments: true,
-              mediaUploads: true,
-            },
-          },
+      usersCollection.find(where).sort({ createdAt: -1 }).limit(20).toArray(),
+      usersCollection.countDocuments(),
+      usersCollection.countDocuments({ role: 'ADMIN' }),
+      usersCollection.countDocuments({
+        role: {
+          $in: ['ADMIN', 'EDITOR', 'AUTHOR'],
         },
       }),
-      prisma.user.count(),
-      prisma.user.count({ where: { role: 'ADMIN' } }),
-      prisma.user.count({
-        where: {
-          role: {
-            in: ['ADMIN', 'EDITOR', 'AUTHOR'],
-          },
-        },
-      }),
-      prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      usersCollection.countDocuments({ createdAt: { $gte: thirtyDaysAgo } }),
     ]);
 
   const roleFilters = ['ALL', 'ADMIN', 'EDITOR', 'AUTHOR', 'SUBSCRIBER'];
@@ -256,15 +246,11 @@ export default async function AdminUsersPage({
                     .toUpperCase() || 'YT';
                 const status = !user.hashedPassword
                   ? 'Pending setup'
-                  : user.updatedAt >= sixtyDaysAgo
+                  : asDate(user.updatedAt) >= sixtyDaysAgo
                     ? 'Active'
                     : 'Quiet';
                 const canDelete =
-                  user.id !== currentUser.id &&
-                  user._count.posts === 0 &&
-                  user._count.pages === 0 &&
-                  user._count.comments === 0 &&
-                  user._count.mediaUploads === 0;
+                  user.id !== currentUser.id;
 
                 return (
                   <tr
@@ -290,8 +276,7 @@ export default async function AdminUsersPage({
                           </p>
                           <p className="text-xs text-[#5d3f3c]">{user.email}</p>
                           <p className="mt-1 text-[0.6875rem] text-[#5d3f3c]">
-                            {user._count.posts} posts · {user._count.pages} pages ·{' '}
-                            {user._count.mediaUploads} uploads
+                            Mongo-managed account
                           </p>
                         </div>
                       </div>
@@ -324,7 +309,7 @@ export default async function AdminUsersPage({
                       </span>
                     </td>
                     <td className="px-8 py-5 text-sm text-[#5d3f3c]">
-                      {user.createdAt.toLocaleDateString()}
+                      {asDate(user.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-8 py-5">
                       <div className="flex flex-wrap justify-end gap-2">
