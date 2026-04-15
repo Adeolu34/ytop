@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
+import { Prisma } from '../app/generated/prisma';
 import prisma from '../lib/db';
 import { resolveSeedAdminCredentials } from '../lib/seed-admin';
 import { YTOP_SOCIAL_URLS } from '../lib/ytop-social-urls';
@@ -213,6 +214,232 @@ async function main() {
         'sample blog posts (each with a different featured image)'
       );
     }
+
+    // Seed additional platform users
+    const supportingUsers = [
+      {
+        email: 'editor@ytopglobal.org',
+        name: 'YTOP Editor',
+        role: 'EDITOR' as const,
+      },
+      {
+        email: 'author@ytopglobal.org',
+        name: 'YTOP Author',
+        role: 'AUTHOR' as const,
+      },
+    ];
+    for (const user of supportingUsers) {
+      await prisma.user.upsert({
+        where: { email: user.email },
+        update: {
+          name: user.name,
+          role: user.role,
+        },
+        create: {
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        },
+      });
+    }
+    console.log('Created/updated supporting users');
+
+    // Seed baseline team members
+    const teamSeeds = [
+      {
+        name: 'Abayomi Adewumi',
+        slug: 'abayomi-adewumi',
+        position: 'Founder & Executive Director',
+        bio: 'Leads YTOP Global strategy and cross-program execution.',
+        teamSection: 'core',
+        order: 1,
+      },
+      {
+        name: 'Adedayo Adeniyi',
+        slug: 'adedayo-adeniyi',
+        position: 'Programs Manager',
+        bio: 'Coordinates education and leadership programs across communities.',
+        teamSection: 'core',
+        order: 2,
+      },
+      {
+        name: 'Adeosun Ilerioluwa',
+        slug: 'adeosun-ilerioluwa',
+        position: 'Community Engagement Lead',
+        bio: 'Builds partnerships and volunteer engagement pipelines.',
+        teamSection: 'community',
+        order: 3,
+      },
+    ];
+    for (const member of teamSeeds) {
+      await prisma.teamMember.upsert({
+        where: { slug: member.slug },
+        update: {
+          name: member.name,
+          position: member.position,
+          bio: member.bio,
+          teamSection: member.teamSection,
+          order: member.order,
+          isActive: true,
+        },
+        create: {
+          ...member,
+          isActive: true,
+        },
+      });
+    }
+    console.log('Created/updated team members');
+
+    // Seed core programs
+    const programSeeds = [
+      {
+        title: 'Project 300',
+        slug: 'project-300',
+        description:
+          'A school mentorship and impact program empowering students through guidance, life skills, and leadership support.',
+        shortDesc: 'School mentorship and leadership development program.',
+        sdgGoals: ['4', '8', '10'],
+        order: 1,
+      },
+      {
+        title: 'Rise of Warriors',
+        slug: 'rise-of-warriors',
+        description:
+          'A transformational youth leadership program focused on mindset, discipline, and purposeful community impact.',
+        shortDesc: 'Youth leadership and personal transformation program.',
+        sdgGoals: ['4', '5', '8', '16'],
+        order: 2,
+      },
+    ];
+    for (const program of programSeeds) {
+      await prisma.program.upsert({
+        where: { slug: program.slug },
+        update: {
+          title: program.title,
+          description: program.description,
+          shortDesc: program.shortDesc,
+          sdgGoals: program.sdgGoals,
+          order: program.order,
+          isActive: true,
+        },
+        create: {
+          ...program,
+          isActive: true,
+        },
+      });
+    }
+    console.log('Created/updated programs');
+
+    // Seed upcoming event
+    const rowProgram = await prisma.program.findUnique({
+      where: { slug: 'rise-of-warriors' },
+      select: { id: true },
+    });
+    await prisma.event.upsert({
+      where: { slug: 'rise-of-warriors-bootcamp' },
+      update: {
+        title: 'Rise of Warriors Bootcamp',
+        description:
+          'A practical training bootcamp for young leaders, with mentorship and project execution support.',
+        startDate: new Date('2026-06-15T09:00:00.000Z'),
+        endDate: new Date('2026-06-15T16:00:00.000Z'),
+        location: 'Lagos, Nigeria',
+        isOnline: false,
+        registrationUrl: 'https://ytopglobal.org/get-involved',
+        galleryImageIds: [],
+        programId: rowProgram?.id ?? null,
+      },
+      create: {
+        title: 'Rise of Warriors Bootcamp',
+        slug: 'rise-of-warriors-bootcamp',
+        description:
+          'A practical training bootcamp for young leaders, with mentorship and project execution support.',
+        startDate: new Date('2026-06-15T09:00:00.000Z'),
+        endDate: new Date('2026-06-15T16:00:00.000Z'),
+        location: 'Lagos, Nigeria',
+        isOnline: false,
+        registrationUrl: 'https://ytopglobal.org/get-involved',
+        galleryImageIds: [],
+        programId: rowProgram?.id ?? null,
+      },
+    });
+    console.log('Created/updated event');
+
+    // Seed donation campaign
+    await prisma.campaign.upsert({
+      where: { slug: 'project-300-fundraiser' },
+      update: {
+        title: 'Project 300 Fundraiser',
+        description:
+          'Support school outreach, mentorship resources, and youth development activities through Project 300.',
+        goalAmount: new Prisma.Decimal('10000.00'),
+        raisedAmount: new Prisma.Decimal('2500.00'),
+        currency: 'USD',
+        startDate: new Date('2026-01-01T00:00:00.000Z'),
+        endDate: new Date('2026-12-31T23:59:59.000Z'),
+        isActive: true,
+      },
+      create: {
+        title: 'Project 300 Fundraiser',
+        slug: 'project-300-fundraiser',
+        description:
+          'Support school outreach, mentorship resources, and youth development activities through Project 300.',
+        goalAmount: new Prisma.Decimal('10000.00'),
+        raisedAmount: new Prisma.Decimal('2500.00'),
+        currency: 'USD',
+        startDate: new Date('2026-01-01T00:00:00.000Z'),
+        endDate: new Date('2026-12-31T23:59:59.000Z'),
+        isActive: true,
+      },
+    });
+    console.log('Created/updated donation campaign');
+
+    // Seed a sample donation form submission so admin has records to test.
+    // Avoid relying on a composite unique index that may not exist in every DB yet.
+    const existingDonationSubmission = await prisma.formSubmission.findFirst({
+      where: {
+        type: 'DONATION',
+        email: 'donor@example.com',
+      },
+      select: { id: true },
+    });
+
+    if (existingDonationSubmission) {
+      await prisma.formSubmission.update({
+        where: { id: existingDonationSubmission.id },
+        data: {
+          name: 'Sample Donor',
+          data: {
+            amount: 100,
+            currency: 'USD',
+            channel: 'seed',
+            note: 'Seed donation record for admin testing',
+          },
+          isRead: false,
+          isProcessed: false,
+        },
+      });
+    } else {
+      await prisma.formSubmission.create({
+        data: {
+          type: 'DONATION',
+          name: 'Sample Donor',
+          email: 'donor@example.com',
+          phone: null,
+          data: {
+            amount: 100,
+            currency: 'USD',
+            channel: 'seed',
+            note: 'Seed donation record for admin testing',
+          },
+          isRead: false,
+          isProcessed: false,
+          ipAddress: '127.0.0.1',
+          userAgent: 'seed-script',
+        },
+      });
+    }
+    console.log('Created/updated sample donation submission');
 
     console.log('\nSeeding complete!');
     if (adminCredentials) {

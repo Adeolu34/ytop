@@ -3,6 +3,10 @@ import Link from 'next/link';
 import TeamTabsSection from './TeamTabsSection';
 import { getPrisma } from '@/lib/db';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
+import {
+  mongoListActiveTeamMembers,
+  useMongoForPublicData,
+} from '@/lib/mongo-public';
 
 /**
  * Team page content aligned with https://ytopglobal.org/team/
@@ -57,11 +61,13 @@ export const metadata = {
 };
 
 async function loadTeamTabsData() {
-  const members = await getPrisma().teamMember.findMany({
-    where: { isActive: true },
-    orderBy: [{ order: 'asc' }, { name: 'asc' }],
-    include: { photo: true },
-  });
+  const members = useMongoForPublicData()
+    ? await mongoListActiveTeamMembers()
+    : await getPrisma().teamMember.findMany({
+        where: { isActive: true },
+        orderBy: [{ order: 'asc' }, { name: 'asc' }],
+        include: { photo: true },
+      });
 
   if (members.length === 0) {
     return null;

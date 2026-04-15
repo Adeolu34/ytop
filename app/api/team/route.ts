@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getPrismaOr503 } from '@/lib/api-prisma';
+import {
+  mongoListActiveTeamMembers,
+  useMongoForPublicData,
+} from '@/lib/mongo-public';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +14,11 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
+    if (useMongoForPublicData()) {
+      const teamMembers = await mongoListActiveTeamMembers();
+      return NextResponse.json({ teamMembers });
+    }
+
     const pg = await getPrismaOr503();
     if (!pg.ok) {
       return pg.response;

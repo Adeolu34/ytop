@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPrismaOr503 } from '@/lib/api-prisma';
+import { mongoListActivePrograms, useMongoForPublicData } from '@/lib/mongo-public';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +11,11 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
+    if (useMongoForPublicData()) {
+      const programs = await mongoListActivePrograms();
+      return NextResponse.json({ programs });
+    }
+
     const pg = await getPrismaOr503();
     if (!pg.ok) {
       return pg.response;
