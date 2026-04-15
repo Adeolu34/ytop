@@ -174,9 +174,14 @@ async function fetchBlogPageData(params: {
   return loadBlogFromPostgres(where, page, limit);
 }
 
-export default async function BlogPage({ searchParams }: { searchParams: SearchParams }) {
-  const page = parseInt(searchParams.page || '1');
-  const categorySlug = searchParams.category;
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const page = parseInt(resolvedSearchParams.page || '1');
+  const categorySlug = resolvedSearchParams.category;
   const limit = 12;
   const mongoPublicBlog = useMongoForPublicBlog();
 
