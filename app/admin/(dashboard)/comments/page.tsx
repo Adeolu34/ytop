@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { CheckCircle2, Clock3, ExternalLink, ShieldAlert, Trash2 } from 'lucide-react';
-import type { Prisma } from '@/app/generated/prisma';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
-import prisma from '@/lib/db';
 import { requireAdmin } from '@/lib/auth-utils';
 import {
   getSearchParamValue,
@@ -10,6 +8,27 @@ import {
   type SearchParamRecord,
 } from '@/lib/admin-feedback';
 import { approveCommentAction, deleteCommentAction } from '@/app/admin/(dashboard)/comments/actions';
+import { getMongoDb } from '@/lib/mongodb';
+
+type AdminComment = {
+  id: string;
+  content: string;
+  authorName?: string | null;
+  authorEmail?: string | null;
+  authorId?: string | null;
+  isApproved?: boolean;
+  parentId?: string | null;
+  createdAt?: Date | string;
+  author?: {
+    name?: string | null;
+    email?: string | null;
+    role?: string | null;
+  } | null;
+  post?: {
+    title?: string | null;
+    slug?: string | null;
+  } | null;
+};
 
 function getCommentAuthorLabel(comment: {
   authorName: string | null;
@@ -37,84 +56,35 @@ export default async function AdminCommentsPage({
   const searchQuery = getSearchParamValue(resolvedSearchParams.q)?.trim() || '';
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-  const where: Prisma.CommentWhereInput = {
-    isApproved: false,
+  const asDate = (value: unknown): Date => {
+    if (value instanceof Date) return value;
+    const parsed = new Date(String(value ?? ''));
+    return Number.isNaN(parsed.getTime()) ? new Date(0) : parsed;
   };
 
+  const db = await getMongoDb();
+  const commentsCollection = db.collection<AdminComment>('comments');
+  const where: Record<string, unknown> = { isApproved: false };
+
   if (searchQuery) {
-    where.OR = [
-      { content: { contains: searchQuery, mode: 'insensitive' } },
-      { authorName: { contains: searchQuery, mode: 'insensitive' } },
-      { authorEmail: { contains: searchQuery, mode: 'insensitive' } },
-      {
-        author: {
-          is: {
-            name: { contains: searchQuery, mode: 'insensitive' },
-          },
-        },
-      },
-      {
-        author: {
-          is: {
-            email: { contains: searchQuery, mode: 'insensitive' },
-          },
-        },
-      },
-      {
-        post: {
-          is: {
-            title: { contains: searchQuery, mode: 'insensitive' },
-          },
-        },
-      },
+    where.$or = [
+      { content: { $regex: searchQuery, $options: 'i' } },
+      { authorName: { $regex: searchQuery, $options: 'i' } },
+      { authorEmail: { $regex: searchQuery, $options: 'i' } },
+      { 'author.name': { $regex: searchQuery, $options: 'i' } },
+      { 'author.email': { $regex: searchQuery, $options: 'i' } },
+      { 'post.title': { $regex: searchQuery, $options: 'i' } },
     ];
   }
 
   const [pendingComments, totalPending, guestPending, pendingThisWeek] =
     await Promise.all([
-      prisma.comment.findMany({
-        where,
-        take: 50,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          content: true,
-          authorName: true,
-          authorEmail: true,
-          parentId: true,
-          createdAt: true,
-          author: {
-            select: {
-              name: true,
-              email: true,
-              role: true,
-            },
-          },
-          post: {
-            select: {
-              title: true,
-              slug: true,
-            },
-          },
-        },
-      }),
-      prisma.comment.count({
-        where: { isApproved: false },
-      }),
-      prisma.comment.count({
-        where: {
-          isApproved: false,
-          authorId: null,
-        },
-      }),
-      prisma.comment.count({
-        where: {
-          isApproved: false,
-          createdAt: {
-            gte: sevenDaysAgo,
-          },
-        },
+      commentsCollection.find(where).sort({ createdAt: -1 }).limit(50).toArray(),
+      commentsCollection.countDocuments({ isApproved: false }),
+      commentsCollection.countDocuments({ isApproved: false, authorId: null }),
+      commentsCollection.countDocuments({
+        isApproved: false,
+        createdAt: { $gte: sevenDaysAgo },
       }),
     ]);
 
@@ -228,7 +198,7 @@ export default async function AdminCommentsPage({
                       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[#5d3f3c]">
                         <span className="inline-flex items-center gap-2">
                           <Clock3 className="h-4 w-4" />
-                          {comment.createdAt.toLocaleString()}
+                          {asDate(comment.createdAt).toLocaleString()}
                         </span>
                         {authorEmail ? (
                           <a
@@ -252,15 +222,17 @@ export default async function AdminCommentsPage({
                       <span className="font-semibold text-[#1b1c1c]">
                         On post:
                       </span>
-                      <span>{comment.post.title}</span>
-                      <Link
-                        href={`/blog/${comment.post.slug}#comments`}
-                        target="_blank"
-                        className="inline-flex items-center gap-2 font-semibold text-[#ba0013] hover:text-[#93000d]"
-                      >
-                        View public page
-                        <ExternalLink className="h-4 w-4" />
-                      </Link>
+                      <span>{comment.post?.title || 'Unknown post'}</span>
+                      {comment.post?.slug ? (
+                        <Link
+                          href={`/blog/${comment.post.slug}#comments`}
+                          target="_blank"
+                          className="inline-flex items-center gap-2 font-semibold text-[#ba0013] hover:text-[#93000d]"
+                        >
+                          View public page
+                          <ExternalLink className="h-4 w-4" />
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
 
