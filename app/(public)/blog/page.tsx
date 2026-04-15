@@ -363,9 +363,8 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                     If you intend to read posts from MongoDB, set{' '}
                     <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MONGODB_URI</code> and{' '}
                     <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">PUBLIC_BLOG_SOURCE=mongodb</code>
-                    , and ensure the <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">blog_posts</code> collection is synced. PostgreSQL (
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">DATABASE_URL</code>) is still required for admin, drafts, and comments—add it when you use those features (e.g. Neon or{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">docker compose</code>).
+                    , and ensure the <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">blog_posts</code> collection is synced.
+                    Also verify Atlas network access allows Netlify and your URI points to the expected database.
                   </>
                 ) : (
                   <>
