@@ -10,6 +10,7 @@
     "import-wordpress": "tsx scripts/transform-and-import.ts",
     "publish-posts": "tsx scripts/publish-all-posts.ts",
     "import-posts-wp": "tsx scripts/import-posts-from-wp-api.ts",
+    "import-posts-wp-mongo": "tsx scripts/import-posts-from-wp-to-mongo.ts",
     "reimport-posts-wp": "tsx scripts/import-posts-from-wp-api.ts --reimport",
     "db:seed": "tsx prisma/seed.ts",
     "migrate:cloudinary": "tsx scripts/migrate-media-to-cloudinary.ts",
