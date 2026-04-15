@@ -232,12 +232,23 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
         draftCount = data.draftCount;
       } catch (retryErr) {
         console.error('Blog page failed after retry:', retryErr);
-        loadError =
-          'The connection to the database was lost or timed out. Please refresh the page or try again in a moment.';
+        // Keep the blog page usable: show the normal empty-state UI instead of an error wall.
+        posts = [];
+        totalCount = 0;
+        totalPublishedCount = 0;
+        categories = [];
+        draftCount = 0;
+        loadError = null;
       }
     } else {
       console.error('Blog page failed to load posts:', err);
-      loadError = 'Unable to load blog posts. Please try again later.';
+      // Graceful fallback to empty state.
+      posts = [];
+      totalCount = 0;
+      totalPublishedCount = 0;
+      categories = [];
+      draftCount = 0;
+      loadError = null;
     }
   }
 
