@@ -7,6 +7,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
  * Real `authorize` + adapter live in `lib/auth.ts`.
  */
 const authConfig = {
+  // Required behind proxies/platform routers (Render/Netlify) so Auth.js trusts request host headers.
+  trustHost: true,
   providers: [
     CredentialsProvider({
       id: 'credentials',
