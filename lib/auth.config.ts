@@ -25,8 +25,8 @@ const authConfig = {
     strategy: 'jwt',
   },
   pages: {
-    signIn: '/admin/login',
-    error: '/admin/login',
+    signIn: '/yadmin/login',
+    error: '/yadmin/login',
   },
   callbacks: {
     async jwt({ token, user }) {

@@ -38,7 +38,7 @@ export default function AdminSidebar() {
     <>
       <aside className="admin-surface-panel fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col bg-[#f5f3f3] py-6 lg:flex">
         <div className="px-6">
-          <Link href="/admin" className="flex items-center gap-3">
+          <Link href="/yadmin" className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#ba0013] to-[#e31e24] text-white shadow-lg shadow-[#ba0013]/20">
               <span className="admin-font-display text-lg font-extrabold">YG</span>
             </div>

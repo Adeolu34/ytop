@@ -8,38 +8,40 @@ import { Bell, Headset, LogOut, Search } from 'lucide-react';
 import { getAdminPageMeta } from '@/lib/admin-shell';
 
 function getSearchAction(pathname: string): string {
-  if (pathname.startsWith('/admin/users')) {
-    return '/admin/users';
+  if (pathname.startsWith('/yadmin/users') || pathname.startsWith('/admin/users')) {
+    return '/yadmin/users';
   }
 
-  if (pathname.startsWith('/admin/posts')) {
-    return '/admin/posts';
+  if (pathname.startsWith('/yadmin/posts') || pathname.startsWith('/admin/posts')) {
+    return '/yadmin/posts';
   }
 
   if (
+    pathname.startsWith('/yadmin/gallery') ||
+    pathname.startsWith('/yadmin/media') ||
     pathname.startsWith('/admin/gallery') ||
     pathname.startsWith('/admin/media')
   ) {
-    return '/admin/gallery';
+    return '/yadmin/gallery';
   }
 
-  if (pathname.startsWith('/admin/comments')) {
-    return '/admin/comments';
+  if (pathname.startsWith('/yadmin/comments') || pathname.startsWith('/admin/comments')) {
+    return '/yadmin/comments';
   }
 
-  if (pathname.startsWith('/admin/settings')) {
-    return '/admin/settings';
+  if (pathname.startsWith('/yadmin/settings') || pathname.startsWith('/admin/settings')) {
+    return '/yadmin/settings';
   }
 
-  if (pathname.startsWith('/admin/team')) {
-    return '/admin/team';
+  if (pathname.startsWith('/yadmin/team') || pathname.startsWith('/admin/team')) {
+    return '/yadmin/team';
   }
 
-  if (pathname.startsWith('/admin/programs')) {
-    return '/admin/programs';
+  if (pathname.startsWith('/yadmin/programs') || pathname.startsWith('/admin/programs')) {
+    return '/yadmin/programs';
   }
 
-  return '/admin';
+  return '/yadmin';
 }
 
 function shouldPreserveParam(pathname: string, key: string): boolean {
@@ -47,15 +49,17 @@ function shouldPreserveParam(pathname: string, key: string): boolean {
     return false;
   }
 
-  if (pathname.startsWith('/admin/users')) {
+  if (pathname.startsWith('/yadmin/users') || pathname.startsWith('/admin/users')) {
     return key === 'role';
   }
 
-  if (pathname.startsWith('/admin/posts')) {
+  if (pathname.startsWith('/yadmin/posts') || pathname.startsWith('/admin/posts')) {
     return key === 'status';
   }
 
   if (
+    pathname.startsWith('/yadmin/gallery') ||
+    pathname.startsWith('/yadmin/media') ||
     pathname.startsWith('/admin/gallery') ||
     pathname.startsWith('/admin/media')
   ) {
@@ -116,7 +120,7 @@ export default function AdminHeader() {
         </div>
 
         <Link
-          href={session?.user?.role === 'ADMIN' ? '/admin/comments' : '/admin'}
+          href={session?.user?.role === 'ADMIN' ? '/yadmin/comments' : '/yadmin'}
           className="relative rounded-full p-2 text-[#5d3f3c] transition-colors hover:bg-white hover:text-[#ba0013]"
           title="Open moderation queue"
         >
@@ -139,7 +143,7 @@ export default function AdminHeader() {
           </div>
 
           <button
-            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            onClick={() => signOut({ callbackUrl: '/yadmin/login' })}
             className="rounded-full p-2 text-[#5d3f3c] transition-colors hover:bg-white hover:text-[#ba0013]"
             title={`Sign out from ${meta.title}`}
           >

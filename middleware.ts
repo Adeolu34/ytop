@@ -33,6 +33,13 @@ function runMiddleware(
     return NextResponse.next();
   }
 
+  // Canonicalize admin path prefix: /admin/* -> /yadmin/*
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/admin/, '/yadmin');
+    return NextResponse.redirect(url, { status: 308 });
+  }
+
   if (isProtectedAdminPath(pathname)) {
     if (!hasUser) {
       return NextResponse.redirect(buildAdminLoginRedirectUrl(request.url), {
@@ -57,6 +64,13 @@ function runMiddleware(
     const url = request.nextUrl.clone();
     url.pathname = patternRedirect;
     return NextResponse.redirect(url, { status: 301 });
+  }
+
+  // Keep filesystem routes under /admin while exposing /yadmin publicly.
+  if (pathname === '/yadmin' || pathname.startsWith('/yadmin/')) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/yadmin/, '/admin');
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next();

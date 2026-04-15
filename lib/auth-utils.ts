@@ -17,7 +17,7 @@ export async function getCurrentUser() {
 export async function requireAuth(): Promise<AuthenticatedUser> {
   const user = await getCurrentUser();
   if (!user?.id || !user.role) {
-    redirect('/admin/login');
+    redirect('/yadmin/login');
   }
 
   return {
@@ -32,7 +32,7 @@ export async function requireAuth(): Promise<AuthenticatedUser> {
 export async function requireAdmin(): Promise<AuthenticatedUser> {
   const user = await requireAuth();
   if (user.role !== 'ADMIN') {
-    redirect('/admin');
+    redirect('/yadmin');
   }
   return user;
 }
