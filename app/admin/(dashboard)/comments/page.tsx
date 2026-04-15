@@ -8,7 +8,11 @@ import {
   type SearchParamRecord,
 } from '@/lib/admin-feedback';
 import { approveCommentAction, deleteCommentAction } from '@/app/admin/(dashboard)/comments/actions';
-import { getMongoDb } from '@/lib/mongodb';
+import { getMongoDb, isMongoConfigured } from '@/lib/mongodb';
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 type AdminComment = {
   id: string;
@@ -62,31 +66,51 @@ export default async function AdminCommentsPage({
     return Number.isNaN(parsed.getTime()) ? new Date(0) : parsed;
   };
 
-  const db = await getMongoDb();
-  const commentsCollection = db.collection<AdminComment>('comments');
-  const where: Record<string, unknown> = { isApproved: false };
+  let pendingComments: AdminComment[] = [];
+  let totalPending = 0;
+  let guestPending = 0;
+  let pendingThisWeek = 0;
+  let loadError: string | null = null;
 
-  if (searchQuery) {
-    where.$or = [
-      { content: { $regex: searchQuery, $options: 'i' } },
-      { authorName: { $regex: searchQuery, $options: 'i' } },
-      { authorEmail: { $regex: searchQuery, $options: 'i' } },
-      { 'author.name': { $regex: searchQuery, $options: 'i' } },
-      { 'author.email': { $regex: searchQuery, $options: 'i' } },
-      { 'post.title': { $regex: searchQuery, $options: 'i' } },
-    ];
+  if (!isMongoConfigured()) {
+    loadError =
+      'MongoDB is not configured for this deployment. Set MONGODB_URI (and MONGODB_DB if needed) in Netlify environment variables, then redeploy.';
+  } else {
+    try {
+      const db = await getMongoDb();
+      const commentsCollection = db.collection<AdminComment>('comments');
+      const where: Record<string, unknown> = { isApproved: false };
+
+      if (searchQuery) {
+        const safe = escapeRegex(searchQuery);
+        where.$or = [
+          { content: { $regex: safe, $options: 'i' } },
+          { authorName: { $regex: safe, $options: 'i' } },
+          { authorEmail: { $regex: safe, $options: 'i' } },
+          { 'author.name': { $regex: safe, $options: 'i' } },
+          { 'author.email': { $regex: safe, $options: 'i' } },
+          { 'post.title': { $regex: safe, $options: 'i' } },
+        ];
+      }
+
+      const results = await Promise.all([
+        commentsCollection.find(where).sort({ createdAt: -1 }).limit(50).toArray(),
+        commentsCollection.countDocuments({ isApproved: false }),
+        commentsCollection.countDocuments({ isApproved: false, authorId: null }),
+        commentsCollection.countDocuments({
+          isApproved: false,
+          createdAt: { $gte: sevenDaysAgo },
+        }),
+      ]);
+      pendingComments = results[0];
+      totalPending = results[1];
+      guestPending = results[2];
+      pendingThisWeek = results[3];
+    } catch (e) {
+      loadError =
+        e instanceof Error ? e.message : 'Could not load comments from MongoDB.';
+    }
   }
-
-  const [pendingComments, totalPending, guestPending, pendingThisWeek] =
-    await Promise.all([
-      commentsCollection.find(where).sort({ createdAt: -1 }).limit(50).toArray(),
-      commentsCollection.countDocuments({ isApproved: false }),
-      commentsCollection.countDocuments({ isApproved: false, authorId: null }),
-      commentsCollection.countDocuments({
-        isApproved: false,
-        createdAt: { $gte: sevenDaysAgo },
-      }),
-    ]);
 
   return (
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8 lg:pb-10 lg:pt-10">
@@ -117,6 +141,10 @@ export default async function AdminCommentsPage({
           type={flashMessage.type}
           message={flashMessage.message}
         />
+      ) : null}
+
+      {loadError ? (
+        <AdminFlashBanner type="error" message={loadError} />
       ) : null}
 
       <section className="grid gap-6 md:grid-cols-3">
