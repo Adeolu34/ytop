@@ -60,6 +60,9 @@ export const metadata = {
   description: 'Meet the dedicated team and faculty behind YTOP Global. We are a happy team and we believe we can create a community of great minds.',
 };
 
+/** Avoid Mongo/Atlas during `next build` on CI (TLS/IP); data loads at request time. */
+export const dynamic = 'force-dynamic';
+
 async function loadTeamTabsData() {
   const members = useMongoForPublicData()
     ? await mongoListActiveTeamMembers()

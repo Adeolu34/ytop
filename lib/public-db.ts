@@ -8,8 +8,18 @@ type LoadWithDatabaseFallbackOptions<T> = {
 };
 
 export function isDatabaseConnectionError(error: unknown): boolean {
+  if (error && typeof error === 'object') {
+    const name = (error as { name?: string }).name ?? '';
+    if (
+      /Mongo(ServerSelection|Network|Timeout|Write|BulkWrite|Pool)?Error/i.test(
+        name
+      )
+    ) {
+      return true;
+    }
+  }
   const message = error instanceof Error ? error.message : String(error);
-  return /connection|terminated|timeout|ECONNRESET|ECONNREFUSED|P1001|P1017/i.test(
+  return /connection|terminated|timeout|ECONNRESET|ECONNREFUSED|P1001|P1017|SSL routines|tlsv1 alert|ERR_SSL|MongoServer|TopologyDescription|SystemOverloadedError/i.test(
     message
   );
 }
