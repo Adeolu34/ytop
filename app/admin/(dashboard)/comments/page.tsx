@@ -34,17 +34,11 @@ type AdminComment = {
   } | null;
 };
 
-function getCommentAuthorLabel(comment: {
-  authorName: string | null;
-  author: { name: string | null } | null;
-}): string {
+function getCommentAuthorLabel(comment: AdminComment): string {
   return comment.author?.name || comment.authorName || 'Guest commenter';
 }
 
-function getCommentEmail(comment: {
-  authorEmail: string | null;
-  author: { email: string | null } | null;
-}): string | null {
+function getCommentEmail(comment: AdminComment): string | null {
   return comment.author?.email || comment.authorEmail || null;
 }
 
