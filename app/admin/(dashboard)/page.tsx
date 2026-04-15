@@ -9,9 +9,37 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react';
-import prisma from '@/lib/db';
 import { checkPermission, requireAuth } from '@/lib/auth-utils';
 import { getSearchParamValue, type SearchParamRecord } from '@/lib/admin-feedback';
+import { getMongoDb } from '@/lib/mongodb';
+
+type DashboardPost = {
+  id: string;
+  title: string;
+  slug?: string;
+  excerpt?: string | null;
+  status: 'PUBLISHED' | 'DRAFT';
+  author?: {
+    name?: string | null;
+  } | null;
+  createdAt: Date;
+  publishedAt?: Date | null;
+};
+
+type DashboardUser = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: string;
+  createdAt: Date;
+};
+
+type DashboardMedia = {
+  id: string;
+  filename: string;
+  type: string;
+  createdAt: Date;
+};
 
 export default async function AdminDashboard({
   searchParams,
@@ -22,12 +50,53 @@ export default async function AdminDashboard({
   const canModerateComments = checkPermission(currentUser.role, 'ADMIN');
   const resolvedSearchParams = await searchParams;
   const searchQuery = getSearchParamValue(resolvedSearchParams.q)?.trim() || '';
+  const asDate = (value: unknown): Date => {
+    if (value instanceof Date) return value;
+    const parsed = new Date(String(value ?? ''));
+    return Number.isNaN(parsed.getTime()) ? new Date(0) : parsed;
+  };
   const now = new Date();
   const thirtyDaysAgo = new Date(now);
   thirtyDaysAgo.setDate(now.getDate() - 30);
 
   const sevenDaysAgo = new Date(now);
   sevenDaysAgo.setDate(now.getDate() - 6);
+
+  const db = await getMongoDb();
+  const usersCollection = db.collection<DashboardUser>('users');
+  const postsCollection = db.collection<DashboardPost>('blog_posts');
+  const mediaCollection = db.collection<DashboardMedia>('media');
+  const teamCollection = db.collection('team_members');
+  const commentsCollection = db.collection('comments');
+
+  const postSearchFilter = searchQuery
+    ? {
+        $or: [
+          { title: { $regex: searchQuery, $options: 'i' } },
+          { slug: { $regex: searchQuery, $options: 'i' } },
+          { excerpt: { $regex: searchQuery, $options: 'i' } },
+        ],
+      }
+    : {};
+
+  const userSearchFilter = searchQuery
+    ? {
+        $or: [
+          { name: { $regex: searchQuery, $options: 'i' } },
+          { email: { $regex: searchQuery, $options: 'i' } },
+        ],
+      }
+    : {};
+
+  const mediaSearchFilter = searchQuery
+    ? {
+        $or: [
+          { filename: { $regex: searchQuery, $options: 'i' } },
+          { originalName: { $regex: searchQuery, $options: 'i' } },
+          { altText: { $regex: searchQuery, $options: 'i' } },
+        ],
+      }
+    : {};
 
   const [
     userCount,
@@ -46,100 +115,39 @@ export default async function AdminDashboard({
     weeklyUsers,
     weeklyMedia,
   ] = await Promise.all([
-    prisma.user.count(),
-    prisma.post.count(),
-    prisma.media.count(),
-    prisma.teamMember.count(),
-    prisma.post.count({ where: { status: 'PUBLISHED' } }),
-    prisma.post.count({ where: { status: 'DRAFT' } }),
-    canModerateComments
-      ? prisma.comment.count({ where: { isApproved: false } })
-      : 0,
-    prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
-    prisma.media.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
-    prisma.post.findMany({
-      ...(searchQuery
-        ? {
-            where: {
-              OR: [
-                { title: { contains: searchQuery, mode: 'insensitive' as const } },
-                { slug: { contains: searchQuery, mode: 'insensitive' as const } },
-                { excerpt: { contains: searchQuery, mode: 'insensitive' as const } },
-              ],
-            },
-          }
-        : {}),
-      take: 5,
-      orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
-      include: {
-        author: {
-          select: { name: true },
-        },
-      },
-    }),
-    prisma.user.findMany({
-      ...(searchQuery
-        ? {
-            where: {
-              OR: [
-                { name: { contains: searchQuery, mode: 'insensitive' as const } },
-                { email: { contains: searchQuery, mode: 'insensitive' as const } },
-              ],
-            },
-          }
-        : {}),
-      take: 4,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-    }),
-    prisma.media.findMany({
-      ...(searchQuery
-        ? {
-            where: {
-              OR: [
-                {
-                  filename: { contains: searchQuery, mode: 'insensitive' as const },
-                },
-                {
-                  originalName: {
-                    contains: searchQuery,
-                    mode: 'insensitive' as const,
-                  },
-                },
-                {
-                  altText: { contains: searchQuery, mode: 'insensitive' as const },
-                },
-              ],
-            },
-          }
-        : {}),
-      take: 4,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        filename: true,
-        type: true,
-        createdAt: true,
-      },
-    }),
-    prisma.post.findMany({
-      where: { createdAt: { gte: sevenDaysAgo } },
-      select: { id: true, createdAt: true },
-    }),
-    prisma.user.findMany({
-      where: { createdAt: { gte: sevenDaysAgo } },
-      select: { id: true, createdAt: true },
-    }),
-    prisma.media.findMany({
-      where: { createdAt: { gte: sevenDaysAgo } },
-      select: { id: true, createdAt: true },
-    }),
+    usersCollection.countDocuments(),
+    postsCollection.countDocuments(),
+    mediaCollection.countDocuments(),
+    teamCollection.countDocuments(),
+    postsCollection.countDocuments({ status: 'PUBLISHED' }),
+    postsCollection.countDocuments({ status: 'DRAFT' }),
+    canModerateComments ? commentsCollection.countDocuments({ isApproved: false }) : 0,
+    usersCollection.countDocuments({ createdAt: { $gte: thirtyDaysAgo } }),
+    mediaCollection.countDocuments({ createdAt: { $gte: thirtyDaysAgo } }),
+    postsCollection
+      .find(postSearchFilter)
+      .sort({ publishedAt: -1, createdAt: -1 })
+      .limit(5)
+      .toArray(),
+    usersCollection
+      .find(userSearchFilter)
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .toArray(),
+    mediaCollection
+      .find(mediaSearchFilter)
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .toArray(),
+    postsCollection
+      .find({ createdAt: { $gte: sevenDaysAgo } }, { projection: { id: 1, createdAt: 1 } })
+      .toArray(),
+    usersCollection
+      .find({ createdAt: { $gte: sevenDaysAgo } }, { projection: { id: 1, createdAt: 1 } })
+      .toArray(),
+    mediaCollection
+      .find({ createdAt: { $gte: sevenDaysAgo } }, { projection: { id: 1, createdAt: 1 } })
+      .toArray(),
   ]);
 
   const shortDateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -156,13 +164,13 @@ export default async function AdminDashboard({
   const activitySeries = activityDays.map((day) => {
     const key = day.toDateString();
     const posts = weeklyPosts.filter(
-      (item) => new Date(item.createdAt).toDateString() === key
+      (item) => asDate(item.createdAt).toDateString() === key
     ).length;
     const users = weeklyUsers.filter(
-      (item) => new Date(item.createdAt).toDateString() === key
+      (item) => asDate(item.createdAt).toDateString() === key
     ).length;
     const media = weeklyMedia.filter(
-      (item) => new Date(item.createdAt).toDateString() === key
+      (item) => asDate(item.createdAt).toDateString() === key
     ).length;
 
     return {
@@ -182,20 +190,20 @@ export default async function AdminDashboard({
     ...recentPosts.map((post) => ({
       id: `post-${post.id}`,
       title: 'Post updated',
-      description: `${post.title} by ${post.author.name || 'Unknown author'}`,
-      timestamp: post.publishedAt || post.createdAt,
+      description: `${post.title} by ${post.author?.name || 'Unknown author'}`,
+      timestamp: asDate(post.publishedAt || post.createdAt),
     })),
     ...recentUsers.map((user) => ({
       id: `user-${user.id}`,
       title: 'User joined',
       description: `${user.name || user.email} joined as ${user.role.toLowerCase()}`,
-      timestamp: user.createdAt,
+      timestamp: asDate(user.createdAt),
     })),
     ...recentMedia.map((media) => ({
       id: `media-${media.id}`,
       title: 'Media uploaded',
       description: `${media.filename} added to the ${media.type.toLowerCase()} library`,
-      timestamp: media.createdAt,
+      timestamp: asDate(media.createdAt),
     })),
   ]
     .sort((left, right) => right.timestamp.getTime() - left.timestamp.getTime())
@@ -425,8 +433,8 @@ export default async function AdminDashboard({
                       {post.title}
                     </h3>
                     <p className="mt-2 text-sm text-[#5d3f3c]">
-                      By {post.author.name || 'Unknown author'} ·{' '}
-                      {post.createdAt.toLocaleDateString()}
+                      By {post.author?.name || 'Unknown author'} ·{' '}
+                      {asDate(post.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <span
