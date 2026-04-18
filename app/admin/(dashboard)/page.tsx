@@ -12,9 +12,11 @@ import {
 import { checkPermission, requireAuth } from '@/lib/auth-utils';
 import { getSearchParamValue, type SearchParamRecord } from '@/lib/admin-feedback';
 import { getMongoDb } from '@/lib/mongodb';
+import { mongoPostAdminEditorId } from '@/lib/mongo-posts-store';
 
 type DashboardPost = {
-  id: string;
+  id?: string;
+  sourcePostId?: string;
   title: string;
   slug?: string;
   excerpt?: string | null;
@@ -188,7 +190,7 @@ export default async function AdminDashboard({
 
   const activityFeed = [
     ...recentPosts.map((post) => ({
-      id: `post-${post.id}`,
+      id: `post-${mongoPostAdminEditorId(post) || post.slug || 'unknown'}`,
       title: 'Post updated',
       description: `${post.title} by ${post.author?.name || 'Unknown author'}`,
       timestamp: asDate(post.publishedAt || post.createdAt),
@@ -427,7 +429,10 @@ export default async function AdminDashboard({
           <div className="divide-y divide-[#efeded]">
             {recentPosts.length > 0 ? (
               recentPosts.map((post) => (
-                <div key={post.id} className="flex flex-col gap-4 px-8 py-6 sm:flex-row sm:items-start sm:justify-between">
+                <div
+                  key={mongoPostAdminEditorId(post) || post.slug}
+                  className="flex flex-col gap-4 px-8 py-6 sm:flex-row sm:items-start sm:justify-between"
+                >
                   <div>
                     <h3 className="text-base font-bold text-[#1b1c1c]">
                       {post.title}

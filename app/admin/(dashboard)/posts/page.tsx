@@ -11,9 +11,11 @@ import {
   updatePostStatusAction,
 } from '@/app/admin/(dashboard)/posts/actions';
 import { getMongoDb } from '@/lib/mongodb';
+import { mongoPostAdminEditorId } from '@/lib/mongo-posts-store';
 
 type AdminPost = {
-  id: string;
+  id?: string;
+  sourcePostId?: string;
   title: string;
   slug: string;
   excerpt?: string | null;
@@ -230,9 +232,11 @@ export default async function AdminPostsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-[#efeded]">
-              {posts.map((post) => (
+              {posts.map((post) => {
+                const editorId = mongoPostAdminEditorId(post);
+                return (
                 <tr
-                  key={post.id}
+                  key={editorId || post.slug}
                   className="group transition-colors hover:bg-[#f5f3f3]"
                 >
                   <td className="px-8 py-5">
@@ -269,29 +273,37 @@ export default async function AdminPostsPage({
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex flex-wrap justify-end gap-2">
-                      <Link
-                        href={`/admin/posts/${post.id}/edit`}
-                        className="rounded-md bg-[#efeded] px-3 py-2 text-xs font-semibold text-[#1b1c1c] transition-colors hover:bg-[#e4e2e2]"
-                      >
-                        Edit
-                      </Link>
-
-                      <form action={updatePostStatusAction}>
-                        <input type="hidden" name="postId" value={post.id} />
-                        <input
-                          type="hidden"
-                          name="nextStatus"
-                          value={
-                            post.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED'
-                          }
-                        />
-                        <button
-                          type="submit"
-                          className="rounded-md bg-white px-3 py-2 text-xs font-semibold text-[#ba0013] transition-colors hover:bg-[#ffdad6]"
+                      {editorId ? (
+                        <Link
+                          href={`/admin/posts/${editorId}/edit`}
+                          className="rounded-md bg-[#efeded] px-3 py-2 text-xs font-semibold text-[#1b1c1c] transition-colors hover:bg-[#e4e2e2]"
                         >
-                          {post.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
-                        </button>
-                      </form>
+                          Edit
+                        </Link>
+                      ) : (
+                        <span className="rounded-md bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
+                          Missing id
+                        </span>
+                      )}
+
+                      {editorId ? (
+                        <form action={updatePostStatusAction}>
+                          <input type="hidden" name="postId" value={editorId} />
+                          <input
+                            type="hidden"
+                            name="nextStatus"
+                            value={
+                              post.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED'
+                            }
+                          />
+                          <button
+                            type="submit"
+                            className="rounded-md bg-white px-3 py-2 text-xs font-semibold text-[#ba0013] transition-colors hover:bg-[#ffdad6]"
+                          >
+                            {post.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
+                          </button>
+                        </form>
+                      ) : null}
 
                       {post.status === 'PUBLISHED' ? (
                         <Link
@@ -303,19 +315,22 @@ export default async function AdminPostsPage({
                         </Link>
                       ) : null}
 
-                      <form action={deletePostAction}>
-                        <input type="hidden" name="postId" value={post.id} />
-                        <button
-                          type="submit"
-                          className="rounded-md bg-[#fff1ef] px-3 py-2 text-xs font-semibold text-[#93000d] transition-colors hover:bg-[#ffdad6]"
-                        >
-                          Delete
-                        </button>
-                      </form>
+                      {editorId ? (
+                        <form action={deletePostAction}>
+                          <input type="hidden" name="postId" value={editorId} />
+                          <button
+                            type="submit"
+                            className="rounded-md bg-[#fff1ef] px-3 py-2 text-xs font-semibold text-[#93000d] transition-colors hover:bg-[#ffdad6]"
+                          >
+                            Delete
+                          </button>
+                        </form>
+                      ) : null}
                     </div>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
         </div>

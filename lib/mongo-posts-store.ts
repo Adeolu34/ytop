@@ -13,6 +13,18 @@ import type {
 
 export const BLOG_POSTS_COLLECTION = 'blog_posts';
 
+/**
+ * ID for admin routes and forms (`/posts/[postId]/edit` loads by sourcePostId).
+ * Older or imported docs may only have `sourcePostId`; `id` is optional.
+ */
+export function mongoPostAdminEditorId(doc: {
+  id?: string | null;
+  sourcePostId?: string | null;
+}): string {
+  const raw = doc.id ?? doc.sourcePostId ?? '';
+  return typeof raw === 'string' ? raw.trim() : '';
+}
+
 type BlogPostWrite = MongoBlogDocument & {
   id: string;
   emailNotifiedAt?: Date | null;
