@@ -6,7 +6,10 @@ import {
   mongoListPublishedPosts,
   useMongoForPublicBlog,
 } from '@/lib/mongo-blog';
-import { isDatabaseConnectionError } from '@/lib/public-db';
+import {
+  isDatabaseConnectionError,
+  mongoBlogConnectionGuidance,
+} from '@/lib/public-db';
 import { getMongoDb, resetMongoConnection } from '@/lib/mongodb';
 import { BLOG_POSTS_COLLECTION } from '@/lib/mongo-posts-store';
 
@@ -110,6 +113,7 @@ export default async function BlogPage({
   let categories: BlogCategoryRow[] = [];
   let draftCount = 0;
   let loadError: string | null = null;
+  let loadErrorHint: string | null = null;
 
   try {
     const data = await fetchBlogPageData({
@@ -145,9 +149,14 @@ export default async function BlogPage({
         totalPublishedCount = 0;
         categories = [];
         draftCount = 0;
-        loadError = isDatabaseConnectionError(retryErr)
-          ? 'Unable to reach the database right now. Check Atlas IP access (allow Netlify) and MONGODB_URI.'
-          : null;
+        if (isDatabaseConnectionError(retryErr)) {
+          const g = mongoBlogConnectionGuidance(retryErr);
+          loadError = g.title;
+          loadErrorHint = g.hint;
+        } else {
+          loadError = null;
+          loadErrorHint = null;
+        }
       }
     } else {
       console.error('Blog page failed to load posts:', err);
@@ -274,16 +283,13 @@ export default async function BlogPage({
         {/* Load error */}
         {loadError && (
           <div className="text-center py-16 px-4">
-            <div className="max-w-md mx-auto p-6 bg-white dark:bg-surface-dark rounded-2xl shadow-ytop border border-red-200 dark:border-red-900">
-              <p className="text-slate-700 font-medium">{loadError}</p>
-              <p className="text-slate-500 text-sm mt-2">
-                <>
-                  Set <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MONGODB_URI</code> and ensure
-                  the <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">blog_posts</code> collection has
-                  published content. Verify Atlas network access allows your host and the URI uses the expected
-                  database.
-                </>
-              </p>
+            <div className="max-w-lg mx-auto p-6 bg-white dark:bg-surface-dark rounded-2xl shadow-ytop border border-red-200 dark:border-red-900 text-left">
+              <p className="text-slate-700 font-medium text-center">{loadError}</p>
+              {loadErrorHint ? (
+                <p className="text-slate-500 text-sm mt-3 leading-relaxed text-center">
+                  {loadErrorHint}
+                </p>
+              ) : null}
             </div>
           </div>
         )}
