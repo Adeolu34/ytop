@@ -7,6 +7,8 @@ import {
   mongoListPublishedPosts,
   useMongoForPublicBlog,
 } from '@/lib/mongo-blog';
+import { isDatabaseConnectionError } from '@/lib/public-db';
+import { resetMongoConnection } from '@/lib/mongodb';
 
 // When a post has no featured image, rotate through these so cards don’t all look the same
 const FALLBACK_FEATURED_IMAGES = [
@@ -25,11 +27,6 @@ function getFallbackImageForPost(postIndex: number): string {
 // Always fetch fresh posts (avoid static cache from when DB was empty)
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-function isConnectionError(err: unknown): boolean {
-  const msg = err instanceof Error ? err.message : String(err);
-  return /connection|terminated|timeout|ECONNRESET|ECONNREFUSED|P1001|P1017/i.test(msg);
-}
 
 interface SearchParams {
   page?: string;
@@ -165,6 +162,7 @@ async function fetchBlogPageData(params: {
         draftCount,
       };
     } catch (mongoErr) {
+      resetMongoConnection();
       if (!isDatabaseConfigured()) throw mongoErr;
       console.error('Mongo blog read failed; falling back to Prisma:', mongoErr);
       return loadBlogFromPostgres(where, page, limit);
@@ -220,8 +218,9 @@ export default async function BlogPage({
     categories = data.categories;
     draftCount = data.draftCount;
   } catch (err) {
-    if (isConnectionError(err)) {
+    if (isDatabaseConnectionError(err)) {
       resetPrismaConnection();
+      resetMongoConnection();
       try {
         const data = await fetchBlogPageData({
           mongoPublicBlog,
@@ -237,17 +236,17 @@ export default async function BlogPage({
         draftCount = data.draftCount;
       } catch (retryErr) {
         console.error('Blog page failed after retry:', retryErr);
-        // Keep the blog page usable: show the normal empty-state UI instead of an error wall.
         posts = [];
         totalCount = 0;
         totalPublishedCount = 0;
         categories = [];
         draftCount = 0;
-        loadError = null;
+        loadError = isDatabaseConnectionError(retryErr)
+          ? 'Unable to reach the database right now. Check Atlas IP access (allow Netlify), MONGODB_URI, and DATABASE_URL / Neon.'
+          : null;
       }
     } else {
       console.error('Blog page failed to load posts:', err);
-      // Graceful fallback to empty state.
       posts = [];
       totalCount = 0;
       totalPublishedCount = 0;

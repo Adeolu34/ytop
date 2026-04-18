@@ -13,6 +13,21 @@ type GlobalWithMongo = typeof globalThis & {
 };
 
 /**
+ * Drop the cached client so the next {@link getMongoClientPromise} starts fresh.
+ * Call after connection / TLS errors (same idea as {@link resetPrismaConnection}).
+ */
+export function resetMongoConnection(): void {
+  const g = globalThis as GlobalWithMongo;
+  const existing = g._mongoClientPromise;
+  if (existing) {
+    void existing
+      .then((client) => client.close().catch(() => {}))
+      .catch(() => {});
+  }
+  g._mongoClientPromise = undefined;
+}
+
+/**
  * True when MONGODB_URI is set (call before using Mongo helpers).
  */
 export function isMongoConfigured(): boolean {
@@ -31,6 +46,7 @@ function requireUri(): string {
 
 /**
  * Lazily connects and reuses one client per server process (dev HMR uses globalThis).
+ * Failed connects do not leave a permanently rejected promise (that would block all later reads).
  */
 export function getMongoClientPromise(): Promise<MongoClient> {
   const u = requireUri();
@@ -42,7 +58,12 @@ export function getMongoClientPromise(): Promise<MongoClient> {
       connectTimeoutMS: 8000,
       socketTimeoutMS: 10000,
       maxPoolSize: 5,
-    }).connect();
+    })
+      .connect()
+      .catch((err: unknown) => {
+        g._mongoClientPromise = undefined;
+        throw err;
+      });
   }
   return g._mongoClientPromise;
 }

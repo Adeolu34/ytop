@@ -470,41 +470,46 @@ async function loadApprovedCommentsForPost(postId: string) {
   if (!isDatabaseConfigured()) {
     return [];
   }
-  return getPrisma().comment.findMany({
-    where: {
-      postId,
-      isApproved: true,
-      parentId: null,
-    },
-    include: {
-      author: {
-        select: {
-          name: true,
-          image: true,
-        },
+  try {
+    return await getPrisma().comment.findMany({
+      where: {
+        postId,
+        isApproved: true,
+        parentId: null,
       },
-      replies: {
-        where: {
-          isApproved: true,
-        },
-        include: {
-          author: {
-            select: {
-              name: true,
-              image: true,
-            },
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
           },
         },
-        orderBy: {
-          createdAt: 'asc',
+        replies: {
+          where: {
+            isApproved: true,
+          },
+          include: {
+            author: {
+              select: {
+                name: true,
+                image: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 50,
-  });
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 50,
+    });
+  } catch {
+    // Public blog body is served from Mongo; comments are optional if Postgres is down.
+    return [];
+  }
 }
 
 /**

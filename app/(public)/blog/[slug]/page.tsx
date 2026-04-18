@@ -3,13 +3,15 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import type { Prisma } from '@/app/generated/prisma';
 import BlogPostArticle from '@/components/blog/BlogPostArticle';
-import { getPrisma, resetPrismaConnection } from '@/lib/db';
+import { getPrisma, isDatabaseConfigured, resetPrismaConnection } from '@/lib/db';
 import {
   loadMongoBlogPostWithRelations,
   mongoFindPostBySlug,
   mongoListAllPublishedSlugs,
   useMongoForPublicBlog,
 } from '@/lib/mongo-blog';
+import { resetMongoConnection } from '@/lib/mongodb';
+import { isDatabaseConnectionError } from '@/lib/public-db';
 
 export async function generateStaticParams() {
   try {
@@ -84,10 +86,50 @@ export async function generateMetadata({
   }
 }
 
-function isConnectionError(err: unknown): boolean {
-  const msg = err instanceof Error ? err.message : String(err);
-  return /connection|terminated|timeout|ECONNRESET|ECONNREFUSED|P1001|P1017/i.test(
-    msg
+function BlogPostDbUnavailable({
+  mongoPublicBlog,
+}: {
+  mongoPublicBlog: boolean;
+}) {
+  return (
+    <div className="min-h-[50vh] flex items-center justify-center px-4">
+      <div className="text-center max-w-md">
+        <h1 className="text-2xl font-bold text-slate-900 mb-2">
+          Unable to load this post
+        </h1>
+        <p className="text-slate-600 mb-4">
+          The connection to the database was lost or timed out. This can happen
+          after the app has been idle, or if no database is set up yet.
+        </p>
+        <p className="text-slate-500 text-sm mb-6">
+          Check your environment variables and data source availability.
+          {mongoPublicBlog ? (
+            <>
+              {' '}
+              For Mongo public blog reads, confirm{' '}
+              <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code> and{' '}
+              <code className="bg-slate-100 px-1 rounded">PUBLIC_BLOG_SOURCE</code>.
+            </>
+          ) : (
+            <>
+              {' '}
+              For Prisma/PostgreSQL features, confirm{' '}
+              <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code>.
+            </>
+          )}
+        </p>
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-ytop-blue text-white font-semibold rounded-xl hover:bg-ytop-blue-hover"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Blog
+        </Link>
+        <p className="mt-4 text-sm text-slate-500">
+          Try refreshing the page once the database is available.
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -145,10 +187,27 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const mongoPublicBlog = useMongoForPublicBlog();
 
+  let mongoLoadThrew = false;
   if (mongoPublicBlog) {
-    const data = await loadMongoBlogPostWithRelations(slug);
-    if (!data) notFound();
-    return <BlogPostArticle post={data.post} relatedPosts={data.relatedPosts} />;
+    try {
+      const data = await loadMongoBlogPostWithRelations(slug);
+      if (data) {
+        return (
+          <BlogPostArticle post={data.post} relatedPosts={data.relatedPosts} />
+        );
+      }
+    } catch (e) {
+      mongoLoadThrew = true;
+      resetMongoConnection();
+      console.error('Mongo blog post load failed:', e);
+    }
+    if (!isDatabaseConfigured()) {
+      if (mongoLoadThrew) {
+        return <BlogPostDbUnavailable mongoPublicBlog={mongoPublicBlog} />;
+      }
+      notFound();
+    }
+    // Mongo miss or error: try PostgreSQL when configured (sync lag or failover).
   }
 
   const loadPost = () =>
@@ -191,8 +250,9 @@ export default async function BlogPostPage({
     };
     relatedPosts = await loadRelatedPosts(relatedWhere);
   } catch (err) {
-    if (isConnectionError(err)) {
+    if (isDatabaseConnectionError(err)) {
       resetPrismaConnection();
+      resetMongoConnection();
       try {
         post = await loadPost();
         if (!post) notFound();
@@ -215,87 +275,11 @@ export default async function BlogPostPage({
         relatedPosts = await loadRelatedPosts(retryRelatedWhere);
       } catch (retryErr) {
         console.error('Blog post page error (after retry):', retryErr);
-        return (
-          <div className="min-h-[50vh] flex items-center justify-center px-4">
-            <div className="text-center max-w-md">
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">
-                Unable to load this post
-              </h1>
-              <p className="text-slate-600 mb-4">
-                The connection to the database was lost or timed out. This can
-                happen after the app has been idle, or if no database is set up
-                yet.
-              </p>
-              <p className="text-slate-500 text-sm mb-6">
-                Check your environment variables and data source availability.
-                {mongoPublicBlog ? (
-                  <>
-                    {' '}For Mongo public blog reads, confirm{' '}
-                    <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code>{' '}
-                    and <code className="bg-slate-100 px-1 rounded">PUBLIC_BLOG_SOURCE</code>.
-                  </>
-                ) : (
-                  <>
-                    {' '}For Prisma/PostgreSQL features, confirm{' '}
-                    <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code>.
-                  </>
-                )}
-              </p>
-              <Link
-                href="/blog"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-ytop-blue text-white font-semibold rounded-xl hover:bg-ytop-blue-hover"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Back to Blog
-              </Link>
-              <p className="mt-4 text-sm text-slate-500">
-                Try refreshing the page once the database is available.
-              </p>
-            </div>
-          </div>
-        );
+        return <BlogPostDbUnavailable mongoPublicBlog={mongoPublicBlog} />;
       }
     } else {
       console.error('Blog post page error:', err);
-      return (
-        <div className="min-h-[50vh] flex items-center justify-center px-4">
-          <div className="text-center max-w-md">
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">
-              Unable to load this post
-            </h1>
-            <p className="text-slate-600 mb-4">
-              The connection to the database was lost or timed out. This can
-              happen after the app has been idle, or if no database is set up
-              yet.
-            </p>
-            <p className="text-slate-500 text-sm mb-6">
-              Check your environment variables and data source availability.
-              {mongoPublicBlog ? (
-                <>
-                  {' '}For Mongo public blog reads, confirm{' '}
-                  <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code>{' '}
-                  and <code className="bg-slate-100 px-1 rounded">PUBLIC_BLOG_SOURCE</code>.
-                </>
-              ) : (
-                <>
-                  {' '}For Prisma/PostgreSQL features, confirm{' '}
-                  <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code>.
-                </>
-              )}
-            </p>
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-ytop-blue text-white font-semibold rounded-xl hover:bg-ytop-blue-hover"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Blog
-            </Link>
-            <p className="mt-4 text-sm text-slate-500">
-              Try refreshing the page once the database is available.
-            </p>
-          </div>
-        </div>
-      );
+      return <BlogPostDbUnavailable mongoPublicBlog={mongoPublicBlog} />;
     }
   }
 
