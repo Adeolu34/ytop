@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrismaOr503 } from '@/lib/api-prisma';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoEventsList } from '@/lib/mongo-events-store';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,43 +13,40 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
     }
-    const prisma = pg.prisma;
 
     const searchParams = request.nextUrl.searchParams;
-    const type = searchParams.get('type') || 'upcoming';
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10')));
+    const type =
+      searchParams.get('type') === 'past' ? 'past' : 'upcoming';
+    const limit = Math.min(
+      100,
+      Math.max(1, parseInt(searchParams.get('limit') || '10'))
+    );
 
-    const now = new Date();
-    const where: any = {};
+    const events = await mongoEventsList({ type, limit });
 
-    if (type === 'upcoming') {
-      where.startDate = { gte: now };
-    } else if (type === 'past') {
-      where.startDate = { lt: now };
-    }
-
-    const events = await prisma.event.findMany({
-      where,
-      include: {
-        image: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-          },
-        },
-      },
-      orderBy: {
-        startDate: type === 'upcoming' ? 'asc' : 'desc',
-      },
-      take: limit,
+    return NextResponse.json({
+      events: events.map((e) => ({
+        id: e.id,
+        title: e.title,
+        slug: e.slug,
+        description: e.description,
+        startDate: e.startDate,
+        endDate: e.endDate,
+        location: e.location,
+        isOnline: e.isOnline,
+        registrationUrl: e.registrationUrl,
+        galleryImageIds: e.galleryImageIds,
+        programId: e.programId,
+        image: e.image,
+        maxParticipants: e.maxParticipants,
+        createdAt: e.createdAt,
+        updatedAt: e.updatedAt,
+      })),
     });
-
-    return NextResponse.json({ events });
   } catch (error) {
     console.error('Error fetching events:', error);
     return NextResponse.json(

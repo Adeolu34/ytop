@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getPrismaOr503 } from '@/lib/api-prisma';
-import {
-  mongoListActiveTeamMembers,
-  useMongoForPublicData,
-} from '@/lib/mongo-public';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoListActiveTeamMembers } from '@/lib/mongo-public';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,35 +11,12 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
-    if (useMongoForPublicData()) {
-      const teamMembers = await mongoListActiveTeamMembers();
-      return NextResponse.json({ teamMembers });
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
     }
 
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
-    }
-    const prisma = pg.prisma;
-
-    const teamMembers = await prisma.teamMember.findMany({
-      where: {
-        isActive: true,
-      },
-      include: {
-        photo: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-          },
-        },
-      },
-      orderBy: {
-        order: 'asc',
-      },
-    });
-
+    const teamMembers = await mongoListActiveTeamMembers();
     return NextResponse.json({ teamMembers });
   } catch (error) {
     console.error('Error fetching team members:', error);

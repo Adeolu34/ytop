@@ -1,22 +1,14 @@
 /**
- * Public blog reads from MongoDB when PUBLIC_BLOG_SOURCE=mongodb and MONGODB_URI is set.
- * Admin continues to use PostgreSQL (Prisma); saving a post syncs published content to Mongo.
+ * Public blog reads from MongoDB when MONGODB_URI is set (Mongo-only stack).
  */
-import type { Prisma } from '@/app/generated/prisma';
-import { isDatabaseConfigured } from '@/lib/db-config';
-import prisma, { getPrisma } from '@/lib/db';
 import { getMongoDb, isMongoConfigured } from '@/lib/mongodb';
+import { mongoListApprovedCommentsForPost } from '@/lib/mongo-comments-store';
 
 const COLLECTION = 'blog_posts';
 
-/** Accepts `mongodb` or common typo `mangodb`. */
-function publicBlogSourceIsMongo(): boolean {
-  const v = process.env.PUBLIC_BLOG_SOURCE?.toLowerCase().trim();
-  return v === 'mongodb' || v === 'mangodb';
-}
-
+/** Legacy env: if set to postgres/prisma-only, still false — app is Mongo-only. */
 export function useMongoForPublicBlog(): boolean {
-  return publicBlogSourceIsMongo() && isMongoConfigured();
+  return isMongoConfigured();
 }
 
 export type MongoBlogAuthor = {
@@ -46,7 +38,7 @@ export type MongoBlogFeaturedImage = {
 
 export type MongoBlogDocument = {
   sourcePostId: string;
-  /** Prisma User id — used for API shape parity */
+  /** Same as users.id in Mongo */
   authorId: string;
   featuredImageId: string | null;
   slug: string;
@@ -65,79 +57,9 @@ export type MongoBlogDocument = {
   updatedAt: Date;
 };
 
-const syncInclude = {
-  author: {
-    select: { name: true, image: true, bio: true, email: true },
-  },
-  categories: { select: { id: true, name: true, slug: true } },
-  tags: { select: { id: true, name: true, slug: true } },
-  featuredImage: { select: { url: true, altText: true, caption: true } },
-} as const;
-
-type PostForSync = Prisma.PostGetPayload<{ include: typeof syncInclude }>;
-
-export async function syncPostToMongoById(postId: string): Promise<void> {
-  if (!useMongoForPublicBlog()) return;
-
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-    include: syncInclude,
-  });
-
-  if (!post) return;
-
-  const db = await getMongoDb();
-  const col = db.collection<MongoBlogDocument>(COLLECTION);
-
-  if (post.status !== 'PUBLISHED') {
-    await col.deleteOne({ sourcePostId: post.id });
-    return;
-  }
-
-  const doc: MongoBlogDocument = {
-    sourcePostId: post.id,
-    authorId: post.authorId,
-    featuredImageId: post.featuredImageId,
-    slug: post.slug,
-    title: post.title,
-    excerpt: post.excerpt,
-    content: post.content,
-    status: post.status,
-    publishedAt: post.publishedAt,
-    viewCount: post.viewCount,
-    author: {
-      name: post.author?.name ?? null,
-      image: post.author?.image ?? null,
-      bio: post.author?.bio ?? null,
-      email: post.author?.email ?? null,
-    },
-    categories: post.categories.map((c) => ({
-      id: c.id,
-      name: c.name,
-      slug: c.slug,
-    })),
-    tags: post.tags.map((t) => ({
-      id: t.id,
-      name: t.name,
-      slug: t.slug,
-    })),
-    featuredImage: post.featuredImage
-      ? {
-          url: post.featuredImage.url,
-          altText: post.featuredImage.altText,
-          caption: post.featuredImage.caption,
-        }
-      : null,
-    metaTitle: post.metaTitle,
-    metaDescription: post.metaDescription,
-    updatedAt: new Date(),
-  };
-
-  await col.updateOne(
-    { sourcePostId: post.id },
-    { $set: doc },
-    { upsert: true }
-  );
+/** @deprecated No-op in Mongo-only mode; post writes update `blog_posts` directly. */
+export async function syncPostToMongoById(_postId: string): Promise<void> {
+  return;
 }
 
 export async function removeBlogPostFromMongo(sourcePostId: string): Promise<void> {
@@ -341,7 +263,7 @@ export async function mongoFindRelatedPosts(
     sourcePostId: { $ne: excludeSourcePostId },
   };
   if (categorySlugs.length > 0) {
-    filter['categories.slug'] = { $in: categorySlugs };
+    filter.categories = { $elemMatch: { slug: { $in: categorySlugs } } };
   }
 
   const items = await col
@@ -465,55 +387,8 @@ export function mongoBlogDocumentToApiListPost(doc: MongoBlogDocument) {
   };
 }
 
-/** Same comment tree as Prisma `postInclude.comments` for /blog/[slug]. */
-async function loadApprovedCommentsForPost(postId: string) {
-  if (!isDatabaseConfigured()) {
-    return [];
-  }
-  try {
-    return await getPrisma().comment.findMany({
-      where: {
-        postId,
-        isApproved: true,
-        parentId: null,
-      },
-      include: {
-        author: {
-          select: {
-            name: true,
-            image: true,
-          },
-        },
-        replies: {
-          where: {
-            isApproved: true,
-          },
-          include: {
-            author: {
-              select: {
-                name: true,
-                image: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: 'asc',
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: 50,
-    });
-  } catch {
-    // Public blog body is served from Mongo; comments are optional if Postgres is down.
-    return [];
-  }
-}
-
 /**
- * Published post body from Mongo + comments from PostgreSQL + related from Mongo.
+ * Published post body from Mongo + comments from Mongo + related from Mongo.
  * Increments view count on Mongo (best-effort).
  */
 export async function loadMongoBlogPostWithRelations(slug: string): Promise<{
@@ -533,7 +408,7 @@ export async function loadMongoBlogPostWithRelations(slug: string): Promise<{
     featuredImage: MongoBlogFeaturedImage;
     metaTitle: string | null;
     metaDescription: string | null;
-    comments: Awaited<ReturnType<typeof loadApprovedCommentsForPost>>;
+    comments: Awaited<ReturnType<typeof mongoListApprovedCommentsForPost>>;
   };
   relatedPosts: Awaited<ReturnType<typeof mongoFindRelatedPosts>>;
 } | null> {
@@ -541,7 +416,7 @@ export async function loadMongoBlogPostWithRelations(slug: string): Promise<{
   if (!doc) return null;
 
   const [comments, relatedPosts] = await Promise.all([
-    loadApprovedCommentsForPost(doc.sourcePostId),
+    mongoListApprovedCommentsForPost(doc.sourcePostId),
     mongoFindRelatedPosts(
       doc.sourcePostId,
       doc.categories.map((c) => c.slug),
@@ -574,17 +449,10 @@ export async function loadMongoBlogPostWithRelations(slug: string): Promise<{
   };
 }
 
-/** Initial bulk sync: all published posts from Prisma → Mongo. */
+/** Legacy script hook — Mongo-only; posts already live in `blog_posts`. */
 export async function syncAllPublishedPostsToMongo(): Promise<number> {
-  if (!useMongoForPublicBlog()) {
-    throw new Error('Set PUBLIC_BLOG_SOURCE=mongodb and MONGODB_URI first.');
+  if (!isMongoConfigured()) {
+    throw new Error('MONGODB_URI is required.');
   }
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { id: true },
-  });
-  for (const p of posts) {
-    await syncPostToMongoById(p.id);
-  }
-  return posts.length;
+  return 0;
 }

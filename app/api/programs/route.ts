@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getPrismaOr503 } from '@/lib/api-prisma';
-import { mongoListActivePrograms, useMongoForPublicData } from '@/lib/mongo-public';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoListActivePrograms } from '@/lib/mongo-public';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,35 +11,12 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
-    if (useMongoForPublicData()) {
-      const programs = await mongoListActivePrograms();
-      return NextResponse.json({ programs });
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
     }
 
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
-    }
-    const prisma = pg.prisma;
-
-    const programs = await prisma.program.findMany({
-      where: {
-        isActive: true,
-      },
-      include: {
-        image: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-          },
-        },
-      },
-      orderBy: {
-        order: 'asc',
-      },
-    });
-
+    const programs = await mongoListActivePrograms();
     return NextResponse.json({ programs });
   } catch (error) {
     console.error('Error fetching programs:', error);

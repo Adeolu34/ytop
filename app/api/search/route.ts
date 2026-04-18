@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrismaOr503 } from '@/lib/api-prisma';
-import { mongoSearchPosts, useMongoForPublicBlog } from '@/lib/mongo-blog';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoSearchPosts } from '@/lib/mongo-blog';
+import { mongoPageSearchPublished } from '@/lib/mongo-pages-store';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +25,11 @@ type SearchPostRow = {
  */
 export async function GET(request: NextRequest) {
   try {
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q');
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20')));
@@ -38,72 +44,15 @@ export async function GET(request: NextRequest) {
     const searchTerm = query.trim();
     const postTake = Math.floor(limit * 0.7);
 
-    let posts: SearchPostRow[] = [];
+    const posts: SearchPostRow[] = await mongoSearchPosts(
+      searchTerm,
+      postTake
+    );
 
-    if (useMongoForPublicBlog()) {
-      posts = await mongoSearchPosts(searchTerm, postTake);
-    } else {
-      const pg = await getPrismaOr503();
-      if (pg.ok) {
-        posts = await pg.prisma.post.findMany({
-          where: {
-            status: 'PUBLISHED',
-            OR: [
-              { title: { contains: searchTerm, mode: 'insensitive' } },
-              { content: { contains: searchTerm, mode: 'insensitive' } },
-              { excerpt: { contains: searchTerm, mode: 'insensitive' } },
-            ],
-          },
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            excerpt: true,
-            publishedAt: true,
-            featuredImage: {
-              select: {
-                url: true,
-                altText: true,
-              },
-            },
-          },
-          take: postTake,
-          orderBy: {
-            publishedAt: 'desc',
-          },
-        });
-      }
-    }
-
-    let pages: Array<{
-      id: string;
-      title: string;
-      slug: string;
-      content: string;
-    }> = [];
-
-    const pgPages = await getPrismaOr503();
-    if (pgPages.ok) {
-      pages = await pgPages.prisma.page.findMany({
-        where: {
-          status: 'PUBLISHED',
-          OR: [
-            { title: { contains: searchTerm, mode: 'insensitive' } },
-            { content: { contains: searchTerm, mode: 'insensitive' } },
-          ],
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          content: true,
-        },
-        take: Math.floor(limit * 0.3),
-        orderBy: {
-          updatedAt: 'desc',
-        },
-      });
-    }
+    const pages = await mongoPageSearchPublished(
+      searchTerm,
+      Math.floor(limit * 0.3)
+    );
 
     return NextResponse.json({
       query: searchTerm,
@@ -114,10 +63,16 @@ export async function GET(request: NextRequest) {
           url: `/blog/${post.slug}`,
         })),
         pages: pages.map((page) => ({
-          ...page,
+          id: page.id,
+          title: page.title,
+          slug: page.slug,
           type: 'page' as const,
           url: `/${page.slug}`,
-          excerpt: page.content.substring(0, 200) + '...',
+          content: page.excerpt ?? '',
+          excerpt:
+            (page.excerpt ?? '').length > 200
+              ? `${(page.excerpt ?? '').substring(0, 200)}...`
+              : page.excerpt ?? '',
         })),
       },
       totalResults: posts.length + pages.length,

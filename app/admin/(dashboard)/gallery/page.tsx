@@ -1,11 +1,13 @@
-import { MediaType, type Prisma } from '@/app/generated/prisma';
-import prisma from '@/lib/db';
 import GalleryManagementView from '@/components/admin/gallery/GalleryManagementView';
 import {
   getSearchParamValue,
   readAdminFlashMessage,
   type SearchParamRecord,
 } from '@/lib/admin-feedback';
+import {
+  mongoMediaGalleryList,
+  mongoMediaGalleryStats,
+} from '@/lib/mongo-media';
 
 export default async function AdminGalleryPage({
   searchParams,
@@ -20,67 +22,17 @@ export default async function AdminGalleryPage({
   const folderFilter =
     getSearchParamValue(resolvedSearchParams.folder)?.trim() || 'ALL';
 
-  const where: Prisma.MediaWhereInput = {};
+  const [items, stats] = await Promise.all([
+    mongoMediaGalleryList({
+      typeFilter,
+      folderFilter,
+      searchQuery,
+      take: 24,
+    }),
+    mongoMediaGalleryStats(),
+  ]);
 
-  if (typeFilter !== 'ALL') {
-    where.type = typeFilter as MediaType;
-  }
-
-  if (folderFilter === '__uncategorized__') {
-    where.folder = null;
-  } else if (folderFilter !== 'ALL') {
-    where.folder = folderFilter;
-  }
-
-  if (searchQuery) {
-    where.OR = [
-      { filename: { contains: searchQuery, mode: 'insensitive' } },
-      { originalName: { contains: searchQuery, mode: 'insensitive' } },
-      { altText: { contains: searchQuery, mode: 'insensitive' } },
-    ];
-  }
-
-  const [items, totalItems, imageCount, videoCount, documentCount, storage, folderRows] =
-    await Promise.all([
-      prisma.media.findMany({
-        where,
-        take: 24,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          filename: true,
-          url: true,
-          altText: true,
-          mimeType: true,
-          type: true,
-          fileSize: true,
-          width: true,
-          height: true,
-          folder: true,
-          createdAt: true,
-        },
-      }),
-      prisma.media.count(),
-      prisma.media.count({ where: { type: 'IMAGE' } }),
-      prisma.media.count({ where: { type: 'VIDEO' } }),
-      prisma.media.count({ where: { type: 'DOCUMENT' } }),
-      prisma.media.aggregate({
-        _sum: {
-          fileSize: true,
-        },
-      }),
-      prisma.media.findMany({
-        where: { folder: { not: null } },
-        select: { folder: true },
-        distinct: ['folder'],
-      }),
-    ]);
-
-  const folderNames = folderRows
-    .map((row) => row.folder)
-    .filter((f): f is string => Boolean(f));
-
-  const totalBytes = storage._sum.fileSize || 0;
+  const totalBytes = stats.totalBytes;
   const totalStorageLabel =
     totalBytes > 1024 * 1024
       ? `${(totalBytes / (1024 * 1024)).toFixed(1)} MB`
@@ -92,14 +44,14 @@ export default async function AdminGalleryPage({
         ...item,
         createdAt: item.createdAt.toISOString(),
       }))}
-      totalItems={totalItems}
-      imageCount={imageCount}
-      documentAndVideoCount={videoCount + documentCount}
+      totalItems={stats.totalItems}
+      imageCount={stats.imageCount}
+      documentAndVideoCount={stats.videoCount + stats.documentCount}
       totalStorageLabel={totalStorageLabel}
       searchQuery={searchQuery}
       typeFilter={typeFilter}
       folderFilter={folderFilter}
-      folderNames={folderNames}
+      folderNames={stats.folderNames}
       flashMessage={flashMessage}
     />
   );

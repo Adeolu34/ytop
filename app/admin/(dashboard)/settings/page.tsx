@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth-utils';
-import prisma from '@/lib/db';
 import SiteSettingsForm from '@/components/admin/settings/SiteSettingsForm';
+import { mongoSettingsFindManyByKeys } from '@/lib/mongo-settings-store';
+import { mongoMediaListImagesForPicker } from '@/lib/mongo-media';
 
 async function loadSettings() {
   const keys = [
@@ -12,9 +13,7 @@ async function loadSettings() {
     'brand_secondary_hex',
   ] as const;
 
-  const rows = await prisma.settings.findMany({
-    where: { key: { in: [...keys] } },
-  });
+  const rows = await mongoSettingsFindManyByKeys([...keys]);
 
   const map = Object.fromEntries(rows.map((r) => [r.key, r.value])) as Record<
     string,
@@ -36,17 +35,12 @@ async function loadSettings() {
 export default async function AdminSiteSettingsPage() {
   await requireAdmin();
 
-  const [initialValues, mediaList] = await Promise.all([
+  const [initialValues, mediaRows] = await Promise.all([
     loadSettings(),
-    prisma.media.findMany({
-      where: { type: 'IMAGE' },
-      take: 200,
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, filename: true, url: true },
-    }),
+    mongoMediaListImagesForPicker({ limit: 200 }),
   ]);
 
-  const imageOptions = mediaList.map((m) => ({
+  const imageOptions = mediaRows.map((m) => ({
     id: m.id,
     label: m.filename,
     url: m.url,

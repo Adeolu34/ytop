@@ -1,12 +1,16 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/db';
+import { revalidatePath } from 'next/cache';
+import { getMongoDb } from '@/lib/mongodb';
 import {
   assessCommentModeration,
   normalizeCommentSubmission,
 } from '@/lib/comment-moderation';
-import { revalidatePath } from 'next/cache';
+import { mongoFindPostBySlug } from '@/lib/mongo-blog';
+import { mongoCommentInsert } from '@/lib/mongo-comments-store';
+
+const COLLECTION = 'blog_comments';
 
 const commentSchema = z.object({
   postId: z.string().min(1),
@@ -47,41 +51,34 @@ export async function submitCommentAction(
     website: validationResult.data.website ?? '',
   });
 
-  const post = await prisma.post.findFirst({
-    where: {
-      id: validationResult.data.postId,
-      slug: validationResult.data.postSlug,
-      status: 'PUBLISHED',
-    },
-    select: {
-      id: true,
-      slug: true,
-    },
-  });
-
-  if (!post) {
+  const doc = await mongoFindPostBySlug(validationResult.data.postSlug);
+  if (
+    !doc ||
+    doc.sourcePostId !== validationResult.data.postId ||
+    doc.status !== 'PUBLISHED'
+  ) {
     return {
       status: 'error',
       message: 'This post is no longer available for commenting.',
     };
   }
 
+  const post = { id: doc.sourcePostId, slug: doc.slug };
+
   const recentWindow = new Date(Date.now() - 30 * 60 * 1000);
+  const db = await getMongoDb();
+  const col = db.collection(COLLECTION);
   const [recentDuplicateCount, recentSubmissionCount] = await Promise.all([
-    prisma.comment.count({
-      where: {
-        postId: post.id,
-        createdAt: { gte: recentWindow },
-        authorEmail: normalizedInput.email,
-        content: normalizedInput.content,
-      },
+    col.countDocuments({
+      postId: post.id,
+      authorEmail: normalizedInput.email,
+      content: normalizedInput.content,
+      createdAt: { $gte: recentWindow },
     }),
-    prisma.comment.count({
-      where: {
-        postId: post.id,
-        createdAt: { gte: recentWindow },
-        authorEmail: normalizedInput.email,
-      },
+    col.countDocuments({
+      postId: post.id,
+      authorEmail: normalizedInput.email,
+      createdAt: { $gte: recentWindow },
     }),
   ]);
 
@@ -99,14 +96,13 @@ export async function submitCommentAction(
     };
   }
 
-  await prisma.comment.create({
-    data: {
-      content: normalizedInput.content,
-      authorName: normalizedInput.name,
-      authorEmail: normalizedInput.email,
-      post: { connect: { id: post.id } },
-      isApproved: moderationResult.decision === 'approve',
-    },
+  await mongoCommentInsert({
+    postId: post.id,
+    postSlug: post.slug,
+    content: normalizedInput.content,
+    authorName: normalizedInput.name,
+    authorEmail: normalizedInput.email,
+    isApproved: moderationResult.decision === 'approve',
   });
 
   revalidatePath(`/blog/${post.slug}`);

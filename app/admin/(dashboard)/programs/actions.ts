@@ -2,11 +2,15 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { Prisma } from '@/app/generated/prisma';
-import prisma from '@/lib/db';
 import { checkPermission, requireAuth } from '@/lib/auth-utils';
 import { slugifyValue } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
+import { isMongoDuplicateKeyError } from '@/lib/mongo-media';
+import {
+  mongoProgramDelete,
+  mongoProgramUniqueSlug,
+  mongoProgramUpsert,
+} from '@/lib/mongo-program-store';
 
 export type ProgramState = { error: string | null };
 
@@ -15,20 +19,6 @@ const PROG_PATH = '/admin/programs';
 function readString(formData: FormData, key: string): string {
   const v = formData.get(key);
   return typeof v === 'string' ? v.trim() : '';
-}
-
-async function uniqueProgramSlug(base: string, excludeId?: string): Promise<string> {
-  let slug = base || 'program';
-  let n = 0;
-  while (true) {
-    const existing = await prisma.program.findUnique({
-      where: { slug },
-      select: { id: true },
-    });
-    if (!existing || existing.id === excludeId) return slug;
-    n += 1;
-    slug = `${base}-${n}`;
-  }
 }
 
 export async function saveProgramAction(
@@ -62,10 +52,11 @@ export async function saveProgramAction(
     : [];
 
   const baseSlug = slugifyValue(slugInput || title);
-  const slug = await uniqueProgramSlug(baseSlug, id || undefined);
+  const slug = await mongoProgramUniqueSlug(baseSlug, id || undefined);
 
   try {
-    const data = {
+    await mongoProgramUpsert({
+      id: id || undefined,
       title,
       slug,
       description,
@@ -74,13 +65,7 @@ export async function saveProgramAction(
       sdgGoals,
       order: Number.isFinite(order) ? order : 0,
       isActive,
-    };
-
-    if (id) {
-      await prisma.program.update({ where: { id }, data });
-    } else {
-      await prisma.program.create({ data });
-    }
+    });
 
     revalidatePath('/programs');
     revalidatePath(PROG_PATH);
@@ -108,7 +93,7 @@ export async function deleteProgramAction(formData: FormData): Promise<void> {
     redirect(createAdminRedirectUrl(PROG_PATH, { error: 'Missing id.' }));
   }
 
-  await prisma.program.delete({ where: { id } });
+  await mongoProgramDelete(id);
   revalidatePath('/programs');
   revalidatePath(PROG_PATH);
 
@@ -116,10 +101,7 @@ export async function deleteProgramAction(formData: FormData): Promise<void> {
 }
 
 function getError(error: unknown): string {
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
-  ) {
+  if (isMongoDuplicateKeyError(error)) {
     return 'Slug must be unique.';
   }
   if (error instanceof Error) return error.message;

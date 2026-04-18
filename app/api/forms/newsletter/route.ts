@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Prisma } from '@/app/generated/prisma';
 import { z } from 'zod';
-import { getPrismaOr503 } from '@/lib/api-prisma';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import {
+  mongoFormSubmissionInsert,
+  mongoNewsletterEmailExists,
+} from '@/lib/mongo-forms-store';
 import { normalizeSubscriberEmail } from '@/lib/newsletter';
 
 export const dynamic = 'force-dynamic';
 
-// Validation schema
 const newsletterSchema = z.object({
   email: z.string().email('Invalid email address'),
   name: z.string().min(2, 'Name must be at least 2 characters').max(100).optional(),
@@ -19,15 +21,13 @@ const newsletterSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
     }
-    const prisma = pg.prisma;
 
     const body = await request.json();
 
-    // Validate input
     const validationResult = newsletterSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -43,48 +43,35 @@ export async function POST(request: NextRequest) {
     const data = validationResult.data;
     const normalizedEmail = normalizeSubscriberEmail(data.email);
 
-    // Get IP and User Agent
-    const ipAddress = request.headers.get('x-forwarded-for') ||
-                      request.headers.get('x-real-ip') ||
-                      'unknown';
+    const ipAddress =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
-    let submission;
-
-    try {
-      submission = await prisma.formSubmission.create({
-        data: {
-          type: 'NEWSLETTER',
-          name: data.name || null,
-          email: normalizedEmail,
-          data: {
-            subscribedAt: new Date().toISOString(),
-          },
-          ipAddress,
-          userAgent,
-        },
-      });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        return NextResponse.json(
-          { error: 'This email is already subscribed to our newsletter.' },
-          { status: 400 }
-        );
-      }
-
-      throw error;
+    if (await mongoNewsletterEmailExists(normalizedEmail)) {
+      return NextResponse.json(
+        { error: 'This email is already subscribed to our newsletter.' },
+        { status: 400 }
+      );
     }
 
-    // TODO: Add to MailChimp
-    // await addToMailChimp(data.email, data.name);
+    const submissionId = await mongoFormSubmissionInsert({
+      type: 'NEWSLETTER',
+      name: data.name || null,
+      email: normalizedEmail,
+      data: {
+        subscribedAt: new Date().toISOString(),
+      },
+      ipAddress,
+      userAgent,
+    });
 
     return NextResponse.json({
       success: true,
-      message: 'Thank you for subscribing! Please check your email to confirm your subscription.',
-      submissionId: submission.id,
+      message:
+        'Thank you for subscribing! Please check your email to confirm your subscription.',
+      submissionId,
     });
   } catch (error) {
     console.error('Error subscribing to newsletter:', error);

@@ -1,81 +1,9 @@
-import 'dotenv/config';
-import { Pool } from 'pg';
-import { PrismaClient } from '@/app/generated/prisma';
-import { PrismaPg } from '@prisma/adapter-pg';
-
-// Prisma + PostgreSQL: admin, auth, campaigns, media rows, drafts, etc. Public blog *reads* can use MongoDB
-// when PUBLIC_BLOG_SOURCE=mongodb (see lib/mongo-blog.ts); that data is synced from Postgres on publish.
-import { getPostgresConnectionString } from './db-config';
-
-export { isDatabaseConfigured, getPostgresConnectionString } from './db-config';
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-  prismaPool: Pool | undefined;
-};
-
-function createPrismaClient(): PrismaClient {
-  // Read URL at client creation time — not at module load — so the first import of this file
-  // cannot freeze an empty string when another part of the build later sets DATABASE_URL.
-  const url = getPostgresConnectionString();
-  if (!url) {
-    throw new Error('DATABASE_URL (or NETLIFY_DATABASE_URL on Netlify) is not set. Add it to .env or Netlify env to use blog, programs, and other database features.');
-  }
-  const pool = new Pool({
-    connectionString: url,
-    max: 5,
-    idleTimeoutMillis: 60_000, // 1 min – avoid dropping connections after short idle
-    connectionTimeoutMillis: 15_000,
-    keepAlive: true,
-    keepAliveInitialDelayMillis: 10_000,
-  });
-  globalForPrisma.prismaPool = pool;
-  const adapter = new PrismaPg(pool);
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-  });
-}
-
-function getPrismaClient(): PrismaClient {
-  if (globalForPrisma.prisma) return globalForPrisma.prisma;
-  const client = createPrismaClient();
-  globalForPrisma.prisma = client;
-  return client;
-}
-
 /**
- * Lazy Prisma singleton: do not connect at import time so `next build` can run when
- * DATABASE_URL is only set at runtime (e.g. Netlify deploy preview without DB env).
- * The first query (or getPrisma()) requires DATABASE_URL / NETLIFY_DATABASE_URL.
+ * Database entrypoint — MongoDB only (no PostgreSQL).
  */
-const prisma = new Proxy({} as PrismaClient, {
-  get(_target, prop, receiver) {
-    const client = getPrismaClient();
-    const value = Reflect.get(client as object, prop, receiver);
-    if (typeof value === 'function') {
-      return (value as (...args: unknown[]) => unknown).bind(client);
-    }
-    return value;
-  },
-});
-
-/** Reset the cached client so the next getPrisma() gets a fresh connection (use after connection errors). */
-export function resetPrismaConnection(): void {
-  if (globalForPrisma.prisma) {
-    void (globalForPrisma.prisma as any).$disconnect?.().catch(() => {});
-    globalForPrisma.prisma = undefined;
-  }
-  if (globalForPrisma.prismaPool) {
-    void globalForPrisma.prismaPool.end().catch(() => {});
-    globalForPrisma.prismaPool = undefined;
-  }
-}
-
-/** Use this when you need a client that may have been reset after a connection error. */
-export function getPrisma(): PrismaClient {
-  return getPrismaClient();
-}
-
-export { prisma };
-export default prisma;
+export {
+  resetMongoConnection,
+  resetMongoConnection as resetPrismaConnection,
+  isMongoConfigured,
+  isMongoConfigured as isDatabaseConfigured,
+} from '@/lib/mongodb';

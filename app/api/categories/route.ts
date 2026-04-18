@@ -1,40 +1,25 @@
 import { NextResponse } from 'next/server';
-import { getPrismaOr503 } from '@/lib/api-prisma';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoAggregateCategories } from '@/lib/mongo-blog';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/categories
  *
- * Get all categories with post counts
+ * Get all categories with post counts (from published Mongo blog posts)
  */
 export async function GET() {
   try {
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
     }
-    const prisma = pg.prisma;
 
-    const categories = await prisma.category.findMany({
-      include: {
-        _count: {
-          select: {
-            posts: {
-              where: {
-                status: 'PUBLISHED',
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    });
+    const categories = await mongoAggregateCategories();
 
     return NextResponse.json({
-      categories: categories.map(cat => ({
+      categories: categories.map((cat) => ({
         id: cat.id,
         name: cat.name,
         slug: cat.slug,

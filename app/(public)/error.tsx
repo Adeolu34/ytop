@@ -44,10 +44,8 @@ export default function PublicError({
           </Link>
         </div>
         <p className="mt-6 text-sm text-slate-500">
-          If this keeps happening, confirm your environment variables are set correctly for your data source (
-          <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code> for Mongo public blog and/or
-          <code className="bg-slate-100 px-1 rounded">DATABASE_URL</code> for Prisma/PostgreSQL features), then
-          redeploy.
+          If this keeps happening, confirm{' '}
+          <code className="bg-slate-100 px-1 rounded">MONGODB_URI</code> is set and reachable, then redeploy.
         </p>
       </div>
     </div>

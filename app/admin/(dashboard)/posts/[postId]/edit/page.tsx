@@ -1,8 +1,14 @@
 import { notFound } from 'next/navigation';
-import prisma from '@/lib/db';
 import { requireAuth } from '@/lib/auth-utils';
 import PostEditorForm from '@/components/admin/posts/PostEditorForm';
 import { getSiteBaseUrl } from '@/lib/email';
+import {
+  mongoMediaFindById,
+  mongoMediaListImageFolders,
+  mongoMediaListImagesForPicker,
+} from '@/lib/mongo-media';
+import { mongoPostFindBySourceId } from '@/lib/mongo-posts-store';
+import { mongoUsersListAuthorsForPosts } from '@/lib/mongo-users-store';
 
 function formatDateTimeLocal(value: Date | null): string {
   if (!value) {
@@ -23,50 +29,11 @@ export default async function EditPostPage({
   await requireAuth();
   const { postId } = await params;
 
-  const [post, authors, baseMedia, folderRows] = await Promise.all([
-    prisma.post.findUnique({
-      where: { id: postId },
-      include: {
-        categories: {
-          select: { name: true },
-        },
-        tags: {
-          select: { name: true },
-        },
-      },
-    }),
-    prisma.user.findMany({
-      where: {
-        role: {
-          in: ['ADMIN', 'EDITOR', 'AUTHOR'],
-        },
-      },
-      orderBy: [{ role: 'asc' }, { name: 'asc' }],
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-      },
-    }),
-    prisma.media.findMany({
-      where: { type: 'IMAGE' },
-      take: 40,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        filename: true,
-        url: true,
-        folder: true,
-        altText: true,
-        mimeType: true,
-      },
-    }),
-    prisma.media.findMany({
-      where: { type: 'IMAGE', folder: { not: null } },
-      select: { folder: true },
-      distinct: ['folder'],
-    }),
+  const [post, authors, baseMedia, imageFolders] = await Promise.all([
+    mongoPostFindBySourceId(postId),
+    mongoUsersListAuthorsForPosts(),
+    mongoMediaListImagesForPicker({ limit: 40 }),
+    mongoMediaListImageFolders(),
   ]);
 
   if (!post) {
@@ -78,25 +45,21 @@ export default async function EditPostPage({
     post.featuredImageId &&
     !baseMedia.some((m) => m.id === post.featuredImageId)
   ) {
-    const featured = await prisma.media.findUnique({
-      where: { id: post.featuredImageId },
-      select: {
-        id: true,
-        filename: true,
-        url: true,
-        folder: true,
-        altText: true,
-        mimeType: true,
-      },
-    });
+    const featured = await mongoMediaFindById(post.featuredImageId);
     if (featured) {
-      mediaPickerInitialItems = [featured, ...baseMedia];
+      mediaPickerInitialItems = [
+        {
+          id: featured.id,
+          filename: featured.filename,
+          url: featured.url,
+          folder: featured.folder ?? null,
+          altText: featured.altText ?? null,
+          mimeType: featured.mimeType,
+        },
+        ...baseMedia,
+      ];
     }
   }
-
-  const imageFolders = folderRows
-    .map((row) => row.folder)
-    .filter((f): f is string => Boolean(f));
 
   const siteBaseUrl = getSiteBaseUrl();
 
@@ -127,15 +90,15 @@ export default async function EditPostPage({
           siteBaseUrl,
         }}
         initialValues={{
-          id: post.id,
+          id: post.sourcePostId,
           title: post.title,
           slug: post.slug,
           excerpt: post.excerpt || '',
           content: post.content,
           status: post.status,
           authorId: post.authorId,
-          categories: post.categories.map((category) => category.name).join(', '),
-          tags: post.tags.map((tag) => tag.name).join(', '),
+          categories: post.categories.map((c) => c.name).join(', '),
+          tags: post.tags.map((t) => t.name).join(', '),
           featuredImageId: post.featuredImageId || '',
           metaTitle: post.metaTitle || '',
           metaDescription: post.metaDescription || '',

@@ -1,5 +1,6 @@
 import { unstable_cache, revalidateTag } from 'next/cache';
-import { isDatabaseConfigured } from '@/lib/db-config';
+import { isMongoConfigured } from '@/lib/mongodb';
+import { mongoSettingsFindManyByKeys } from '@/lib/mongo-settings-store';
 
 export type PublicSiteIdentity = {
   siteName: string;
@@ -30,7 +31,7 @@ function isHexColor(value: string): boolean {
 }
 
 async function loadIdentityFromDb(): Promise<PublicSiteIdentity> {
-  if (!isDatabaseConfigured()) {
+  if (!isMongoConfigured()) {
     return defaultPublicSiteIdentity();
   }
 
@@ -44,11 +45,7 @@ async function loadIdentityFromDb(): Promise<PublicSiteIdentity> {
   ] as const;
 
   try {
-    const { default: prisma } = await import('@/lib/db');
-    const rows = await prisma.settings.findMany({
-      where: { key: { in: [...keys] } },
-      select: { key: true, value: true },
-    });
+    const rows = await mongoSettingsFindManyByKeys([...keys]);
 
     const map = Object.fromEntries(rows.map((r) => [r.key, r.value])) as Record<
       string,

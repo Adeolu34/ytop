@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrismaOr503 } from '@/lib/api-prisma';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
 import {
   mongoBlogDocumentToApiListPost,
   mongoListPublishedPostDocuments,
-  useMongoForPublicBlog,
 } from '@/lib/mongo-blog';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +19,11 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
+    const mongo = await getMongoDbOr503();
+    if (!mongo.ok) {
+      return mongo.response;
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10')));
@@ -27,119 +31,22 @@ export async function GET(request: NextRequest) {
     const tagSlug = searchParams.get('tag');
     const searchQuery = searchParams.get('search');
 
-    if (useMongoForPublicBlog()) {
-      const { documents, total } = await mongoListPublishedPostDocuments({
-        page,
-        limit,
-        categorySlug: categorySlug || undefined,
-        tagSlug: tagSlug || undefined,
-        searchQuery: searchQuery || undefined,
-      });
-      const posts = documents.map((doc) => mongoBlogDocumentToApiListPost(doc));
-      return NextResponse.json({
-        posts,
-        pagination: {
-          page,
-          limit,
-          totalCount: total,
-          totalPages: Math.ceil(total / limit),
-          hasMore: page * limit < total,
-        },
-      });
-    }
-
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
-    }
-    const prisma = pg.prisma;
-
-    // Build where clause
-    const where: Record<string, unknown> = {
-      status: 'PUBLISHED',
-    };
-
-    // Filter by category
-    if (categorySlug) {
-      where.categories = {
-        some: {
-          slug: categorySlug,
-        },
-      };
-    }
-
-    // Filter by tag
-    if (tagSlug) {
-      where.tags = {
-        some: {
-          slug: tagSlug,
-        },
-      };
-    }
-
-    // Search in title and content
-    if (searchQuery) {
-      where.OR = [
-        { title: { contains: searchQuery, mode: 'insensitive' } },
-        { content: { contains: searchQuery, mode: 'insensitive' } },
-        { excerpt: { contains: searchQuery, mode: 'insensitive' } },
-      ];
-    }
-
-    // Get total count
-    const totalCount = await prisma.post.count({ where });
-
-    // Get posts
-    const posts = await prisma.post.findMany({
-      where,
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
-        },
-        categories: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        tags: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        featuredImage: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-            width: true,
-            height: true,
-          },
-        },
-      },
-      orderBy: {
-        publishedAt: 'desc',
-      },
-      skip: (page - 1) * limit,
-      take: limit,
+    const { documents, total } = await mongoListPublishedPostDocuments({
+      page,
+      limit,
+      categorySlug: categorySlug || undefined,
+      tagSlug: tagSlug || undefined,
+      searchQuery: searchQuery || undefined,
     });
-
+    const posts = documents.map((doc) => mongoBlogDocumentToApiListPost(doc));
     return NextResponse.json({
       posts,
       pagination: {
         page,
         limit,
-        totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-        hasMore: page * limit < totalCount,
+        totalCount: total,
+        totalPages: Math.ceil(total / limit),
+        hasMore: page * limit < total,
       },
     });
   } catch (error) {

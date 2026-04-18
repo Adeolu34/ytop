@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, User, Tag, ArrowRight } from 'lucide-react';
-import { getPrisma, isDatabaseConfigured, resetPrismaConnection } from '@/lib/db';
 import {
   mongoAggregateCategories,
   mongoListPublishedPosts,
   useMongoForPublicBlog,
 } from '@/lib/mongo-blog';
 import { isDatabaseConnectionError } from '@/lib/public-db';
-import { resetMongoConnection } from '@/lib/mongodb';
+import { getMongoDb, resetMongoConnection } from '@/lib/mongodb';
+import { BLOG_POSTS_COLLECTION } from '@/lib/mongo-posts-store';
 
 // When a post has no featured image, rotate through these so cards don’t all look the same
 const FALLBACK_FEATURED_IMAGES = [
@@ -33,143 +33,64 @@ interface SearchParams {
   category?: string;
 }
 
-async function loadBlogData(
-  where: { status: 'PUBLISHED'; categories?: { some: { slug: string } } },
-  page: number,
-  limit: number
-) {
-  const prisma = getPrisma();
-  return Promise.all([
-    prisma.post.findMany({
-      where,
-      include: {
-        author: {
-          select: {
-            name: true,
-            image: true,
-          },
-        },
-        categories: {
-          select: {
-            name: true,
-            slug: true,
-          },
-        },
-        featuredImage: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-          },
-        },
-      },
-      orderBy: {
-        publishedAt: 'desc',
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    }),
-    prisma.post.count({ where }),
-    prisma.post.count({ where: { status: 'PUBLISHED' } }),
-    prisma.category.findMany({
-      include: {
-        _count: {
-          select: {
-            posts: {
-              where: {
-                status: 'PUBLISHED',
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    }),
-    prisma.post.count({ where: { status: 'DRAFT' } }),
-  ]);
-}
+type BlogPostItem = Awaited<
+  ReturnType<typeof mongoListPublishedPosts>
+>['posts'][number];
+
+type BlogCategoryRow = Awaited<
+  ReturnType<typeof mongoAggregateCategories>
+>[number];
 
 type BlogPageData = {
-  posts: Awaited<ReturnType<typeof loadBlogData>>[0];
+  posts: BlogPostItem[];
   totalCount: number;
   totalPublishedCount: number;
-  categories: Awaited<ReturnType<typeof loadBlogData>>[3];
+  categories: BlogCategoryRow[];
   draftCount: number;
 };
 
-async function loadBlogFromPostgres(
-  where: { status: 'PUBLISHED'; categories?: { some: { slug: string } } },
-  page: number,
-  limit: number
-): Promise<BlogPageData> {
-  const [
-    postsResult,
-    totalCountResult,
-    totalPublishedCountResult,
-    categoriesResult,
-    draftCountResult,
-  ] = await loadBlogData(where, page, limit);
-  return {
-    posts: postsResult,
-    totalCount: totalCountResult,
-    totalPublishedCount: totalPublishedCountResult,
-    categories: categoriesResult,
-    draftCount: draftCountResult,
-  };
+async function mongoDraftCount(): Promise<number> {
+  const db = await getMongoDb();
+  return db
+    .collection(BLOG_POSTS_COLLECTION)
+    .countDocuments({ status: 'DRAFT' });
 }
 
-/**
- * Mongo path must not share Promise.all with Prisma — a failing draft count would abort the whole blog load.
- */
 async function fetchBlogPageData(params: {
   mongoPublicBlog: boolean;
-  where: { status: 'PUBLISHED'; categories?: { some: { slug: string } } };
   page: number;
   limit: number;
   categorySlug: string | undefined;
 }): Promise<BlogPageData> {
-  const { mongoPublicBlog, where, page, limit, categorySlug } = params;
+  const { mongoPublicBlog, page, limit, categorySlug } = params;
 
-  if (mongoPublicBlog) {
-    try {
-      const [mongoData, categoriesResult] = await Promise.all([
-        mongoListPublishedPosts({
-          page,
-          limit,
-          categorySlug: categorySlug || undefined,
-        }),
-        mongoAggregateCategories(),
-      ]);
-
-      let draftCount = 0;
-      if (isDatabaseConfigured()) {
-        try {
-          draftCount = await getPrisma().post.count({
-            where: { status: 'DRAFT' },
-          });
-        } catch {
-          /* optional stat for empty state; must not break public blog */
-        }
-      }
-
-      return {
-        posts: mongoData.posts as BlogPageData['posts'],
-        totalCount: mongoData.total,
-        totalPublishedCount: mongoData.totalPublished,
-        categories: categoriesResult,
-        draftCount,
-      };
-    } catch (mongoErr) {
-      resetMongoConnection();
-      if (!isDatabaseConfigured()) throw mongoErr;
-      console.error('Mongo blog read failed; falling back to Prisma:', mongoErr);
-      return loadBlogFromPostgres(where, page, limit);
-    }
+  if (!mongoPublicBlog) {
+    return {
+      posts: [],
+      totalCount: 0,
+      totalPublishedCount: 0,
+      categories: [],
+      draftCount: 0,
+    };
   }
 
-  return loadBlogFromPostgres(where, page, limit);
+  const [mongoData, categoriesResult, draftCount] = await Promise.all([
+    mongoListPublishedPosts({
+      page,
+      limit,
+      categorySlug: categorySlug || undefined,
+    }),
+    mongoAggregateCategories(),
+    mongoDraftCount().catch(() => 0),
+  ]);
+
+  return {
+    posts: mongoData.posts,
+    totalCount: mongoData.total,
+    totalPublishedCount: mongoData.totalPublished,
+    categories: categoriesResult,
+    draftCount,
+  };
 }
 
 export default async function BlogPage({
@@ -183,31 +104,16 @@ export default async function BlogPage({
   const limit = 12;
   const mongoPublicBlog = useMongoForPublicBlog();
 
-  // Build where clause for published posts only
-  const where: { status: 'PUBLISHED'; categories?: { some: { slug: string } } } = {
-    status: 'PUBLISHED',
-  };
-
-  if (categorySlug) {
-    where.categories = {
-      some: {
-        slug: categorySlug,
-      },
-    };
-  }
-
-  type BlogPostItem = Awaited<ReturnType<typeof loadBlogData>>[0][number];
   let posts: BlogPostItem[] = [];
   let totalCount = 0;
   let totalPublishedCount = 0;
-  let categories: Awaited<ReturnType<typeof loadBlogData>>[3] = [];
+  let categories: BlogCategoryRow[] = [];
   let draftCount = 0;
   let loadError: string | null = null;
 
   try {
     const data = await fetchBlogPageData({
       mongoPublicBlog,
-      where,
       page,
       limit,
       categorySlug,
@@ -219,12 +125,10 @@ export default async function BlogPage({
     draftCount = data.draftCount;
   } catch (err) {
     if (isDatabaseConnectionError(err)) {
-      resetPrismaConnection();
       resetMongoConnection();
       try {
         const data = await fetchBlogPageData({
           mongoPublicBlog,
-          where,
           page,
           limit,
           categorySlug,
@@ -242,7 +146,7 @@ export default async function BlogPage({
         categories = [];
         draftCount = 0;
         loadError = isDatabaseConnectionError(retryErr)
-          ? 'Unable to reach the database right now. Check Atlas IP access (allow Netlify), MONGODB_URI, and DATABASE_URL / Neon.'
+          ? 'Unable to reach the database right now. Check Atlas IP access (allow Netlify) and MONGODB_URI.'
           : null;
       }
     } else {
@@ -373,24 +277,12 @@ export default async function BlogPage({
             <div className="max-w-md mx-auto p-6 bg-white dark:bg-surface-dark rounded-2xl shadow-ytop border border-red-200 dark:border-red-900">
               <p className="text-slate-700 font-medium">{loadError}</p>
               <p className="text-slate-500 text-sm mt-2">
-                {mongoPublicBlog ? (
-                  <>
-                    If you intend to read posts from MongoDB, set{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MONGODB_URI</code> and{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">PUBLIC_BLOG_SOURCE=mongodb</code>
-                    , and ensure the <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">blog_posts</code> collection is synced.
-                    Also verify Atlas network access allows Netlify and your URI points to the expected database.
-                  </>
-                ) : (
-                  <>
-                    Configure your data source environment variables and ensure the backing service is reachable.
-                    For Prisma/PostgreSQL features, verify{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">DATABASE_URL</code>. If you are
-                    using Mongo public blog reads, verify{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MONGODB_URI</code> and{' '}
-                    <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">PUBLIC_BLOG_SOURCE</code>.
-                  </>
-                )}
+                <>
+                  Set <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MONGODB_URI</code> and ensure
+                  the <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">blog_posts</code> collection has
+                  published content. Verify Atlas network access allows your host and the URI uses the expected
+                  database.
+                </>
               </p>
             </div>
           </div>

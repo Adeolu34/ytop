@@ -1,47 +1,18 @@
-import prisma from '@/lib/db';
 import { requireAuth } from '@/lib/auth-utils';
 import PostEditorForm from '@/components/admin/posts/PostEditorForm';
+import {
+  mongoMediaListImageFolders,
+  mongoMediaListImagesForPicker,
+} from '@/lib/mongo-media';
+import { mongoUsersListAuthorsForPosts } from '@/lib/mongo-users-store';
 
 export default async function NewPostPage() {
   const currentUser = await requireAuth();
-  const [authors, mediaPickerInitialItems, folderRows] = await Promise.all([
-    prisma.user.findMany({
-      where: {
-        role: {
-          in: ['ADMIN', 'EDITOR', 'AUTHOR'],
-        },
-      },
-      orderBy: [{ role: 'asc' }, { name: 'asc' }],
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-      },
-    }),
-    prisma.media.findMany({
-      where: { type: 'IMAGE' },
-      take: 40,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        filename: true,
-        url: true,
-        folder: true,
-        altText: true,
-        mimeType: true,
-      },
-    }),
-    prisma.media.findMany({
-      where: { type: 'IMAGE', folder: { not: null } },
-      select: { folder: true },
-      distinct: ['folder'],
-    }),
+  const [authors, mediaPickerInitialItems, imageFolders] = await Promise.all([
+    mongoUsersListAuthorsForPosts(),
+    mongoMediaListImagesForPicker({ limit: 40 }),
+    mongoMediaListImageFolders(),
   ]);
-
-  const imageFolders = folderRows
-    .map((row) => row.folder)
-    .filter((f): f is string => Boolean(f));
 
   return (
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8 lg:pb-10 lg:pt-10">

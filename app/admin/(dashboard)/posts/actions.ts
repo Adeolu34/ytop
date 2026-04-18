@@ -1,22 +1,27 @@
 'use server';
 
+import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { PostStatus, Prisma } from '@/app/generated/prisma';
-import prisma from '@/lib/db';
 import { checkPermission, requireAuth } from '@/lib/auth-utils';
-import { buildPostDraft, slugifyValue } from '@/lib/admin-crud';
+import { buildPostDraft } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
 import {
   getSiteBaseUrl,
   isEmailSendingConfigured,
   sendBulkNewsletterEmail,
 } from '@/lib/email';
+import { mongoNewsletterSubscriberEmails } from '@/lib/mongo-forms-store';
+import { isMongoDuplicateKeyError } from '@/lib/mongo-media';
 import {
-  removeBlogPostFromMongo,
-  syncPostToMongoById,
-  useMongoForPublicBlog,
-} from '@/lib/mongo-blog';
+  mongoCreateUniquePostSlug,
+  mongoPostDelete,
+  mongoPostFindBySourceId,
+  mongoPostInsertFromDraft,
+  mongoPostSetEmailNotifiedAt,
+  mongoPostUpdateFromDraft,
+  mongoPostUpdateStatus,
+} from '@/lib/mongo-posts-store';
 
 type PostEditorState = {
   error: string | null;
@@ -59,37 +64,28 @@ export async function savePostAction(
     });
 
     const authorId = resolveAllowedAuthorId(currentUser, draft.authorId);
-    const slug = await createUniquePostSlug(draft.slug, postId);
+    const slug = await mongoCreateUniquePostSlug(draft.slug, postId);
     const existingPost = postId
-      ? await prisma.post.findUnique({
-          where: { id: postId },
-          select: { slug: true },
-        })
+      ? await mongoPostFindBySourceId(postId)
       : null;
 
     if (postId && !existingPost) {
       return { error: 'That post could not be found.' };
     }
 
-    let savedPostId: string;
     if (postId) {
-      await prisma.post.update({
-        where: { id: postId },
-        data: buildPostUpdateData(draft, authorId, slug),
+      await mongoPostUpdateFromDraft({
+        sourcePostId: postId,
+        draft: { ...draft, authorId },
+        slug,
       });
-      savedPostId = postId;
     } else {
-      const created = await prisma.post.create({
-        data: buildPostCreateData(draft, authorId, slug),
-        select: { id: true },
+      const newId = randomUUID();
+      await mongoPostInsertFromDraft({
+        draft: { ...draft, authorId },
+        slug,
+        sourcePostId: newId,
       });
-      savedPostId = created.id;
-    }
-
-    if (useMongoForPublicBlog()) {
-      await syncPostToMongoById(savedPostId).catch((e) =>
-        console.error('[mongo-blog sync]', e)
-      );
     }
 
     revalidatePostSurfaces(existingPost?.slug, slug);
@@ -116,10 +112,7 @@ export async function deletePostAction(formData: FormData): Promise<void> {
   }
 
   const postId = readRequiredString(formData, 'postId');
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-    select: { slug: true },
-  });
+  const post = await mongoPostFindBySourceId(postId);
 
   if (!post) {
     redirect(
@@ -129,13 +122,7 @@ export async function deletePostAction(formData: FormData): Promise<void> {
     );
   }
 
-  if (useMongoForPublicBlog()) {
-    await removeBlogPostFromMongo(postId).catch((e) =>
-      console.error('[mongo-blog delete]', e)
-    );
-  }
-
-  await prisma.post.delete({ where: { id: postId } });
+  await mongoPostDelete(postId);
   revalidatePostSurfaces(post.slug);
 
   redirect(
@@ -160,16 +147,7 @@ export async function notifyNewsletterSubscribersAction(
     return { error: 'Post is required.' };
   }
 
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      status: true,
-      emailNotifiedAt: true,
-    },
-  });
+  const post = await mongoPostFindBySourceId(postId);
 
   if (!post) {
     return { error: 'That post could not be found.' };
@@ -203,15 +181,7 @@ export async function notifyNewsletterSubscribersAction(
 
   const postUrl = `${base}/blog/${post.slug}`;
 
-  const rows = await prisma.formSubmission.findMany({
-    where: { type: 'NEWSLETTER', email: { not: null } },
-    select: { email: true },
-    distinct: ['email'],
-  });
-
-  const emails = rows
-    .map((r) => r.email?.trim().toLowerCase())
-    .filter((e): e is string => Boolean(e));
+  const emails = await mongoNewsletterSubscriberEmails();
 
   if (emails.length === 0) {
     return {
@@ -242,16 +212,7 @@ export async function notifyNewsletterSubscribersAction(
     };
   }
 
-  await prisma.post.update({
-    where: { id: postId },
-    data: { emailNotifiedAt: new Date() },
-  });
-
-  if (useMongoForPublicBlog()) {
-    await syncPostToMongoById(postId).catch((e) =>
-      console.error('[mongo-blog sync]', e)
-    );
-  }
+  await mongoPostSetEmailNotifiedAt(postId, new Date());
 
   revalidatePostSurfaces(post.slug);
   revalidatePath(`/admin/posts/${postId}/edit`);
@@ -289,10 +250,7 @@ export async function updatePostStatusAction(formData: FormData): Promise<void> 
     );
   }
 
-  const currentPost = await prisma.post.findUnique({
-    where: { id: postId },
-    select: { slug: true, publishedAt: true },
-  });
+  const currentPost = await mongoPostFindBySourceId(postId);
 
   if (!currentPost) {
     redirect(
@@ -302,24 +260,16 @@ export async function updatePostStatusAction(formData: FormData): Promise<void> 
     );
   }
 
-  await prisma.post.update({
-    where: { id: postId },
-    data: {
-      status: nextStatus as PostStatus,
-      publishedAt:
-        nextStatus === 'PUBLISHED'
-          ? currentPost.publishedAt || new Date()
-          : nextStatus === 'DRAFT'
-            ? null
-            : currentPost.publishedAt,
-    },
+  await mongoPostUpdateStatus({
+    sourcePostId: postId,
+    status: nextStatus,
+    publishedAt:
+      nextStatus === 'PUBLISHED'
+        ? currentPost.publishedAt || new Date()
+        : nextStatus === 'DRAFT'
+          ? null
+          : currentPost.publishedAt,
   });
-
-  if (useMongoForPublicBlog()) {
-    await syncPostToMongoById(postId).catch((e) =>
-      console.error('[mongo-blog sync]', e)
-    );
-  }
 
   revalidatePostSurfaces(currentPost.slug);
 
@@ -331,101 +281,6 @@ export async function updatePostStatusAction(formData: FormData): Promise<void> 
           : 'Post moved back to draft.',
     })
   );
-}
-
-function buildPostCreateData(
-  draft: ReturnType<typeof buildPostDraft>,
-  authorId: string,
-  slug: string
-): Prisma.PostCreateInput {
-  return {
-    title: draft.title,
-    slug,
-    excerpt: draft.excerpt,
-    content: draft.content,
-    status: draft.status,
-    author: { connect: { id: authorId } },
-    categories: buildTaxonomyCreateInput(draft.categoryNames),
-    tags: buildTaxonomyCreateInput(draft.tagNames),
-    metaTitle: draft.metaTitle,
-    metaDescription: draft.metaDescription,
-    metaKeywords: draft.metaKeywords,
-    publishedAt: draft.publishedAt,
-    ...(draft.featuredImageId
-      ? { featuredImage: { connect: { id: draft.featuredImageId } } }
-      : {}),
-  };
-}
-
-function buildPostUpdateData(
-  draft: ReturnType<typeof buildPostDraft>,
-  authorId: string,
-  slug: string
-): Prisma.PostUpdateInput {
-  return {
-    title: draft.title,
-    slug,
-    excerpt: draft.excerpt,
-    content: draft.content,
-    status: draft.status,
-    author: { connect: { id: authorId } },
-    categories: buildTaxonomyUpdateInput(draft.categoryNames),
-    tags: buildTaxonomyUpdateInput(draft.tagNames),
-    metaTitle: draft.metaTitle,
-    metaDescription: draft.metaDescription,
-    metaKeywords: draft.metaKeywords,
-    publishedAt: draft.publishedAt,
-    featuredImage: draft.featuredImageId
-      ? { connect: { id: draft.featuredImageId } }
-      : { disconnect: true },
-  };
-}
-
-function buildTaxonomyCreateInput(values: string[]) {
-  return {
-    connectOrCreate: values.map((value) => ({
-      where: { slug: slugifyValue(value) },
-      create: {
-        name: value,
-        slug: slugifyValue(value),
-      },
-    })),
-  };
-}
-
-function buildTaxonomyUpdateInput(values: string[]) {
-  return {
-    set: [],
-    connectOrCreate: values.map((value) => ({
-      where: { slug: slugifyValue(value) },
-      create: {
-        name: value,
-        slug: slugifyValue(value),
-      },
-    })),
-  };
-}
-
-async function createUniquePostSlug(
-  baseSlug: string,
-  postId: string | null
-): Promise<string> {
-  let attempt = 1;
-  let candidateSlug = baseSlug;
-
-  while (true) {
-    const existingPost = await prisma.post.findUnique({
-      where: { slug: candidateSlug },
-      select: { id: true },
-    });
-
-    if (!existingPost || existingPost.id === postId) {
-      return candidateSlug;
-    }
-
-    attempt += 1;
-    candidateSlug = `${baseSlug}-${attempt}`;
-  }
 }
 
 function resolveAllowedAuthorId(
@@ -476,10 +331,7 @@ function readOptionalString(formData: FormData, key: string): string | null {
 }
 
 function getActionErrorMessage(error: unknown): string {
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
-  ) {
+  if (isMongoDuplicateKeyError(error)) {
     return 'A post with that slug already exists.';
   }
 

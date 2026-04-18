@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
-import prisma from '@/lib/db';
 import { requireAdmin } from '@/lib/auth-utils';
 import UserEditorForm from '@/components/admin/users/UserEditorForm';
+import { mongoUserFindById } from '@/lib/mongo-users-store';
 
 export default async function EditUserPage({
   params,
@@ -11,17 +11,7 @@ export default async function EditUserPage({
   await requireAdmin();
   const { userId } = await params;
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      bio: true,
-      image: true,
-    },
-  });
+  const user = await mongoUserFindById(userId);
 
   if (!user) {
     notFound();

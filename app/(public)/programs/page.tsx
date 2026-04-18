@@ -1,9 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { getPrisma } from '@/lib/db';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
-import { mongoListActivePrograms, useMongoForPublicData } from '@/lib/mongo-public';
+import { mongoListActivePrograms } from '@/lib/mongo-public';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -15,40 +14,14 @@ export const metadata = {
 
 export default async function ProgramsPage() {
   let isUsingFallbackPrograms = false;
-  const programs = useMongoForPublicData()
-    ? await (async () => {
-        try {
-          return await mongoListActivePrograms();
-        } catch (error) {
-          isUsingFallbackPrograms = true;
-          console.error('Programs page Mongo query failed:', error);
-          return [];
-        }
-      })()
-    : await loadWithDatabaseFallback({
-        load: async () =>
-          getPrisma().program.findMany({
-            where: {
-              isActive: true,
-            },
-            include: {
-              image: {
-                select: {
-                  url: true,
-                  altText: true,
-                },
-              },
-            },
-            orderBy: {
-              order: 'asc',
-            },
-          }),
-        fallback: [],
-        onError(error) {
-          isUsingFallbackPrograms = true;
-          console.error('Programs page database query failed after retry:', error);
-        },
-      });
+  const programs = await loadWithDatabaseFallback({
+    load: async () => mongoListActivePrograms(),
+    fallback: [],
+    onError(error) {
+      isUsingFallbackPrograms = true;
+      console.error('Programs page database query failed after retry:', error);
+    },
+  });
 
   return (
     <div>

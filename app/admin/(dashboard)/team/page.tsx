@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { requireAuth } from '@/lib/auth-utils';
 import { checkPermission } from '@/lib/auth-utils';
-import prisma from '@/lib/db';
 import { redirect } from 'next/navigation';
+import { mongoTeamListForAdmin } from '@/lib/mongo-team-store';
 
 export default async function AdminTeamListPage() {
   const user = await requireAuth();
@@ -10,12 +10,7 @@ export default async function AdminTeamListPage() {
     redirect('/admin');
   }
 
-  const members = await prisma.teamMember.findMany({
-    orderBy: [{ teamSection: 'asc' }, { order: 'asc' }, { name: 'asc' }],
-    include: {
-      photo: { select: { url: true } },
-    },
-  });
+  const members = await mongoTeamListForAdmin();
 
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8">

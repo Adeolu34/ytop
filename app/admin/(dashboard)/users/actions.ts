@@ -3,11 +3,17 @@
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { Prisma } from '@/app/generated/prisma';
-import prisma from '@/lib/db';
 import { requireAdmin } from '@/lib/auth-utils';
 import { buildUserDraft } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
+import { isMongoDuplicateKeyError } from '@/lib/mongo-media';
+import {
+  mongoUserContentCounts,
+  mongoUserDelete,
+  mongoUserFindById,
+  mongoUserInsert,
+  mongoUserUpdate,
+} from '@/lib/mongo-users-store';
 
 type UserEditorState = {
   error: string | null;
@@ -41,27 +47,22 @@ export async function saveUserAction(
       : null;
 
     if (userId) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: {
-          name: draft.name,
-          email: draft.email,
-          role: draft.role,
-          bio: draft.bio,
-          image: draft.image,
-          ...(hashedPassword ? { hashedPassword } : {}),
-        },
+      await mongoUserUpdate(userId, {
+        name: draft.name,
+        email: draft.email,
+        role: draft.role,
+        bio: draft.bio,
+        image: draft.image,
+        ...(hashedPassword ? { hashedPassword } : {}),
       });
     } else {
-      await prisma.user.create({
-        data: {
-          name: draft.name,
-          email: draft.email,
-          role: draft.role,
-          bio: draft.bio,
-          image: draft.image,
-          hashedPassword,
-        },
+      await mongoUserInsert({
+        name: draft.name,
+        email: draft.email,
+        role: draft.role,
+        bio: draft.bio,
+        image: draft.image,
+        hashedPassword,
       });
     }
 
@@ -89,19 +90,7 @@ export async function deleteUserAction(formData: FormData): Promise<void> {
     );
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      _count: {
-        select: {
-          posts: true,
-          pages: true,
-          comments: true,
-          mediaUploads: true,
-        },
-      },
-    },
-  });
+  const user = await mongoUserFindById(userId);
 
   if (!user) {
     redirect(
@@ -111,7 +100,9 @@ export async function deleteUserAction(formData: FormData): Promise<void> {
     );
   }
 
-  if (hasUserDependencies(user._count)) {
+  const counts = await mongoUserContentCounts(userId);
+
+  if (hasUserDependencies(counts)) {
     redirect(
       createAdminRedirectUrl(USER_INDEX_PATH, {
         error:
@@ -120,7 +111,7 @@ export async function deleteUserAction(formData: FormData): Promise<void> {
     );
   }
 
-  await prisma.user.delete({ where: { id: userId } });
+  await mongoUserDelete(userId);
   revalidateUserSurfaces();
 
   redirect(
@@ -165,10 +156,7 @@ function readOptionalString(formData: FormData, key: string): string | null {
 }
 
 function getUserActionErrorMessage(error: unknown): string {
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
-  ) {
+  if (isMongoDuplicateKeyError(error)) {
     return 'A user with that email already exists.';
   }
 

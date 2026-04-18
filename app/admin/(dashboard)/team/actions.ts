@@ -2,11 +2,15 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { Prisma } from '@/app/generated/prisma';
-import prisma from '@/lib/db';
 import { checkPermission, requireAuth } from '@/lib/auth-utils';
 import { slugifyValue } from '@/lib/admin-crud';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
+import { isMongoDuplicateKeyError } from '@/lib/mongo-media';
+import {
+  mongoTeamDelete,
+  mongoTeamUniqueSlug,
+  mongoTeamUpsert,
+} from '@/lib/mongo-team-store';
 
 export type TeamState = { error: string | null };
 
@@ -17,20 +21,6 @@ const SECTIONS = new Set(['core', 'faculty', 'volunteer', 'community']);
 function readString(formData: FormData, key: string): string {
   const v = formData.get(key);
   return typeof v === 'string' ? v.trim() : '';
-}
-
-async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
-  let slug = base || 'member';
-  let n = 0;
-  while (true) {
-    const existing = await prisma.teamMember.findUnique({
-      where: { slug },
-      select: { id: true },
-    });
-    if (!existing || existing.id === excludeId) return slug;
-    n += 1;
-    slug = `${base}-${n}`;
-  }
 }
 
 export async function saveTeamMemberAction(
@@ -66,10 +56,11 @@ export async function saveTeamMemberAction(
   }
 
   const baseSlug = slugifyValue(slugInput || name);
-  const slug = await uniqueSlug(baseSlug, id || undefined);
+  const slug = await mongoTeamUniqueSlug(baseSlug, id || undefined);
 
   try {
-    const data = {
+    await mongoTeamUpsert({
+      id: id || undefined,
       name,
       slug,
       position,
@@ -83,16 +74,7 @@ export async function saveTeamMemberAction(
       facebook: facebook || null,
       order: Number.isFinite(order) ? order : 0,
       isActive,
-    };
-
-    if (id) {
-      await prisma.teamMember.update({
-        where: { id },
-        data,
-      });
-    } else {
-      await prisma.teamMember.create({ data });
-    }
+    });
 
     revalidatePath('/team');
     revalidatePath(TEAM_PATH);
@@ -120,7 +102,7 @@ export async function deleteTeamMemberAction(formData: FormData): Promise<void> 
     redirect(createAdminRedirectUrl(TEAM_PATH, { error: 'Missing id.' }));
   }
 
-  await prisma.teamMember.delete({ where: { id } });
+  await mongoTeamDelete(id);
   revalidatePath('/team');
   revalidatePath(TEAM_PATH);
 
@@ -130,10 +112,7 @@ export async function deleteTeamMemberAction(formData: FormData): Promise<void> 
 }
 
 function getError(error: unknown): string {
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
-  ) {
+  if (isMongoDuplicateKeyError(error)) {
     return 'Slug must be unique.';
   }
   if (error instanceof Error) return error.message;

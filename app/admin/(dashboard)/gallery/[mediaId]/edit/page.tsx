@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
-import prisma from '@/lib/db';
 import { requireAuth } from '@/lib/auth-utils';
 import MediaEditorForm from '@/components/admin/gallery/MediaEditorForm';
+import { mongoMediaFindById } from '@/lib/mongo-media';
 
 export default async function EditMediaPage({
   params,
@@ -11,23 +11,7 @@ export default async function EditMediaPage({
   await requireAuth();
   const { mediaId } = await params;
 
-  const media = await prisma.media.findUnique({
-    where: { id: mediaId },
-    select: {
-      id: true,
-      filename: true,
-      originalName: true,
-      url: true,
-      mimeType: true,
-      type: true,
-      altText: true,
-      caption: true,
-      description: true,
-      width: true,
-      height: true,
-      folder: true,
-    },
-  });
+  const media = await mongoMediaFindById(mediaId);
 
   if (!media) {
     notFound();

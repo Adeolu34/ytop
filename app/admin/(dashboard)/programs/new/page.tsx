@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { requireAuth } from '@/lib/auth-utils';
 import { checkPermission } from '@/lib/auth-utils';
-import prisma from '@/lib/db';
 import ProgramForm from '@/components/admin/programs/ProgramForm';
+import { mongoMediaListImagesForPicker } from '@/lib/mongo-media';
 
 export default async function NewProgramPage() {
   const user = await requireAuth();
@@ -10,14 +10,8 @@ export default async function NewProgramPage() {
     redirect('/admin');
   }
 
-  const imageOptions = (
-    await prisma.media.findMany({
-      where: { type: 'IMAGE' },
-      take: 300,
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, filename: true },
-    })
-  ).map((m) => ({ id: m.id, label: m.filename }));
+  const imageRows = await mongoMediaListImagesForPicker({ limit: 300 });
+  const imageOptions = imageRows.map((m) => ({ id: m.id, label: m.filename }));
 
   return (
     <div className="mx-auto flex w-full max-w-[960px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8">

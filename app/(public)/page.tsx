@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import HomeHeroSlideshow from '@/components/public/HomeHeroSlideshow';
-import { getPrisma } from '@/lib/db';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
 import { mongoListPublishedPosts, useMongoForPublicBlog } from '@/lib/mongo-blog';
+import { mongoListActiveTeamMembers } from '@/lib/mongo-public';
 import {
   GraduationCap,
   Megaphone,
@@ -88,21 +88,17 @@ export default async function HomePage() {
 
   const [teamMembers, latestPosts] = await loadWithDatabaseFallback({
     load: async () => {
-      const prisma = getPrisma();
-
-      const teamMembers = await prisma.teamMember.findMany({
-        where: { isActive: true },
-        include: {
-          photo: {
-            select: {
-              url: true,
-              altText: true,
-            },
-          },
-        },
-        orderBy: { order: 'asc' },
-        take: 3,
-      });
+      const teamMembers = (await mongoListActiveTeamMembers())
+        .slice(0, 3)
+        .map((m) => ({
+          id: m.id,
+          name: m.name,
+          position: m.position,
+          bio: m.bio,
+          photo: m.photo
+            ? { url: m.photo.url, altText: m.photo.altText }
+            : null,
+        }));
 
       let latestPosts: Awaited<ReturnType<typeof mongoListPublishedPosts>>['posts'];
       if (useMongoForPublicBlog()) {
@@ -112,46 +108,7 @@ export default async function HomePage() {
         });
         latestPosts = posts;
       } else {
-        const prismaPosts = await prisma.post.findMany({
-          where: { status: 'PUBLISHED' },
-          include: {
-            author: { select: { name: true, image: true } },
-            featuredImage: {
-              select: {
-                id: true,
-                url: true,
-                altText: true,
-              },
-            },
-            categories: {
-              select: {
-                name: true,
-                slug: true,
-              },
-            },
-          },
-          orderBy: { publishedAt: 'desc' },
-          take: 3,
-        });
-        latestPosts = prismaPosts.map((p) => ({
-          id: p.id,
-          slug: p.slug,
-          title: p.title,
-          excerpt: p.excerpt,
-          publishedAt: p.publishedAt,
-          author: {
-            name: p.author?.name ?? null,
-            image: p.author?.image ?? null,
-          },
-          categories: p.categories.map((c) => ({ name: c.name, slug: c.slug })),
-          featuredImage: p.featuredImage
-            ? {
-                id: p.featuredImage.id,
-                url: p.featuredImage.url,
-                altText: p.featuredImage.altText,
-              }
-            : null,
-        }));
+        latestPosts = [];
       }
 
       return [teamMembers, latestPosts] as const;

@@ -1,8 +1,9 @@
 import { notFound, redirect } from 'next/navigation';
 import { requireAuth } from '@/lib/auth-utils';
 import { checkPermission } from '@/lib/auth-utils';
-import prisma from '@/lib/db';
 import TeamMemberForm from '@/components/admin/team/TeamMemberForm';
+import { mongoMediaListImagesForPicker } from '@/lib/mongo-media';
+import { mongoTeamFindById } from '@/lib/mongo-team-store';
 
 export default async function EditTeamMemberPage({
   params,
@@ -16,18 +17,13 @@ export default async function EditTeamMemberPage({
   }
 
   const [member, imageRows] = await Promise.all([
-    prisma.teamMember.findUnique({ where: { id: memberId } }),
-    prisma.media.findMany({
-      where: { type: 'IMAGE' },
-      take: 300,
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, filename: true },
-    }),
+    mongoTeamFindById(memberId),
+    mongoMediaListImagesForPicker({ limit: 300 }),
   ]);
 
-  const imageOptions = imageRows.map((m) => ({ id: m.id, label: m.filename }));
-
   if (!member) notFound();
+
+  const imageOptions = imageRows.map((m) => ({ id: m.id, label: m.filename }));
 
   return (
     <div className="mx-auto flex w-full max-w-[960px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8">

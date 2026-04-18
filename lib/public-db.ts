@@ -1,4 +1,4 @@
-import { resetPrismaConnection } from '@/lib/db';
+import { resetMongoConnection } from '@/lib/mongodb';
 
 type LoadWithDatabaseFallbackOptions<T> = {
   load: () => Promise<T>;
@@ -24,21 +24,21 @@ export function isDatabaseConnectionError(error: unknown): boolean {
   );
 }
 
-function isMissingDatabaseUrlError(error: unknown): boolean {
+function isMissingMongoUriError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
-  return /DATABASE_URL \(or NETLIFY_DATABASE_URL.*\) is not set/i.test(message);
+  return /MONGODB_URI is not set|MongoDB is not configured/i.test(message);
 }
 
 export async function loadWithDatabaseFallback<T>({
   load,
   fallback,
-  resetConnection = resetPrismaConnection,
+  resetConnection = resetMongoConnection,
   onError,
 }: LoadWithDatabaseFallbackOptions<T>): Promise<T> {
   try {
     return await load();
   } catch (error) {
-    if (isMissingDatabaseUrlError(error)) {
+    if (isMissingMongoUriError(error)) {
       onError?.(error);
       return fallback;
     }
@@ -52,7 +52,7 @@ export async function loadWithDatabaseFallback<T>({
     try {
       return await load();
     } catch (retryError) {
-      if (isMissingDatabaseUrlError(retryError)) {
+      if (isMissingMongoUriError(retryError)) {
         onError?.(retryError);
         return fallback;
       }

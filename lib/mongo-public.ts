@@ -1,12 +1,7 @@
 import { getMongoDb, isMongoConfigured } from '@/lib/mongodb';
 
-function publicSourceIsMongo(): boolean {
-  const v = process.env.PUBLIC_BLOG_SOURCE?.toLowerCase().trim();
-  return v === 'mongodb' || v === 'mangodb';
-}
-
 export function useMongoForPublicData(): boolean {
-  return isMongoConfigured() && publicSourceIsMongo();
+  return isMongoConfigured();
 }
 
 export type MongoProgram = {

@@ -1,11 +1,10 @@
 'use server';
 
+import { randomUUID } from 'crypto';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { Prisma } from '@/app/generated/prisma';
-import prisma from '@/lib/db';
 import { checkPermission, requireAuth } from '@/lib/auth-utils';
 import {
   buildMediaDraft,
@@ -17,6 +16,15 @@ import {
   destroyCloudinaryAsset,
 } from '@/lib/cloudinary';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
+import { countMongoMediaReferences } from '@/lib/mongo-media-usage';
+import {
+  mongoMediaDelete,
+  mongoMediaDeleteMany,
+  mongoMediaFindById,
+  mongoMediaInsert,
+  mongoMediaSetFolderMany,
+  mongoMediaUpdate,
+} from '@/lib/mongo-media';
 
 type MediaEditorState = {
   error: string | null;
@@ -50,29 +58,30 @@ export async function createMediaAction(
     });
     const persisted = await persistUploadedFile(fileEntry, mediaDraft.filename);
 
-    await prisma.media.create({
-      data: {
-        filename: mediaDraft.filename,
-        originalName: mediaDraft.originalName,
-        url: persisted.url,
-        cloudinaryPublicId: persisted.cloudinaryPublicId,
-        mimeType: mediaDraft.mimeType,
-        fileSize: mediaDraft.fileSize,
-        type: mediaDraft.type,
-        altText: mediaDraft.altText,
-        caption: mediaDraft.caption,
-        description: mediaDraft.description,
-        folder: normalizeFolderField(formData, 'folder'),
-        width:
-          readOptionalInteger(formData, 'width') ??
-          persisted.width ??
-          null,
-        height:
-          readOptionalInteger(formData, 'height') ??
-          persisted.height ??
-          null,
-        uploadedBy: { connect: { id: currentUser.id } },
-      },
+    await mongoMediaInsert({
+      id: randomUUID(),
+      filename: mediaDraft.filename,
+      originalName: mediaDraft.originalName,
+      url: persisted.url,
+      thumbnailUrl: null,
+      mimeType: mediaDraft.mimeType,
+      fileSize: mediaDraft.fileSize,
+      type: mediaDraft.type,
+      width:
+        readOptionalInteger(formData, 'width') ??
+        persisted.width ??
+        null,
+      height:
+        readOptionalInteger(formData, 'height') ??
+        persisted.height ??
+        null,
+      altText: mediaDraft.altText,
+      caption: mediaDraft.caption,
+      description: mediaDraft.description,
+      wordpressId: null,
+      cloudinaryPublicId: persisted.cloudinaryPublicId,
+      folder: normalizeFolderField(formData, 'folder'),
+      uploadedById: currentUser.id,
     });
 
     revalidateGallerySurfaces();
@@ -100,16 +109,13 @@ export async function updateMediaAction(
   const mediaId = readRequiredString(formData, 'mediaId');
 
   try {
-    await prisma.media.update({
-      where: { id: mediaId },
-      data: {
-        altText: nullableField(formData, 'altText'),
-        caption: nullableField(formData, 'caption'),
-        description: nullableField(formData, 'description'),
-        folder: normalizeFolderField(formData, 'folder'),
-        width: readOptionalInteger(formData, 'width'),
-        height: readOptionalInteger(formData, 'height'),
-      },
+    await mongoMediaUpdate(mediaId, {
+      altText: nullableField(formData, 'altText'),
+      caption: nullableField(formData, 'caption'),
+      description: nullableField(formData, 'description'),
+      folder: normalizeFolderField(formData, 'folder'),
+      width: readOptionalInteger(formData, 'width'),
+      height: readOptionalInteger(formData, 'height'),
     });
 
     revalidateGallerySurfaces();
@@ -146,8 +152,7 @@ export async function deleteMediaAction(formData: FormData): Promise<void> {
     );
   }
 
-  const mediaUsageCount = countMediaDependencies(media._count);
-  if (mediaUsageCount > 0) {
+  if (media.usage > 0) {
     redirect(
       createAdminRedirectUrl(GALLERY_INDEX_PATH, {
         error:
@@ -156,7 +161,7 @@ export async function deleteMediaAction(formData: FormData): Promise<void> {
     );
   }
 
-  await prisma.media.delete({ where: { id: mediaId } });
+  await mongoMediaDelete(mediaId);
   await deleteStoredAsset({
     url: media.url,
     cloudinaryPublicId: media.cloudinaryPublicId,
@@ -199,10 +204,7 @@ export async function moveSelectedMediaToFolderAction(
       ? null
       : targetFolderRaw.trim();
 
-  await prisma.media.updateMany({
-    where: { id: { in: mediaIds } },
-    data: { folder },
-  });
+  await mongoMediaSetFolderMany(mediaIds, folder);
 
   revalidateGallerySurfaces();
 
@@ -237,24 +239,24 @@ export async function deleteSelectedMediaAction(formData: FormData): Promise<voi
     );
   }
 
-  const mediaItems = await prisma.media.findMany({
-    where: { id: { in: mediaIds } },
-    select: {
-      id: true,
-      url: true,
-      cloudinaryPublicId: true,
-      _count: {
-        select: {
-          posts: true,
-          teamMembers: true,
-          testimonials: true,
-          programs: true,
-          events: true,
-          campaigns: true,
-        },
-      },
-    },
-  });
+  const mediaItems = (
+    await Promise.all(
+      mediaIds.map(async (id) => {
+        const doc = await mongoMediaFindById(id);
+        if (!doc) return null;
+        const usage = await countMongoMediaReferences(id);
+        return {
+          id: doc.id,
+          url: doc.url,
+          cloudinaryPublicId: doc.cloudinaryPublicId,
+          usage,
+        };
+      })
+    )
+  ).filter(
+    (m): m is { id: string; url: string; cloudinaryPublicId: string | null; usage: number } =>
+      m != null
+  );
 
   if (mediaItems.length !== mediaIds.length) {
     redirect(
@@ -264,9 +266,7 @@ export async function deleteSelectedMediaAction(formData: FormData): Promise<voi
     );
   }
 
-  const blockedItem = mediaItems.find(
-    (mediaItem) => countMediaDependencies(mediaItem._count) > 0
-  );
+  const blockedItem = mediaItems.find((mediaItem) => mediaItem.usage > 0);
 
   if (blockedItem) {
     redirect(
@@ -277,9 +277,7 @@ export async function deleteSelectedMediaAction(formData: FormData): Promise<voi
     );
   }
 
-  await prisma.media.deleteMany({
-    where: { id: { in: mediaIds } },
-  });
+  await mongoMediaDeleteMany(mediaIds);
 
   await Promise.all(
     mediaItems.map((mediaItem) =>
@@ -302,41 +300,14 @@ export async function deleteSelectedMediaAction(formData: FormData): Promise<voi
 }
 
 async function findMediaForDeletion(mediaId: string) {
-  return prisma.media.findUnique({
-    where: { id: mediaId },
-    select: {
-      url: true,
-      cloudinaryPublicId: true,
-      _count: {
-        select: {
-          posts: true,
-          teamMembers: true,
-          testimonials: true,
-          programs: true,
-          events: true,
-          campaigns: true,
-        },
-      },
-    },
-  });
-}
-
-function countMediaDependencies(counts: {
-  posts: number;
-  teamMembers: number;
-  testimonials: number;
-  programs: number;
-  events: number;
-  campaigns: number;
-}): number {
-  return (
-    counts.posts +
-    counts.teamMembers +
-    counts.testimonials +
-    counts.programs +
-    counts.events +
-    counts.campaigns
-  );
+  const doc = await mongoMediaFindById(mediaId);
+  if (!doc) return null;
+  const usage = await countMongoMediaReferences(mediaId);
+  return {
+    url: doc.url,
+    cloudinaryPublicId: doc.cloudinaryPublicId,
+    usage,
+  };
 }
 
 type PersistedUpload = {
@@ -469,13 +440,6 @@ function readOptionalString(formData: FormData, key: string): string | null {
 }
 
 function getMediaActionErrorMessage(error: unknown): string {
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2025'
-  ) {
-    return 'That media item could not be found.';
-  }
-
   if (error instanceof Error) {
     return error.message;
   }

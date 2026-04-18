@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getPostgresConnectionString } from '@/lib/db-config';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoCampaignsListActive } from '@/lib/mongo-campaigns-store';
 
-/** Do not prerender; keeps `next build` from eagerly evaluating DB-backed handlers. */
 export const dynamic = 'force-dynamic';
 
 /**
@@ -10,40 +10,20 @@ export const dynamic = 'force-dynamic';
  * Get all active fundraising campaigns
  */
 export async function GET() {
-  if (!getPostgresConnectionString()) {
-    return NextResponse.json({ campaigns: [] });
-  }
-
-  const { default: prisma } = await import('@/lib/db');
-
   try {
-    const now = new Date();
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
+    }
 
-    const campaigns = await prisma.campaign.findMany({
-      where: {
-        isActive: true,
-        endDate: { gte: now }, // Not yet ended
-      },
-      include: {
-        image: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-          },
-        },
-      },
-      orderBy: {
-        endDate: 'asc', // Ending soonest first
-      },
-    });
+    const campaigns = await mongoCampaignsListActive();
 
     const campaignsWithProgress = campaigns.map((campaign) => ({
       ...campaign,
       progressPercentage:
-        Number(campaign.goalAmount) > 0
+        campaign.goalAmount > 0
           ? Math.round(
-              (Number(campaign.raisedAmount) / Number(campaign.goalAmount)) * 100
+              (campaign.raisedAmount / campaign.goalAmount) * 100
             )
           : 0,
     }));

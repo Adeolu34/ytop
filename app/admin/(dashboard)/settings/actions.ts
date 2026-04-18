@@ -1,7 +1,7 @@
 'use server';
 
-import prisma from '@/lib/db';
 import { requireAdmin } from '@/lib/auth-utils';
+import { mongoSettingsUpsert } from '@/lib/mongo-settings-store';
 import { revalidateSiteIdentityCache } from '@/lib/public-site-settings';
 import { revalidatePath } from 'next/cache';
 
@@ -55,10 +55,10 @@ export async function updateSiteSettingsAction(
   ];
 
   for (const row of upserts) {
-    await prisma.settings.upsert({
-      where: { key: row.key },
-      update: { value: row.value, group: row.group },
-      create: row,
+    await mongoSettingsUpsert({
+      key: row.key,
+      value: row.value,
+      group: row.group,
     });
   }
 

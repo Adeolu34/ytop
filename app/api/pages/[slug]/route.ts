@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrismaOr503 } from '@/lib/api-prisma';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoPageFindPublishedBySlug } from '@/lib/mongo-pages-store';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,60 +10,21 @@ export const dynamic = 'force-dynamic';
  * Get a single page by slug
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
+    }
+
     const { slug } = await params;
 
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
-    }
-    const prisma = pg.prisma;
-
-    const page = await prisma.page.findUnique({
-      where: {
-        slug,
-        status: 'PUBLISHED',
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        parent: {
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-          },
-        },
-        children: {
-          where: {
-            status: 'PUBLISHED',
-          },
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            order: true,
-          },
-          orderBy: {
-            order: 'asc',
-          },
-        },
-      },
-    });
+    const page = await mongoPageFindPublishedBySlug(slug);
 
     if (!page) {
-      return NextResponse.json(
-        { error: 'Page not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Page not found' }, { status: 404 });
     }
 
     return NextResponse.json({ page });

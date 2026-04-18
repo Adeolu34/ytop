@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getPrismaOr503 } from '@/lib/api-prisma';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
+import { mongoFormSubmissionInsert } from '@/lib/mongo-forms-store';
 
 export const dynamic = 'force-dynamic';
 
-// Validation schema
 const volunteerFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   email: z.string().email('Invalid email address'),
@@ -24,15 +24,13 @@ const volunteerFormSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
     }
-    const prisma = pg.prisma;
 
     const body = await request.json();
 
-    // Validate input
     const validationResult = volunteerFormSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -47,39 +45,34 @@ export async function POST(request: NextRequest) {
 
     const data = validationResult.data;
 
-    // Get IP and User Agent
-    const ipAddress = request.headers.get('x-forwarded-for') ||
-                      request.headers.get('x-real-ip') ||
-                      'unknown';
+    const ipAddress =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
-    // Save to database
-    const submission = await prisma.formSubmission.create({
+    const submissionId = await mongoFormSubmissionInsert({
+      type: 'VOLUNTEER',
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
       data: {
-        type: 'VOLUNTEER',
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        data: {
-          age: data.age,
-          location: data.location,
-          interests: data.interests,
-          availability: data.availability,
-          experience: data.experience,
-          why: data.why,
-        },
-        ipAddress,
-        userAgent,
+        age: data.age,
+        location: data.location,
+        interests: data.interests,
+        availability: data.availability,
+        experience: data.experience,
+        why: data.why,
       },
+      ipAddress,
+      userAgent,
     });
-
-    // TODO: Send email notification to admin
-    // await sendVolunteerApplicationEmail(data);
 
     return NextResponse.json({
       success: true,
-      message: 'Thank you for your interest in volunteering! We will review your application and contact you soon.',
-      submissionId: submission.id,
+      message:
+        'Thank you for your interest in volunteering! We will review your application and contact you soon.',
+      submissionId,
     });
   } catch (error) {
     console.error('Error submitting volunteer form:', error);

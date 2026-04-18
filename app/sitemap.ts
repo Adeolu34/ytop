@@ -1,38 +1,26 @@
 import { MetadataRoute } from 'next';
-import { isDatabaseConfigured } from '@/lib/db-config';
+import { isMongoConfigured } from '@/lib/mongodb';
 import { buildSitemapEntries } from '@/lib/sitemap';
 import {
+  mongoAggregateCategories,
   mongoListPostsForSitemap,
-  useMongoForPublicBlog,
 } from '@/lib/mongo-blog';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return buildSitemapEntries({
     baseUrl: 'https://ytopglobal.org',
     fetchPosts: async () => {
-      if (useMongoForPublicBlog()) {
-        return mongoListPostsForSitemap();
-      }
-      if (!isDatabaseConfigured()) {
+      if (!isMongoConfigured()) {
         return [];
       }
-      const { default: prisma } = await import('@/lib/db');
-      return prisma.post.findMany({
-        where: { status: 'PUBLISHED' },
-        select: {
-          slug: true,
-          updatedAt: true,
-        },
-      });
+      return mongoListPostsForSitemap();
     },
     fetchCategories: async () => {
-      if (!isDatabaseConfigured()) {
+      if (!isMongoConfigured()) {
         return [];
       }
-      const { default: prisma } = await import('@/lib/db');
-      return prisma.category.findMany({
-        select: { slug: true },
-      });
+      const cats = await mongoAggregateCategories();
+      return cats.map((c) => ({ slug: c.slug }));
     },
     onDynamicDataError(error) {
       console.warn('Falling back to the static sitemap entries.', error);

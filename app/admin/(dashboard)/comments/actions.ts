@@ -2,9 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import prisma from '@/lib/db';
 import { requireAdmin } from '@/lib/auth-utils';
 import { createAdminRedirectUrl } from '@/lib/admin-feedback';
+import {
+  mongoCommentApprove,
+  mongoCommentDelete,
+  mongoCommentFindById,
+} from '@/lib/mongo-comments-store';
 
 const COMMENT_INDEX_PATH = '/admin/comments';
 
@@ -12,17 +16,7 @@ export async function approveCommentAction(formData: FormData): Promise<void> {
   await requireAdmin();
 
   const commentId = readRequiredString(formData, 'commentId');
-  const comment = await prisma.comment.findUnique({
-    where: { id: commentId },
-    select: {
-      isApproved: true,
-      post: {
-        select: {
-          slug: true,
-        },
-      },
-    },
-  });
+  const comment = await mongoCommentFindById(commentId);
 
   if (!comment) {
     redirect(
@@ -40,12 +34,9 @@ export async function approveCommentAction(formData: FormData): Promise<void> {
     );
   }
 
-  await prisma.comment.update({
-    where: { id: commentId },
-    data: { isApproved: true },
-  });
+  await mongoCommentApprove(commentId);
 
-  revalidateCommentSurfaces(comment.post.slug);
+  revalidateCommentSurfaces(comment.postSlug);
 
   redirect(
     createAdminRedirectUrl(COMMENT_INDEX_PATH, {
@@ -58,16 +49,7 @@ export async function deleteCommentAction(formData: FormData): Promise<void> {
   await requireAdmin();
 
   const commentId = readRequiredString(formData, 'commentId');
-  const comment = await prisma.comment.findUnique({
-    where: { id: commentId },
-    select: {
-      post: {
-        select: {
-          slug: true,
-        },
-      },
-    },
-  });
+  const comment = await mongoCommentFindById(commentId);
 
   if (!comment) {
     redirect(
@@ -77,11 +59,9 @@ export async function deleteCommentAction(formData: FormData): Promise<void> {
     );
   }
 
-  await prisma.comment.delete({
-    where: { id: commentId },
-  });
+  await mongoCommentDelete(commentId);
 
-  revalidateCommentSurfaces(comment.post.slug);
+  revalidateCommentSurfaces(comment.postSlug);
 
   redirect(
     createAdminRedirectUrl(COMMENT_INDEX_PATH, {
@@ -99,10 +79,8 @@ function revalidateCommentSurfaces(postSlug: string): void {
 
 function readRequiredString(formData: FormData, key: string): string {
   const value = formData.get(key);
-
   if (typeof value !== 'string') {
     throw new Error(`${key} is required`);
   }
-
   return value;
 }

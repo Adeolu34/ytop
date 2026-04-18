@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import type { Prisma } from '@/app/generated/prisma';
-import { getPrismaOr503 } from '@/lib/api-prisma';
+import { getMongoDbOr503 } from '@/lib/api-mongo';
 import { checkPermission, getCurrentUser } from '@/lib/auth-utils';
+import { mongoMediaListAdminImages } from '@/lib/mongo-media';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,11 +12,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const pg = await getPrismaOr503();
-    if (!pg.ok) {
-      return pg.response;
+    const gate = await getMongoDbOr503();
+    if (!gate.ok) {
+      return gate.response;
     }
-    const prisma = pg.prisma;
 
     const { searchParams } = new URL(request.url);
     const q = (searchParams.get('q') || '').trim();
@@ -27,40 +26,12 @@ export async function GET(request: NextRequest) {
       Math.max(1, Number.parseInt(searchParams.get('take') || '40', 10) || 40)
     );
 
-    const where: Prisma.MediaWhereInput = {
-      type: 'IMAGE',
-    };
-
-    if (q) {
-      where.OR = [
-        { filename: { contains: q, mode: 'insensitive' } },
-        { originalName: { contains: q, mode: 'insensitive' } },
-      ];
-    }
-
-    if (folderParam === '__uncategorized__') {
-      where.folder = null;
-    } else if (folderParam && folderParam !== 'all') {
-      where.folder = folderParam;
-    }
-
-    const [items, total] = await Promise.all([
-      prisma.media.findMany({
-        where,
-        skip,
-        take,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          filename: true,
-          url: true,
-          folder: true,
-          altText: true,
-          mimeType: true,
-        },
-      }),
-      prisma.media.count({ where }),
-    ]);
+    const { items, total } = await mongoMediaListAdminImages({
+      q: q || undefined,
+      folderParam,
+      skip,
+      take,
+    });
 
     return NextResponse.json({
       items,

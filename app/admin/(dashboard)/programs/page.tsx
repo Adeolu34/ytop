@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { requireAuth } from '@/lib/auth-utils';
 import { checkPermission } from '@/lib/auth-utils';
-import prisma from '@/lib/db';
+import { mongoProgramListForAdmin } from '@/lib/mongo-program-store';
 
 export default async function AdminProgramsListPage() {
   const user = await requireAuth();
@@ -10,10 +10,7 @@ export default async function AdminProgramsListPage() {
     redirect('/admin');
   }
 
-  const programs = await prisma.program.findMany({
-    orderBy: [{ order: 'asc' }, { title: 'asc' }],
-    include: { image: { select: { url: true } } },
-  });
+  const programs = await mongoProgramListForAdmin();
 
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-8">
