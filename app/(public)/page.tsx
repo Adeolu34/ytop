@@ -16,9 +16,8 @@ import {
   MapPin,
   Quote,
 } from 'lucide-react';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+/** CDN ISR: 60s (see lib/public-page-config.ts). Must be a literal for Next.js. */
+export const revalidate = 60;
 
 const GOALS = [
   {

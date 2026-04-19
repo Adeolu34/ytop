@@ -4,10 +4,8 @@ import {
   isCloudinaryConfigured,
   listGalleryImagesFromCloudinary,
 } from '@/lib/cloudinary';
-
-/** Always fetch fresh gallery list (Cloudinary env must exist at request time, not only at build). */
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+/** CDN ISR — lib/public-page-config.ts */
+export const revalidate = 60;
 
 export default async function GalleryPage() {
   let cloudinaryImages: Awaited<

@@ -25,6 +25,23 @@ export function mongoPostAdminEditorId(doc: {
   return typeof raw === 'string' ? raw.trim() : '';
 }
 
+/**
+ * Use in href path segments. IDs like `wp:5160` contain `:` which breaks many
+ * CDNs/proxies if left raw; encode so `/posts/wp%3A5160/edit` is reliable.
+ */
+export function mongoPostIdInAdminPathSegment(id: string): string {
+  return encodeURIComponent(id);
+}
+
+/** Decode `[postId]` from the URL (Next usually decodes once; this is safe if already decoded). */
+export function mongoPostIdFromAdminPathSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
 type BlogPostWrite = MongoBlogDocument & {
   id: string;
   emailNotifiedAt?: Date | null;

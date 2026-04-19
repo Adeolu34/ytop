@@ -57,7 +57,8 @@ export function getMongoClientPromise(): Promise<MongoClient> {
       serverSelectionTimeoutMS: 8000,
       connectTimeoutMS: 8000,
       socketTimeoutMS: 10000,
-      maxPoolSize: 5,
+      // Slightly higher pool helps concurrent ISR revalidations / parallel segments.
+      maxPoolSize: 10,
     })
       .connect()
       .catch((err: unknown) => {

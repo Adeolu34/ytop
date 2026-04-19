@@ -17,6 +17,7 @@ import {
   mongoCreateUniquePostSlug,
   mongoPostDelete,
   mongoPostFindBySourceId,
+  mongoPostIdInAdminPathSegment,
   mongoPostInsertFromDraft,
   mongoPostSetEmailNotifiedAt,
   mongoPostUpdateFromDraft,
@@ -215,7 +216,9 @@ export async function notifyNewsletterSubscribersAction(
   await mongoPostSetEmailNotifiedAt(postId, new Date());
 
   revalidatePostSurfaces(post.slug);
-  revalidatePath(`/admin/posts/${postId}/edit`);
+  revalidatePath(
+    `/admin/posts/${mongoPostIdInAdminPathSegment(postId)}/edit`
+  );
 
   return { error: null, ok: true };
 }

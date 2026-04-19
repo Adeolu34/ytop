@@ -1,5 +1,9 @@
 /**
- * Import WordPress posts directly into MongoDB `blog_posts` (no Postgres required).
+ * Import WordPress posts into MongoDB `blog_posts` (one-time or repeat pull from WP REST API).
+ *
+ * Posts become first-class YTOP records: stable UUID `sourcePostId`, your Mongo `authorId`,
+ * public URLs are `/blog/{slug}` on this site. Optional HTML URL rewrite so old absolute
+ * WP links in body copy point at your deployed domain.
  *
  * Required in .env:
  *   WORDPRESS_URL=https://ytopglobal.org
@@ -9,13 +13,16 @@
  * Optional:
  *   MONGODB_DB=ytopglobal
  *   WP_IMPORT_ALL_STATUSES=1   // default imports only published posts
+ *   IMPORT_DEFAULT_AUTHOR_ID=<users.id>   // else first ADMIN/EDITOR/AUTHOR in Mongo is used
+ *   IMPORT_URL_REWRITE_TO=https://ytopglobal.org   // replace WORDPRESS_URL in imported HTML (same as NEXT_PUBLIC_SITE_URL if unset)
  *
  * Usage:
  *   npm run import-posts-wp-mongo
  */
 
+import { randomUUID } from "crypto";
 import "dotenv/config";
-import { MongoClient } from "mongodb";
+import { MongoClient, type Db } from "mongodb";
 import type { MongoBlogDocument } from "../lib/mongo-blog";
 
 const WP_URL = (process.env.WORDPRESS_URL || process.env.WP_URL || "").replace(/\/$/, "");
@@ -30,6 +37,12 @@ const WP_APP_PASSWORD =
 const MONGODB_URI = process.env.MONGODB_URI || "";
 const MONGODB_DB = process.env.MONGODB_DB || "";
 const IMPORT_ALL_STATUSES = process.env.WP_IMPORT_ALL_STATUSES === "1";
+
+const IMPORT_URL_TO = (
+  process.env.IMPORT_URL_REWRITE_TO ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  ""
+).replace(/\/$/, "");
 
 if (!WP_URL || !WP_APP_PASSWORD) {
   console.error("\nMissing WordPress env. Set:");
@@ -72,6 +85,27 @@ function stripHtml(html: string): string {
   return (html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+/** Point imported absolute links at your live site instead of the WP origin. */
+function rewriteImportedHtml(html: string): string {
+  if (!html || !IMPORT_URL_TO || !WP_URL || IMPORT_URL_TO === WP_URL) return html;
+  return html.split(WP_URL).join(IMPORT_URL_TO);
+}
+
+async function resolveDefaultAuthorId(db: Db): Promise<string> {
+  const fromEnv = process.env.IMPORT_DEFAULT_AUTHOR_ID?.trim();
+  if (fromEnv) return fromEnv;
+  const user = await db
+    .collection<{ id: string }>("users")
+    .findOne(
+      { role: { $in: ["ADMIN", "EDITOR", "AUTHOR"] } },
+      { sort: { createdAt: 1 }, projection: { id: 1 } }
+    );
+  if (user?.id) return user.id;
+  throw new Error(
+    "No Mongo user found for authorId. Create an admin/editor user, or set IMPORT_DEFAULT_AUTHOR_ID to a users.id value."
+  );
+}
+
 async function wpFetch<T>(path: string, params?: Record<string, string>): Promise<T> {
   const url = new URL(path, WP_URL);
   if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
@@ -106,29 +140,33 @@ async function getAllWpPosts(): Promise<WPPost[]> {
   return out;
 }
 
-async function getFeaturedImage(post: WPPost): Promise<{ url: string; altText: string | null; id: string | null }> {
+async function getFeaturedImage(post: WPPost): Promise<{ url: string; altText: string | null }> {
   const embedded = post._embedded?.["wp:featuredmedia"]?.[0];
   if (embedded?.source_url) {
     return {
       url: embedded.source_url,
       altText: embedded.alt_text || null,
-      id: post.featured_media ? `wp-media:${post.featured_media}` : null,
     };
   }
-  if (!post.featured_media) return { url: "", altText: null, id: null };
+  if (!post.featured_media) return { url: "", altText: null };
   try {
     const media = await wpFetch<WPMedia>(`/wp-json/wp/v2/media/${post.featured_media}`);
     return {
       url: media?.source_url || "",
-      altText: media?.alt_text || null,
-      id: `wp-media:${post.featured_media}`,
+      altText: media.alt_text || null,
     };
   } catch {
-    return { url: "", altText: null, id: null };
+    return { url: "", altText: null };
   }
 }
 
-function toMongoDoc(post: WPPost, featured: { url: string; altText: string | null; id: string | null }): MongoBlogDocument {
+type BlogPostDoc = MongoBlogDocument & { id: string; createdAt: Date };
+
+function toMongoDoc(
+  post: WPPost,
+  featured: { url: string; altText: string | null },
+  opts: { sourcePostId: string; authorId: string; createdAt: Date }
+): BlogPostDoc {
   const terms = post._embedded?.["wp:term"] || [];
   const wpCategories = terms[0] || [];
   const wpTags = terms[1] || [];
@@ -136,33 +174,37 @@ function toMongoDoc(post: WPPost, featured: { url: string; altText: string | nul
 
   const published = post.status === "publish";
   const title = stripHtml(post.title?.rendered || "Untitled");
+  const rawContent = post.content?.rendered || "";
+  const rawExcerpt = post.excerpt?.rendered || "";
+  const excerptPlain = stripHtml(rewriteImportedHtml(rawExcerpt));
 
   return {
-    sourcePostId: `wp:${post.id}`,
-    authorId: `wp-author:${post.author || 0}`,
-    featuredImageId: featured.id,
+    id: opts.sourcePostId,
+    sourcePostId: opts.sourcePostId,
+    authorId: opts.authorId,
+    featuredImageId: null,
     slug: post.slug,
     title,
-    excerpt: stripHtml(post.excerpt?.rendered || "") || null,
-    content: post.content?.rendered || "",
+    excerpt: excerptPlain || null,
+    content: rewriteImportedHtml(rawContent),
     status: published ? "PUBLISHED" : "DRAFT",
     publishedAt: published ? new Date(post.date) : null,
     viewCount: 0,
     author: {
-      name: wpAuthor?.name || "YTOP Blog",
+      name: wpAuthor?.name || "YTOP Global",
       image: wpAuthor?.avatar_urls?.["96"] || null,
       bio: null,
       email: wpAuthor?.email || null,
     },
     categories: wpCategories
       .filter((c) => c?.slug && c?.name)
-      .map((c) => ({ id: `wp-cat:${c.id}`, name: c.name, slug: c.slug })),
+      .map((c) => ({ id: randomUUID(), name: c.name, slug: c.slug })),
     tags: wpTags
       .filter((t) => t?.slug && t?.name)
-      .map((t) => ({ id: `wp-tag:${t.id}`, name: t.name, slug: t.slug })),
+      .map((t) => ({ id: randomUUID(), name: t.name, slug: t.slug })),
     featuredImage: featured.url
       ? {
-          url: featured.url,
+          url: rewriteImportedHtml(featured.url),
           altText: featured.altText || title,
           caption: null,
         }
@@ -170,11 +212,12 @@ function toMongoDoc(post: WPPost, featured: { url: string; altText: string | nul
     metaTitle: post.yoast_head_json?.title || null,
     metaDescription: post.yoast_head_json?.description || null,
     updatedAt: new Date(post.modified || post.date),
+    createdAt: opts.createdAt,
   };
 }
 
 async function main() {
-  console.log(`\nFetching WordPress posts from ${WP_URL} ...`);
+  console.log(`\nFetching posts from ${WP_URL} (WordPress REST API) …`);
   const wpPosts = await getAllWpPosts();
   console.log(`Fetched ${wpPosts.length} post(s).`);
 
@@ -184,7 +227,13 @@ async function main() {
   });
   await client.connect();
   const db = MONGODB_DB ? client.db(MONGODB_DB) : client.db();
-  const col = db.collection<MongoBlogDocument>("blog_posts");
+  const col = db.collection<BlogPostDoc>("blog_posts");
+
+  const authorId = await resolveDefaultAuthorId(db);
+  console.log(`Using Mongo authorId: ${authorId}`);
+  if (IMPORT_URL_TO && IMPORT_URL_TO !== WP_URL) {
+    console.log(`Rewriting imported HTML URLs: ${WP_URL} → ${IMPORT_URL_TO}`);
+  }
 
   await col.createIndex({ slug: 1 }, { unique: true });
   await col.createIndex({ sourcePostId: 1 }, { unique: true });
@@ -193,18 +242,23 @@ async function main() {
   let upserts = 0;
   for (const post of wpPosts) {
     const featured = await getFeaturedImage(post);
-    const doc = toMongoDoc(post, featured);
-    await col.updateOne(
-      { sourcePostId: doc.sourcePostId },
-      { $set: doc },
-      { upsert: true }
+    const existing = await col.findOne(
+      { slug: post.slug },
+      { projection: { sourcePostId: 1, createdAt: 1 } }
     );
+    const sourcePostId = existing?.sourcePostId ?? randomUUID();
+    const createdAt = existing?.createdAt ?? new Date();
+    const doc = toMongoDoc(post, featured, { sourcePostId, authorId, createdAt });
+    await col.updateOne({ slug: doc.slug }, { $set: doc }, { upsert: true });
     upserts += 1;
   }
 
   const publishedCount = await col.countDocuments({ status: "PUBLISHED" });
-  console.log(`Upserted ${upserts} post(s) into blog_posts.`);
-  console.log(`Published posts available for /blog: ${publishedCount}\n`);
+  console.log(`Upserted ${upserts} post(s) by slug into blog_posts.`);
+  console.log(`Published posts available for /blog: ${publishedCount}`);
+  console.log(
+    "Each post uses a native sourcePostId (UUID). Public URLs are /blog/<slug> on this app.\n"
+  );
 
   await client.close();
 }
@@ -213,4 +267,3 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-

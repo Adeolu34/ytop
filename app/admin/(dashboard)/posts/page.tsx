@@ -11,7 +11,10 @@ import {
   updatePostStatusAction,
 } from '@/app/admin/(dashboard)/posts/actions';
 import { getMongoDb } from '@/lib/mongodb';
-import { mongoPostAdminEditorId } from '@/lib/mongo-posts-store';
+import {
+  mongoPostAdminEditorId,
+  mongoPostIdInAdminPathSegment,
+} from '@/lib/mongo-posts-store';
 
 type AdminPost = {
   id?: string;
@@ -275,7 +278,7 @@ export default async function AdminPostsPage({
                     <div className="flex flex-wrap justify-end gap-2">
                       {editorId ? (
                         <Link
-                          href={`/admin/posts/${editorId}/edit`}
+                          href={`/admin/posts/${mongoPostIdInAdminPathSegment(editorId)}/edit`}
                           className="rounded-md bg-[#efeded] px-3 py-2 text-xs font-semibold text-[#1b1c1c] transition-colors hover:bg-[#e4e2e2]"
                         >
                           Edit

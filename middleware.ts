@@ -33,6 +33,25 @@ function runMiddleware(
     return NextResponse.next();
   }
 
+  // Post edit URLs: IDs like wp:5160 must be encoded in the path or many hosts break the route.
+  const postEditMatch = pathname.match(/^\/(yadmin|admin)\/posts\/([^/]+)\/edit$/);
+  if (postEditMatch) {
+    const prefix = postEditMatch[1];
+    const segment = postEditMatch[2];
+    let normalized: string;
+    try {
+      normalized = decodeURIComponent(segment);
+    } catch {
+      normalized = segment;
+    }
+    const encoded = encodeURIComponent(normalized);
+    if (encoded !== segment) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${prefix}/posts/${encoded}/edit`;
+      return NextResponse.redirect(url, 308);
+    }
+  }
+
   // Canonicalize admin path prefix: /admin/* -> /yadmin/*
   if (pathname === '/admin' || pathname.startsWith('/admin/')) {
     const url = request.nextUrl.clone();

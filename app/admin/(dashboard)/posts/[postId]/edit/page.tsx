@@ -7,7 +7,10 @@ import {
   mongoMediaListImageFolders,
   mongoMediaListImagesForPicker,
 } from '@/lib/mongo-media';
-import { mongoPostFindBySourceId } from '@/lib/mongo-posts-store';
+import {
+  mongoPostFindBySourceId,
+  mongoPostIdFromAdminPathSegment,
+} from '@/lib/mongo-posts-store';
 import { mongoUsersListAuthorsForPosts } from '@/lib/mongo-users-store';
 
 function formatDateTimeLocal(value: Date | null): string {
@@ -27,7 +30,8 @@ export default async function EditPostPage({
   params: Promise<{ postId: string }>;
 }) {
   await requireAuth();
-  const { postId } = await params;
+  const { postId: postIdSegment } = await params;
+  const postId = mongoPostIdFromAdminPathSegment(postIdSegment);
 
   const [post, authors, baseMedia, imageFolders] = await Promise.all([
     mongoPostFindBySourceId(postId),

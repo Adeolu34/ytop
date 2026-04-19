@@ -12,7 +12,6 @@ import {
 } from '@/lib/public-db';
 import { getMongoDb, resetMongoConnection } from '@/lib/mongodb';
 import { BLOG_POSTS_COLLECTION } from '@/lib/mongo-posts-store';
-
 // When a post has no featured image, rotate through these so cards don’t all look the same
 const FALLBACK_FEATURED_IMAGES = [
   '/media/2021/10/IMG_9658-scaled.jpg',
@@ -27,9 +26,8 @@ function getFallbackImageForPost(postIndex: number): string {
   return FALLBACK_FEATURED_IMAGES[postIndex % FALLBACK_FEATURED_IMAGES.length] ?? FALLBACK_FEATURED_IMAGES[0];
 }
 
-// Always fetch fresh posts (avoid static cache from when DB was empty)
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+/** CDN ISR — lib/public-page-config.ts */
+export const revalidate = 60;
 
 interface SearchParams {
   page?: string;

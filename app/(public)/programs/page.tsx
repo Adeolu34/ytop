@@ -3,9 +3,8 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
 import { mongoListActivePrograms } from '@/lib/mongo-public';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+/** CDN ISR — lib/public-page-config.ts */
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Our Programs - YTOP Global',

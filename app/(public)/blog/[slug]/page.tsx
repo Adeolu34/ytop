@@ -10,6 +10,9 @@ import {
 } from '@/lib/mongo-blog';
 import { resetMongoConnection } from '@/lib/mongodb';
 
+/** CDN ISR for prerendered post pages — lib/public-page-config.ts */
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   try {
     if (!useMongoForPublicBlog()) {
