@@ -37,6 +37,22 @@ export async function mongoListActivePrograms(): Promise<MongoProgram[]> {
     .toArray();
 }
 
+export async function mongoFindActiveProgramBySlug(
+  slug: string
+): Promise<MongoProgram | null> {
+  const db = await getMongoDb();
+  return db.collection<MongoProgram>('programs').findOne({ slug, isActive: true });
+}
+
+export async function mongoListActiveProgramSlugs(): Promise<string[]> {
+  const db = await getMongoDb();
+  const rows = await db
+    .collection<MongoProgram>('programs')
+    .find({ isActive: true }, { projection: { slug: 1 } })
+    .toArray();
+  return rows.map((row) => row.slug);
+}
+
 export async function mongoListActiveTeamMembers(): Promise<MongoTeamMember[]> {
   const db = await getMongoDb();
   return db
