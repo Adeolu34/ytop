@@ -21,12 +21,6 @@ export default function Header({ logoUrl, siteName }: HeaderProps) {
 
           <div className="hidden lg:flex items-center gap-3">
             <Link
-              href="/get-involved"
-              className="px-5 py-2.5 text-secondary font-semibold hover:bg-secondary/10 rounded-full transition-all duration-200 cursor-pointer"
-            >
-              Get Involved
-            </Link>
-            <Link
               href="/donate"
               className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-primary/30 transition-all duration-200 cursor-pointer transform hover:-translate-y-0.5"
             >

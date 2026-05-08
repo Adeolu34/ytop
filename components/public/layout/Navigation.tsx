@@ -27,13 +27,11 @@ const menuItems = [
     label: 'Get Involved',
     href: '/get-involved',
     children: [
-      { label: 'Get Involved', href: '/get-involved' },
       { label: 'Campus Ambassadors', href: '/get-involved/campus-ambassadors' },
       { label: 'Become a Sponsor', href: '/get-involved/sponsor' },
       { label: 'Partner With Us', href: '/get-involved/partner' },
     ],
   },
-  { label: 'Donate', href: '/donate' },
   { label: 'Contact', href: '/contact' },
 ];
 
