@@ -7,6 +7,7 @@ import { ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
 
 const menuItems = [
+  { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   {
     label: 'Programs',
