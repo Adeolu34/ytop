@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import SocialIconLinks from '../SocialIconLinks';
 
 const menuItems = [
+  { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   {
     label: 'Programs',

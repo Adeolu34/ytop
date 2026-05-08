@@ -109,7 +109,9 @@ export default async function ProgramsPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {programs.length > 0 ? (
             <div className="space-y-16">
-              {programs.map((program, index) => (
+              {programs.map((program, index) => {
+                const programHref = `/programs/${program.slug}`;
+                return (
                 <div
                   key={program.id}
                   className={`flex flex-col ${
@@ -119,7 +121,10 @@ export default async function ProgramsPage() {
                   {/* Image */}
                   {program.image ? (
                     <div className="w-full lg:w-1/2">
-                      <div className="group relative h-96 bg-slate-200 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer">
+                      <Link
+                        href={programHref}
+                        className="group block relative h-96 bg-slate-200 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                      >
                         <Image
                           src={program.image.url}
                           alt={program.image.altText || program.title}
@@ -127,23 +132,28 @@ export default async function ProgramsPage() {
                           className="object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
+                      </Link>
                     </div>
                   ) : (
                     <div className="w-full lg:w-1/2">
-                      <div className="group h-96 bg-gradient-to-br from-secondary to-secondary rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center cursor-pointer transform hover:scale-[1.02]">
+                      <Link
+                        href={programHref}
+                        className="group block h-96 bg-gradient-to-br from-secondary to-secondary rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center cursor-pointer transform hover:scale-[1.02]"
+                      >
                         <span className="text-6xl font-bold text-white group-hover:scale-110 transition-transform duration-300">
                           {program.title.charAt(0)}
                         </span>
-                      </div>
+                      </Link>
                     </div>
                   )}
 
                   {/* Content */}
                   <div className="w-full lg:w-1/2">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 hover:text-primary transition-colors duration-200">
-                      {program.title}
-                    </h2>
+                    <Link href={programHref} className="inline-block mb-4">
+                      <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white hover:text-primary transition-colors duration-200">
+                        {program.title}
+                      </h2>
+                    </Link>
                     <div
                       className="prose prose-lg dark:prose-invert max-w-none mb-6 text-slate-700 dark:text-slate-300"
                       dangerouslySetInnerHTML={{ __html: program.description }}
@@ -170,7 +180,8 @@ export default async function ProgramsPage() {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-12">
