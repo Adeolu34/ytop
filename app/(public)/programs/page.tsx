@@ -3,13 +3,21 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
 import { mongoListActivePrograms } from '@/lib/mongo-public';
+import { generateSEOMetadata } from '@/components/SEOHead';
 /** CDN ISR — lib/public-page-config.ts */
 export const revalidate = 60;
 
-export const metadata = {
-  title: 'Our Programs - YTOP Global',
-  description: 'Discover YTOP Global\'s six core programs empowering youth through leadership, career guidance, and community impact.',
-};
+export function generateMetadata() {
+  return generateSEOMetadata({
+    title: 'Our Programs',
+    description:
+      "Discover YTOP Global's core programs: Project 300, Rise of Warriors, leadership development, career guidance, financial education, and community impact initiatives empowering Nigerian youth.",
+    url: '/programs',
+    image: '/media/2021/11/005.jpg',
+    type: 'website',
+    keywords: 'YTOP programs, Project 300, Rise of Warriors, youth leadership Nigeria, career guidance, community impact',
+  });
+}
 
 export default async function ProgramsPage() {
   let isUsingFallbackPrograms = false;

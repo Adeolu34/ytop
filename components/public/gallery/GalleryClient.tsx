@@ -11,11 +11,11 @@ const STATIC_GALLERY: Array<{
   alt: string;
   category: string;
 }> = [
-  { src: '/media/2021/10/IMG_9586-scaled.jpg', alt: 'YTOP team workshop', category: 'Events' },
+  { src: '/media/2025/08/AAAA.jpg', alt: 'YTOP Global team community service', category: 'Events' },
   { src: '/media/2021/10/IMG_9622-scaled.jpg', alt: 'Community outreach', category: 'Community' },
-  { src: '/media/2021/10/IMG_9658-scaled.jpg', alt: 'Leadership training', category: 'Programs' },
-  { src: '/media/2021/10/IMG_9724-scaled.jpg', alt: 'Youth gathering', category: 'Events' },
-  { src: '/media/2021/11/1-scaled.jpg', alt: 'Team collaboration', category: 'Team' },
+  { src: '/media/2025/09/WhatsApp-Image-2025-09-18-at-06.39.24_e212b9bb.jpg', alt: 'YTOP Global leadership training session', category: 'Programs' },
+  { src: '/media/2025/09/WhatsApp-Image-2025-09-18-at-14.44.29_da1e90ac.jpg', alt: 'YTOP Global youth gathering with banner', category: 'Events' },
+  { src: '/media/2025/08/c89befe4-e9a8-4112-b0e2-6efdd9456739_800x530.jpg', alt: 'YTOP Global speaker at training workshop', category: 'Team' },
   { src: '/media/2021/11/2-scaled.jpg', alt: 'Workshop session', category: 'Programs' },
   { src: '/media/2021/11/005.jpg', alt: 'Anniversary celebration', category: 'Events' },
   { src: '/media/2021/11/006.jpg', alt: 'Youth empowerment', category: 'Programs' },

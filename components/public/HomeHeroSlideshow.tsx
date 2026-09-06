@@ -6,22 +6,22 @@ import Link from 'next/link';
 
 const SLIDE_INTERVAL_MS = 5000;
 
-const HERO_IMAGES = [
-  '/media/2021/10/IMG_9724-scaled.jpg',
-  '/media/2021/10/IMG_9658-scaled.jpg',
-  '/media/2021/11/005.jpg',
-  '/media/2021/11/006.jpg',
-  '/media/2021/10/IMG_9586-scaled.jpg',
-  '/media/2021/11/1-scaled.jpg',
+const HERO_SLIDES = [
+  { src: '/media/2025/10/DSC0289.jpg', alt: 'YTOP Global conference participants engaged at an event' },
+  { src: '/media/2025/04/DSC0326-scaled.jpg', alt: 'YTOP Global community engagement conference audience' },
+  { src: '/media/2025/08/c495ab60-a6d8-4610-98d1-eade65239a24_2048x1411.jpg', alt: 'YTOP Global youth empowerment lecture hall session' },
+  { src: '/media/2025/08/IMG_3377.jpg', alt: 'YTOP Global large auditorium gathering of young people' },
+  { src: '/media/2025/09/WhatsApp-Image-2025-09-18-at-14.44.29_da1e90ac.jpg', alt: 'YTOP Global group with YTOP banner at community event' },
+  { src: '/media/2025/09/WhatsApp-Image-2025-09-18-at-06.39.15_1a649190.jpg', alt: 'YTOP Global large outdoor SDG youth group gathering' },
 ];
 
 export default function HomeHeroSlideshow() {
   const [index, setIndex] = useState(0);
-  const len = HERO_IMAGES.length;
+  const len = HERO_SLIDES.length;
   const nextIndex = (index + 1) % len;
   const slot0Visible = index % 2 === 0;
-  const slot0Src = slot0Visible ? HERO_IMAGES[index] : HERO_IMAGES[nextIndex];
-  const slot1Src = slot0Visible ? HERO_IMAGES[nextIndex] : HERO_IMAGES[index];
+  const slot0Slide = slot0Visible ? HERO_SLIDES[index] : HERO_SLIDES[nextIndex];
+  const slot1Slide = slot0Visible ? HERO_SLIDES[nextIndex] : HERO_SLIDES[index];
 
   const goTo = useCallback((i: number) => setIndex(i), []);
   const next = useCallback(() => setIndex((i) => (i + 1) % len), [len]);
@@ -40,8 +40,8 @@ export default function HomeHeroSlideshow() {
         aria-hidden={!slot0Visible}
       >
         <Image
-          src={slot0Src}
-          alt=""
+          src={slot0Slide.src}
+          alt={slot0Slide.alt}
           fill
           className="object-cover object-center"
           priority={index === 0}
@@ -57,8 +57,8 @@ export default function HomeHeroSlideshow() {
         aria-hidden={slot0Visible}
       >
         <Image
-          src={slot1Src}
-          alt=""
+          src={slot1Slide.src}
+          alt={slot1Slide.alt}
           fill
           className="object-cover object-center"
           priority={false}
@@ -100,7 +100,7 @@ export default function HomeHeroSlideshow() {
 
       {/* Dots */}
       <div className="absolute bottom-8 left-0 right-0 z-10 flex justify-center gap-2">
-        {HERO_IMAGES.map((_, i) => (
+        {HERO_SLIDES.map((_, i) => (
           <button
             key={i}
             type="button"

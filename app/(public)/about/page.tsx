@@ -14,11 +14,19 @@ import {
   Handshake,
   Quote,
 } from 'lucide-react';
+import { generateSEOMetadata } from '@/components/SEOHead';
 
-export const metadata = {
-  title: 'About Us - YTOP Global',
-  description: 'Learn about YTOP Global\'s mission to empower young people through leadership development and community impact.',
-};
+export function generateMetadata() {
+  return generateSEOMetadata({
+    title: 'About Us',
+    description:
+      'YTOP Global (RC179444) — founded in Lagos in 2016. We empower young people through leadership, mentorship, career guidance, and community impact programs across Nigeria and beyond. Learn our story, mission, and vision.',
+    url: '/about',
+    image: '/media/2021/11/1-scaled.jpg',
+    type: 'website',
+    keywords: 'about YTOP Global, RC179444, youth NGO Nigeria, leadership NGO Lagos, YTOP mission vision',
+  });
+}
 
 const JOURNEY = [
   { year: '2016', title: 'Founded in Lagos', desc: 'YTOP Global started as a small community group passionate about youth literacy.', icon: Rocket },
@@ -47,8 +55,8 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="relative min-h-[500px] flex items-center justify-center bg-cover bg-center">
         <Image
-          src="/media/2021/10/IMG_9724-scaled.jpg"
-          alt="YTOP Global community"
+          src="/media/2025/09/WhatsApp-Image-2025-09-18-at-14.44.29_da1e90ac.jpg"
+          alt="YTOP Global community gathering"
           fill
           className="object-cover"
           priority

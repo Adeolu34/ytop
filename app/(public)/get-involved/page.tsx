@@ -72,8 +72,8 @@ export default function GetInvolvedPage() {
               <div className="relative">
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
                   <Image
-                    src="/media/2021/10/IMG_9724-scaled.jpg"
-                    alt="YTOP community"
+                    src="/media/2025/08/AAAA.jpg"
+                    alt="YTOP Global community service volunteers"
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"

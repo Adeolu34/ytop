@@ -56,6 +56,7 @@ export default function Navigation() {
             {hasChildren ? (
               <Link
                 href={item.href}
+                aria-current={isActive ? 'page' : undefined}
                 className={clsx(
                   'flex items-center gap-1 px-4 py-2 text-sm font-semibold transition-colors duration-200 rounded-lg cursor-pointer',
                   isActive
@@ -72,6 +73,7 @@ export default function Navigation() {
             ) : (
               <Link
                 href={item.href}
+                aria-current={isActive ? 'page' : undefined}
                 className={clsx(
                   'block px-4 py-2 text-sm font-semibold transition-colors duration-200 rounded-lg cursor-pointer',
                   isActive

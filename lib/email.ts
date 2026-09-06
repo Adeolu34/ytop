@@ -117,6 +117,15 @@ export function isEmailSendingConfigured(): boolean {
   );
 }
 
+export async function sendTransactionalEmail(params: {
+  to: string | string[];
+  subject: string;
+  html: string;
+}): Promise<void> {
+  const recipients = Array.isArray(params.to) ? params.to : [params.to];
+  return sendBulkNewsletterEmail({ recipients, subject: params.subject, html: params.html });
+}
+
 export async function sendBulkNewsletterEmail(params: {
   recipients: string[];
   subject: string;

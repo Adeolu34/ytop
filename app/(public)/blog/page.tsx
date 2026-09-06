@@ -12,14 +12,15 @@ import {
 } from '@/lib/public-db';
 import { getMongoDb, resetMongoConnection } from '@/lib/mongodb';
 import { BLOG_POSTS_COLLECTION } from '@/lib/mongo-posts-store';
+import { generateSEOMetadata } from '@/components/SEOHead';
 // When a post has no featured image, rotate through these so cards don’t all look the same
 const FALLBACK_FEATURED_IMAGES = [
-  '/media/2021/10/IMG_9658-scaled.jpg',
-  '/media/2021/10/IMG_9586-scaled.jpg',
-  '/media/2021/10/IMG_9724-scaled.jpg',
+  '/media/2025/09/WhatsApp-Image-2025-09-18-at-06.39.24_e212b9bb.jpg',
+  '/media/2025/08/AAAA.jpg',
+  '/media/2025/09/WhatsApp-Image-2025-09-18-at-14.44.29_da1e90ac.jpg',
   '/media/2021/11/20210605_080734-scaled.jpg',
   '/media/2021/10/IMG_9622-scaled.jpg',
-  '/media/2021/11/005.jpg',
+  '/media/2025/10/DSC0289.jpg',
 ];
 
 function getFallbackImageForPost(postIndex: number): string {
@@ -28,6 +29,18 @@ function getFallbackImageForPost(postIndex: number): string {
 
 /** CDN ISR — lib/public-page-config.ts */
 export const revalidate = 60;
+
+export function generateMetadata() {
+  return generateSEOMetadata({
+    title: 'Blog — Insights & Stories',
+    description:
+      'Explore articles on youth leadership, personal development, community impact, and the latest news from YTOP Global. Stories that inspire the next generation.',
+    url: '/blog',
+    image: '/media/2025/10/DSC0289.jpg',
+    type: 'website',
+    keywords: 'YTOP blog, youth leadership articles, community impact stories, NGO Nigeria insights',
+  });
+}
 
 interface SearchParams {
   page?: string;
@@ -196,7 +209,6 @@ export default async function BlogPage({
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="100vw"
-                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
               </div>
@@ -222,7 +234,7 @@ export default async function BlogPage({
                   <div className="flex items-center gap-4">
                     {featuredPost.author.image ? (
                       <div className="relative w-10 h-10 rounded-full border-2 border-primary overflow-hidden">
-                        <Image src={featuredPost.author.image} alt="" fill className="object-cover" sizes="40px" unoptimized />
+                        <Image src={featuredPost.author.image} alt={featuredPost.author.name ?? 'Author'} fill className="object-cover" sizes="40px" />
                       </div>
                     ) : (
                       <div className="w-10 h-10 rounded-full border-2 border-primary bg-white/20 flex items-center justify-center">
@@ -311,7 +323,6 @@ export default async function BlogPage({
                         fill
                         className="object-cover transform group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        unoptimized
                       />
                       {post.categories.length > 0 && (
                         <div className="absolute top-4 left-4">
@@ -345,7 +356,7 @@ export default async function BlogPage({
                     <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                       {post.author?.image ? (
                         <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                          <Image src={post.author.image} alt="" fill className="object-cover" sizes="32px" unoptimized />
+                          <Image src={post.author.image} alt={post.author.name ?? 'Author'} fill className="object-cover" sizes="32px" />
                         </div>
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-sm font-semibold text-slate-600 dark:text-slate-300">

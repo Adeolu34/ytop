@@ -49,7 +49,7 @@ const previousEvents: Array<{
     location: 'Special Needs School, Ile-Ife, Osun State',
     description: 'The project took place at the Special Needs School in Ile-Ife to commemorate Children’s Day 2024 under the theme “For every child, every right.” It aimed to promote inclusivity, joy, and empowerment among children with disabilities. The outreach featured motivational talks, self-affirmations, singing, dancing, and interactive interviews that encouraged the children to express their aspirations.',
     description2: 'Aligned with SDG 4 (Quality Education), the initiative addressed limited societal support and inclusiveness often experienced by children with special needs. About 150 students and teachers participated, with support from OAU Campus Ambassadors, the Volunteering Hub Team, and the More to Me Organization.',
-    images: ['/media/2021/10/IMG_9658-scaled.jpg'],
+    images: ['/media/2025/10/20240527_135435.jpg'],
     tags: ['SpecialNeedsAwareness', 'EmpowerEveryChild', 'DisabilityInclusion', 'YouthEmpowerment'],
     sdg: 'SDG 4 – Quality Education',
   },
@@ -61,7 +61,7 @@ const previousEvents: Array<{
     location: 'Ajose Lecture Theater, Obafemi Awolowo University, Ile-Ife, Osun State',
     description: 'An annual flagship event that serves as a pivotal platform for young individuals embarking on their personal development journey. The conference addresses clarity in self-discovery, talent cultivation, career trajectory, purpose alignment, and holistic self-improvement.',
     description2: 'YTOP Conference 2.0 “Youths On A Mission – beCOMING” spanned six enriching hours with seven distinguished resource persons. Over 300 intentional changemakers attended physically and virtually from secondary schools in Ile-Ife, 32 universities, and 5 countries: Nigeria, Namibia, Zimbabwe, Zambia, and Ghana.',
-    image: '/media/2021/10/IMG_9724-scaled.jpg',
+    image: '/media/2025/10/DSC0289.jpg',
     tags: ['Conference', 'Leadership', 'PersonalDevelopment'],
   },
   {
@@ -137,7 +137,7 @@ const previousEvents: Array<{
     date: 'Launched 2020 – 4 editions',
     description: 'Rise of Warriors was launched in 2020 with the aim of raising community leaders and change-makers. The YTOP Global Community started with 5 community leaders and has continually increased in size.',
     description2: 'ROW is an intensive training program covering emotional intelligence, personal branding, mental health, effective leadership and communication, with notable experts. Since inception, the program has taken place 4 times with massive impact testimonies.',
-    image: '/media/2021/10/IMG_9658-scaled.jpg',
+    image: '/media/2021/11/008.jpg',
   },
   {
     id: 'human-capital-2021',
@@ -145,7 +145,7 @@ const previousEvents: Array<{
     date: 'July 13, 2021',
     location: 'Comprehensive High School, Ayetoro (OOU & Beyond Attendance partnership)',
     description: 'The YTOP team in Olabisi Onabanjo University, Ogun State, partnered with the Beyond Attendance team to enlighten students on the power of a growth mindset. About 250 students participated.',
-    image: '/media/2021/10/IMG_9724-scaled.jpg',
+    image: '/media/2025/08/c89befe4-e9a8-4112-b0e2-6efdd9456739_800x530.jpg',
   },
   {
     id: 'talent-discovery-2021',
@@ -171,7 +171,7 @@ const previousEvents: Array<{
     date: 'January–February 2020',
     location: 'South-West Nigeria (Urban Day Secondary School Jericho Ibadan; Saint Peter Middle School Ile-Ife; Fadehan International School; Aatan Baptist Comprehensive High School, Koso; others)',
     description: 'Project talent discovery talks in various secondary schools in South-West Nigeria. We visited Urban Day Secondary School, Jericho, Ibadan, Oyo State, where over 800 students were coordinated and lectured on the importance and impact of early talent discovery.',
-    image: '/media/2021/10/IMG_9586-scaled.jpg',
+    image: '/media/2021/11/007.jpg',
   },
   {
     id: 'kiddies-arts',
@@ -195,7 +195,7 @@ export default function EventsPage() {
       <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/media/2021/10/IMG_9724-scaled.jpg"
+            src="/media/2025/04/DSC0326-scaled.jpg"
             alt="YTOP events and community"
             fill
             className="object-cover"

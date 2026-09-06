@@ -43,9 +43,9 @@ const FACULTY_MENTORS: Array<{ name: string; role?: string; photo?: string }> = 
 ];
 
 const TEAM_IN_ACTION_IMAGES = [
-  { src: '/media/2021/10/IMG_9586-scaled.jpg', alt: 'YTOP team in action' },
+  { src: '/media/2025/10/DSC0289.jpg', alt: 'YTOP team in action at conference' },
   { src: '/media/2021/10/IMG_9622-scaled.jpg', alt: 'YTOP community event' },
-  { src: '/media/2021/10/IMG_9658-scaled.jpg', alt: 'YTOP program' },
+  { src: '/media/2025/08/IMG_3377.jpg', alt: 'YTOP program auditorium gathering' },
   { src: '/media/2021/11/20210605_080734-scaled.jpg', alt: 'YTOP team' },
   { src: '/media/2021/11/20210605_082337-scaled.jpg', alt: 'YTOP event' },
   { src: '/media/2021/11/2-scaled.jpg', alt: 'YTOP community' },

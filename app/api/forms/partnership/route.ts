@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getMongoDbOr503 } from '@/lib/api-mongo';
 import { mongoFormSubmissionInsert } from '@/lib/mongo-forms-store';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limiter';
 
 export const dynamic = 'force-dynamic';
+
+const RATE_LIMIT = { limit: 3, windowMs: 60_000 };
 
 const partnershipSchema = z.object({
   organizationName: z.string().min(2, 'Organization name is required').max(200),
@@ -22,6 +25,15 @@ const partnershipSchema = z.object({
  * Submit a partnership inquiry
  */
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request.headers);
+  const rl = checkRateLimit(ip, RATE_LIMIT);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait before submitting again.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+    );
+  }
+
   try {
     const gate = await getMongoDbOr503();
     if (!gate.ok) {
@@ -43,11 +55,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = validationResult.data;
-
-    const ipAddress =
-      request.headers.get('x-forwarded-for') ||
-      request.headers.get('x-real-ip') ||
-      'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
     const submissionId = await mongoFormSubmissionInsert({
@@ -62,7 +69,7 @@ export async function POST(request: NextRequest) {
         partnershipType: data.partnershipType,
         message: data.message,
       },
-      ipAddress,
+      ipAddress: ip,
       userAgent,
     });
 

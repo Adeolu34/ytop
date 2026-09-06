@@ -43,7 +43,7 @@ export default function ImpactPage() {
           </div>
           <div className="flex-1 w-full max-w-md">
             <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl bg-slate-200 dark:bg-slate-800">
-              <Image src="/media/2021/10/IMG_9724-scaled.jpg" alt="YTOP impact" fill className="object-cover" sizes="500px" />
+              <Image src="/media/2025/08/A.jpg" alt="YTOP Global 8th anniversary impact collage" fill className="object-cover" sizes="500px" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 p-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-xl border border-slate-100 dark:border-slate-800 shadow-lg">
                 <div className="flex items-center justify-between mb-2">

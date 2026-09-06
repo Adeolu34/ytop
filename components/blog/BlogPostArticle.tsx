@@ -11,7 +11,7 @@ import CommentSection from '@/components/blog/CommentSection';
 import BlogArticleListenPlayer from '@/components/blog/BlogArticleListenPlayer';
 
 export const DEFAULT_BLOG_FEATURED_IMAGE =
-  '/media/2021/10/IMG_9658-scaled.jpg';
+  '/media/2025/10/DSC0289.jpg';
 
 type CommentThread = {
   id: string;

@@ -4,6 +4,7 @@ import HomeHeroSlideshow from '@/components/public/HomeHeroSlideshow';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
 import { mongoListPublishedPosts, useMongoForPublicBlog } from '@/lib/mongo-blog';
 import { mongoListActiveTeamMembers } from '@/lib/mongo-public';
+import { generateSEOMetadata } from '@/components/SEOHead';
 import {
   GraduationCap,
   Megaphone,
@@ -18,6 +19,18 @@ import {
 } from 'lucide-react';
 /** CDN ISR: 60s (see lib/public-page-config.ts). Must be a literal for Next.js. */
 export const revalidate = 60;
+
+export function generateMetadata() {
+  return generateSEOMetadata({
+    title: 'YTOP Global | Youth Empowerment Foundation',
+    description:
+      'YTOP Global (RC179444) empowers young people through leadership development, career guidance, financial education, and community impact. Join us in building the next generation of changemakers.',
+    url: '/',
+    image: '/media/2025/10/DSC0289.jpg',
+    type: 'website',
+    keywords: 'youth empowerment, leadership development, NGO Nigeria, YTOP Global, community impact, mentorship',
+  });
+}
 
 const GOALS = [
   {
@@ -363,8 +376,8 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Link href="/events" className="group relative overflow-hidden rounded-xl shadow-lg h-96 block">
               <Image
-                src="/media/2021/10/IMG_9724-scaled.jpg"
-                alt="Conference"
+                src="/media/2025/10/DSC0289.jpg"
+                alt="YTOP Global conference"
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 50vw"

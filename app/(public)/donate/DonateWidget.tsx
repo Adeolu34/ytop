@@ -10,6 +10,8 @@ export default function DonateWidget() {
   const [customAmount, setCustomAmount] = useState('');
 
   const displayAmount = amount ?? (customAmount ? Number(customAmount) : 50);
+  // Paystack accepts amount in kobo (NGN) or cents (USD) — multiply by 100
+  const paystackUrl = `https://paystack.com/pay/ytopglobalpay/?amount=${Math.round(displayAmount * 100)}`;
   const amounts = [10, 25, 50, 100];
 
   return (
@@ -70,7 +72,7 @@ export default function DonateWidget() {
             You will be redirected to our secure payment partner to complete your donation of ${displayAmount} ({frequency.replace('-', ' ')}).
           </p>
           <a
-            href="https://paystack.com/pay/ytopglobalpay/"
+            href={paystackUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full py-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2"

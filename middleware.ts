@@ -60,6 +60,11 @@ function runMiddleware(
   }
 
   if (isProtectedAdminPath(pathname)) {
+    if (!authSecretPresent) {
+      return new NextResponse('Server misconfiguration: AUTH_SECRET is not set.', {
+        status: 503,
+      });
+    }
     if (!hasUser) {
       return NextResponse.redirect(buildAdminLoginRedirectUrl(request.url), {
         status: 307,
