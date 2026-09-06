@@ -110,6 +110,22 @@ function galleryListEntireAccount(): boolean {
   return v === '1' || v?.toLowerCase() === 'true' || v?.toLowerCase() === 'yes';
 }
 
+/**
+ * Comma-separated public_id prefixes to exclude from the gallery.
+ * Set CLOUDINARY_GALLERY_EXCLUDE_PREFIX=ytopp,other/folder in your env.
+ */
+export function cloudinaryGalleryExcludePrefixes(): string[] {
+  const raw = process.env.CLOUDINARY_GALLERY_EXCLUDE_PREFIX?.trim();
+  if (!raw) return [];
+  return raw.split(',').map((s) => s.trim().replace(/^\/+|\/+$/g, '')).filter(Boolean);
+}
+
+function isExcluded(publicId: string): boolean {
+  const excludes = cloudinaryGalleryExcludePrefixes();
+  if (excludes.length === 0) return false;
+  return excludes.some((prefix) => publicId === prefix || publicId.startsWith(prefix + '/'));
+}
+
 /** Max images to load for /gallery (avoids timeouts on huge accounts). */
 function galleryMaxImages(): number {
   const raw = process.env.CLOUDINARY_GALLERY_MAX_IMAGES?.trim();
@@ -307,7 +323,7 @@ export async function listGalleryImagesFromCloudinary(): Promise<
     const merged = new Map<string, GalleryResource>();
     for (const r of rows) {
       const src = r.secure_url || r.url;
-      if (r.public_id && src) {
+      if (r.public_id && src && !isExcluded(r.public_id)) {
         merged.set(r.public_id, { ...r, secure_url: src });
       }
     }
@@ -323,7 +339,7 @@ export async function listGalleryImagesFromCloudinary(): Promise<
     const rows = await collectForPrefix(prefix);
     for (const r of rows) {
       const src = r.secure_url || r.url;
-      if (r.public_id && src) {
+      if (r.public_id && src && !isExcluded(r.public_id)) {
         merged.set(r.public_id, { ...r, secure_url: src });
       }
     }
