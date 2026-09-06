@@ -401,6 +401,7 @@ export async function loadMongoBlogPostWithRelations(slug: string): Promise<{
     excerpt: string | null;
     content: string;
     publishedAt: Date | null;
+    updatedAt: Date | null;
     viewCount: number;
     author: MongoBlogAuthor;
     categories: MongoBlogCategory[];
@@ -436,6 +437,7 @@ export async function loadMongoBlogPostWithRelations(slug: string): Promise<{
       excerpt: doc.excerpt,
       content: doc.content,
       publishedAt: doc.publishedAt,
+      updatedAt: doc.updatedAt ?? null,
       viewCount: doc.viewCount,
       author: doc.author,
       categories: doc.categories,
