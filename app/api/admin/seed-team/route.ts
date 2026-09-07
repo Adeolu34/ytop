@@ -55,14 +55,6 @@ export async function POST() {
   const db = await getMongoDb();
   const col = db.collection('team_members');
 
-  const existing = await col.countDocuments({});
-  if (existing > 0) {
-    return NextResponse.json({
-      message: `Already seeded — ${existing} team members exist. Visit /admin/team to manage them.`,
-      seeded: 0,
-    });
-  }
-
   const now = new Date();
   const docs = [
     ...CORE_TEAM.map((m, i) => ({
@@ -107,14 +99,22 @@ export async function POST() {
     })),
   ];
 
-  await col.insertMany(docs);
+  // Upsert by name — safe to call multiple times, skips existing names
+  const ops = docs.map((doc) => ({
+    updateOne: {
+      filter: { name: doc.name },
+      update: { $setOnInsert: doc },
+      upsert: true,
+    },
+  }));
+
+  const result = await col.bulkWrite(ops, { ordered: false });
+  const inserted = result.upsertedCount;
 
   return NextResponse.json({
-    message: `Seeded ${docs.length} team members successfully. Visit /admin/team to manage them.`,
-    seeded: docs.length,
-    breakdown: {
-      core: CORE_TEAM.length,
-      faculty: FACULTY_MENTORS.length,
-    },
+    message: `Done. ${inserted} new member(s) added. Visit /admin/team to manage them.`,
+    seeded: inserted,
+    total: docs.length,
+    breakdown: { core: CORE_TEAM.length, faculty: FACULTY_MENTORS.length },
   });
 }
