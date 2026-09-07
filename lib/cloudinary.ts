@@ -106,6 +106,8 @@ function galleryAlsoIncludeUploadFolder(): boolean {
  * Use when assets are not under ytop/gallery or ytop/admin (or your CLOUDINARY_GALLERY_PREFIX).
  */
 function galleryListEntireAccount(): boolean {
+  // If CLOUDINARY_GALLERY_PREFIX is explicitly set, always use prefix mode — ignore ALL_IMAGES.
+  if (process.env.CLOUDINARY_GALLERY_PREFIX?.trim()) return false;
   const v = process.env.CLOUDINARY_GALLERY_ALL_IMAGES?.trim();
   return v === '1' || v?.toLowerCase() === 'true' || v?.toLowerCase() === 'yes';
 }
