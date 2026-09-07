@@ -181,7 +181,7 @@ export default function BlogPostArticle({
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-800">
                   <Eye className="h-4 w-4 text-secondary" />
-                  {post.viewCount.toLocaleString()} views
+                  {(post.viewCount ?? 0).toLocaleString()} views
                 </span>
                 <Link
                   href="#comments"
