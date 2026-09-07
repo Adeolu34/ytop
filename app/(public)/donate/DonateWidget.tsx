@@ -6,13 +6,13 @@ import Link from 'next/link';
 
 export default function DonateWidget() {
   const [frequency, setFrequency] = useState<'one-time' | 'monthly' | 'yearly'>('one-time');
-  const [amount, setAmount] = useState<number | null>(50);
+  const [amount, setAmount] = useState<number | null>(5000);
   const [customAmount, setCustomAmount] = useState('');
 
-  const displayAmount = amount ?? (customAmount ? Number(customAmount) : 50);
-  // Paystack accepts amount in kobo (NGN) or cents (USD) — multiply by 100
+  const displayAmount = amount ?? (customAmount ? Number(customAmount) : 5000);
+  // Paystack expects amount in kobo (NGN × 100)
   const paystackUrl = `https://paystack.com/pay/ytopglobalpay/?amount=${Math.round(displayAmount * 100)}`;
-  const amounts = [10, 25, 50, 100];
+  const amounts = [1000, 2500, 5000, 10000];
 
   return (
     <div className="bg-white dark:bg-surface-dark rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-6 sm:p-10">
@@ -50,26 +50,26 @@ export default function DonateWidget() {
                     : 'border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-primary hover:text-primary'
                 }`}
               >
-                ${a}
+                ₦{a.toLocaleString()}
               </button>
             ))}
           </div>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₦</span>
             <input
               type="number"
-              placeholder="Enter custom amount"
+              placeholder="Enter custom amount (NGN)"
               value={customAmount}
               onChange={(e) => { setCustomAmount(e.target.value); setAmount(null); }}
               className="w-full pl-8 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-transparent dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              min={1}
+              min={100}
             />
           </div>
         </div>
         <div className="flex-1 lg:max-w-md flex flex-col gap-6 lg:border-l lg:border-slate-200 dark:border-slate-700 lg:pl-10">
           <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white">Complete Your Donation</h3>
           <p className="text-slate-600 dark:text-slate-400 text-sm">
-            You will be redirected to our secure payment partner to complete your donation of ${displayAmount} ({frequency.replace('-', ' ')}).
+            You will be redirected to our secure payment partner to complete your donation of ₦{displayAmount.toLocaleString()} ({frequency.replace('-', ' ')}).
           </p>
           <a
             href={paystackUrl}
@@ -78,7 +78,7 @@ export default function DonateWidget() {
             className="w-full py-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2"
           >
             <Lock className="w-4 h-4" />
-            Donate ${displayAmount} Securely
+            Donate ₦{displayAmount.toLocaleString()} Securely
           </a>
           <p className="text-xs text-center text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1">
             <Lock className="w-3 h-3" />

@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth-utils';
 import { checkPermission } from '@/lib/auth-utils';
 import { redirect } from 'next/navigation';
 import { mongoTeamListForAdmin } from '@/lib/mongo-team-store';
+import TeamAdminActions from '@/components/admin/team/TeamAdminActions';
 
 export default async function AdminTeamListPage() {
   const user = await requireAuth();
@@ -23,12 +24,15 @@ export default async function AdminTeamListPage() {
             Team members
           </h1>
         </div>
-        <Link
-          href="/admin/team/new"
-          className="rounded-lg bg-[#ba0013] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#93000d]"
-        >
-          Add member
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <TeamAdminActions />
+          <Link
+            href="/admin/team/new"
+            className="rounded-lg bg-[#ba0013] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#93000d]"
+          >
+            Add member
+          </Link>
+        </div>
       </div>
 
       <div className="admin-surface-card overflow-hidden rounded-2xl">

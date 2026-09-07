@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Eye, Filter, Plus } from 'lucide-react';
+import WpImportButton from '@/components/admin/posts/WpImportButton';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
 import {
   getSearchParamValue,
@@ -112,13 +113,16 @@ export default async function AdminPostsPage({
           </p>
         </div>
 
-        <Link
-          href="/admin/posts/new"
-          className="inline-flex items-center gap-2 rounded-md bg-gradient-to-br from-[#ba0013] to-[#e31e24] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#ba0013]/20 transition-transform hover:scale-[1.02]"
-        >
-          <Plus className="h-4 w-4" />
-          New Post
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <WpImportButton />
+          <Link
+            href="/admin/posts/new"
+            className="inline-flex items-center gap-2 rounded-md bg-gradient-to-br from-[#ba0013] to-[#e31e24] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#ba0013]/20 transition-transform hover:scale-[1.02]"
+          >
+            <Plus className="h-4 w-4" />
+            New Post
+          </Link>
+        </div>
       </section>
 
       {flashMessage ? (

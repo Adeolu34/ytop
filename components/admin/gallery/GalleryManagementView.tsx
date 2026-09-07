@@ -11,6 +11,7 @@ import {
   Video,
 } from 'lucide-react';
 import AdminFlashBanner from '@/components/admin/forms/AdminFlashBanner';
+import SyncCloudinaryButton from '@/components/admin/gallery/SyncCloudinaryButton';
 import {
   deleteMediaAction,
   deleteSelectedMediaAction,
@@ -143,6 +144,7 @@ export default function GalleryManagementView({
         </div>
 
         <div className="flex flex-wrap gap-3">
+          <SyncCloudinaryButton />
           <form
             method="get"
             className="inline-flex items-center gap-2 rounded-md bg-[#e9e8e7] px-4 py-3 text-sm font-semibold text-[#1b1c1c]"
