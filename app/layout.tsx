@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Open_Sans } from "next/font/google";
 import Script from "next/script";
 import { generateOrganizationSchema } from "@/components/SEOHead";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const fontDisplay = Montserrat({
@@ -19,7 +20,7 @@ const fontBody = Open_Sans({
 export const metadata: Metadata = {
   title: "YTOP Global | Youth Empowerment Foundation - Mission, Vision & Impact",
   description: "YTOP Youth Empowerment Foundation (RC179444) empowers young people through self-discovery, skill acquisition, and mentorship. Our mission: equip youth to create sustainable solutions. Our vision: a global community of great minds driving effective change.",
-  metadataBase: new URL("https://ytopglobal.org"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ytop.netlify.app'),
 };
 
 export default function RootLayout({

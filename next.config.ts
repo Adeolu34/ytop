@@ -13,7 +13,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://res.cloudinary.com https://ytopglobal.org https://www.ytopglobal.org https://www.google-analytics.com",
+      "img-src 'self' data: blob: https://res.cloudinary.com https://ytop.netlify.app https://ytopglobal.org https://www.ytopglobal.org https://www.google-analytics.com",
       "connect-src 'self' https://www.google-analytics.com https://analytics.google.com",
       "frame-src 'self' https://paystack.com",
       "object-src 'none'",
@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ytop.netlify.app',
+        pathname: '/**',
+      },
       {
         protocol: 'https',
         hostname: 'ytopglobal.org',

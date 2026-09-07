@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { YTOP_SOCIAL_SAME_AS } from '@/lib/ytop-social-urls';
+import { siteUrl } from '@/lib/site';
 
 interface SEOHeadProps {
   title: string;
@@ -26,7 +27,7 @@ export function generateSEOMetadata({
 }: SEOHeadProps): Metadata {
   const siteName = 'YTOP Global';
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
-  const baseUrl = 'https://ytopglobal.org';
+  const baseUrl = siteUrl();
   const fullUrl = url ? `${baseUrl}${url}` : baseUrl;
   const ogImage = image || `${baseUrl}/og-image.jpg`;
 
@@ -93,14 +94,14 @@ export function generateBlogPostingSchema(post: {
       name: 'YTOP Global',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://ytopglobal.org/logo.png',
+        url: `${siteUrl()}/logo.png`,
       },
     },
     datePublished: post.publishedAt.toISOString(),
     dateModified: post.updatedAt.toISOString(),
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://ytopglobal.org${post.url}`,
+      '@id': `${siteUrl()}${post.url}`,
     },
   };
 }
@@ -111,8 +112,8 @@ export function generateOrganizationSchema() {
     '@type': 'NGO',
     name: 'YTOP Global',
     alternateName: 'Young Talented Optimistic and Potential Organization',
-    url: 'https://ytopglobal.org',
-    logo: 'https://ytopglobal.org/logo.png',
+    url: siteUrl(),
+    logo: `${siteUrl()}/logo.png`,
     description:
       'Empowering young people through leadership development, career guidance, financial education, and community impact initiatives.',
     address: {
@@ -140,7 +141,7 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `https://ytopglobal.org${item.url}`,
+      item: `${siteUrl()}${item.url}`,
     })),
   };
 }

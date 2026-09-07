@@ -10,6 +10,7 @@ import {
 } from '@/lib/mongo-blog';
 import { resetMongoConnection } from '@/lib/mongodb';
 import { generateBlogPostingSchema, generateBreadcrumbSchema } from '@/components/SEOHead';
+import { siteUrl } from '@/lib/site';
 
 /** CDN ISR for prerendered post pages — lib/public-page-config.ts */
 export const revalidate = 60;
@@ -49,11 +50,11 @@ export async function generateMetadata({
     return {
       title,
       description,
-      alternates: { canonical: `https://ytopglobal.org/blog/${slug}` },
+      alternates: { canonical: `${siteUrl()}/blog/${slug}` },
       openGraph: {
         title,
         description,
-        url: `https://ytopglobal.org/blog/${slug}`,
+        url: `${siteUrl()}/blog/${slug}`,
         siteName: 'YTOP Global',
         type: 'article',
         publishedTime: doc.publishedAt?.toISOString(),

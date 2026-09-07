@@ -5,10 +5,11 @@ import {
   mongoAggregateCategories,
   mongoListPostsForSitemap,
 } from '@/lib/mongo-blog';
+import { siteUrl } from '@/lib/site';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return buildSitemapEntries({
-    baseUrl: 'https://ytopglobal.org',
+    baseUrl: siteUrl(),
     fetchPosts: async () => {
       if (!isMongoConfigured()) {
         return [];
