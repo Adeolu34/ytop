@@ -18,8 +18,8 @@ const fontBody = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "YTOP Global | Youth Empowerment Foundation - Mission, Vision & Impact",
-  description: "YTOP Youth Empowerment Foundation (RC179444) empowers young people through self-discovery, skill acquisition, and mentorship. Our mission: equip youth to create sustainable solutions. Our vision: a global community of great minds driving effective change.",
+  title: "YTOP Global | Youth Empowerment, Leadership and Community Development",
+  description: "YTOP Global empowers young people through leadership development, education, mentorship, capacity building and community engagement in Nigeria and beyond.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ytop.netlify.app'),
   icons: {
     icon: [

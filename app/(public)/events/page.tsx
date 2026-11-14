@@ -184,8 +184,8 @@ const previousEvents: Array<{
 ];
 
 export const metadata = {
-  title: 'YTOP Events – Upcoming & Previous Events | YTOP Global',
-  description: 'Explore YTOP Global events: conferences, Rise of Warriors boot camp, International Youth Week, talent discovery programs, and community outreaches. Join upcoming events and see our impact.',
+  title: 'Events | YTOP Global',
+  description: 'Explore YTOP Global events: conferences, Rise of Warriors, International Youth Week, school outreach and community engagements, upcoming and previous.',
 };
 
 export default function EventsPage() {
@@ -211,10 +211,10 @@ export default function EventsPage() {
               YTOP Events
             </h1>
             <p className="text-xl md:text-2xl text-white font-semibold mb-2">
-              Welcome to YTOP Global — we believe you are Young, Talented, Optimistic and full of potential.
+              Bringing People Together to Learn, Lead and Collaborate.
             </p>
             <p className="text-base text-white/95 font-medium">
-              Upcoming events and highlights from our previous programs
+              Our events provide opportunities for young people, professionals and institutional stakeholders to engage with important development issues and explore practical solutions.
             </p>
           </div>
         </div>
@@ -227,7 +227,7 @@ export default function EventsPage() {
             Upcoming Events
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-            Register now to secure your spot at our upcoming programs
+            Dates, venues and registration details are published here as each event is confirmed.
           </p>
 
           <div className="space-y-8">
@@ -288,7 +288,7 @@ export default function EventsPage() {
             Previous Events
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-            Highlights from our conferences, boot camps, and community outreaches
+            Documenting Our Engagement and Learning. Conferences, workshops, school outreach activities and community engagements.
           </p>
 
           <div className="space-y-12">
@@ -386,7 +386,7 @@ export default function EventsPage() {
             Your donation can help
           </h2>
           <p className="text-xl text-white/95 mb-8 max-w-2xl mx-auto">
-            Every contribution, no matter the size, can go a long way. Click now to make a secure donation to support us.
+            Your contribution helps expand learning, mentorship and leadership opportunities for young people.
           </p>
           <Link
             href="/donate"

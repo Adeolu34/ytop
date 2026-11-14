@@ -9,9 +9,9 @@ export const revalidate = 60;
 
 export function generateMetadata() {
   return generateSEOMetadata({
-    title: 'Our Programs',
+    title: 'Youth Development Programmes | YTOP Global',
     description:
-      "Discover YTOP Global's core programs: Project 300, Rise of Warriors, leadership development, career guidance, financial education, and community impact initiatives empowering Nigerian youth.",
+      "Explore YTOP Global's leadership, mentorship, school outreach, education and community development programmes.",
     url: '/programs',
     image: '/media/2021/11/005.jpg',
     type: 'website',
@@ -46,9 +46,9 @@ export default async function ProgramsPage() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Our Programs</h1>
+            <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Creating Opportunities Through Action.</h1>
             <p className="text-xl text-white/95">
-              Six pillars of youth empowerment and development
+              YTOP Global implements programmes that support leadership development, education, capacity building, mentorship and community participation. Explore our programmes and find out how you can participate or support their implementation.
             </p>
           </div>
         </div>
@@ -60,14 +60,15 @@ export default async function ProgramsPage() {
           <div className="grid md:grid-cols-[1.4fr_minmax(0,1fr)] gap-8 items-center rounded-2xl bg-white dark:bg-background-dark shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-8">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">
-                New Nationwide Initiative
+                School Outreach Initiative
               </p>
               <h2 className="font-display text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">
                 Project 300 – Secondary School Outreach
               </h2>
               <p className="text-sm md:text-base text-slate-700 dark:text-slate-300 mb-4 max-w-xl">
-                A nationwide secondary school mentorship and identity development program reaching 300 schools and
-                over 100,000 students across Nigeria.
+                A school outreach initiative aimed at expanding access to leadership education, career guidance and
+                personal development opportunities among secondary school students. Our target is to reach 300
+                secondary schools through structured outreach activities.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
@@ -97,15 +98,9 @@ export default async function ProgramsPage() {
                   sizes="(min-width: 1024px) 240px, 50vw"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-xl bg-secondary/5 dark:bg-secondary/20 p-4">
-                  <p className="text-2xl font-black text-secondary mb-1">300+</p>
-                  <p className="text-xs text-slate-700 dark:text-slate-200">Secondary schools nationwide</p>
-                </div>
-                <div className="rounded-xl bg-primary/5 dark:bg-primary/20 p-4">
-                  <p className="text-2xl font-black text-primary mb-1">100k+</p>
-                  <p className="text-xs text-slate-700 dark:text-slate-200">Students empowered</p>
-                </div>
+              <div className="rounded-xl bg-secondary/5 dark:bg-secondary/20 p-4 flex flex-col justify-center">
+                <p className="text-2xl font-black text-secondary mb-1">300</p>
+                <p className="text-xs text-slate-700 dark:text-slate-200">Secondary schools targeted</p>
               </div>
             </div>
           </div>
@@ -206,7 +201,7 @@ export default async function ProgramsPage() {
             Ready to Get Involved?
           </h2>
           <p className="text-xl mb-10 text-white/95 max-w-2xl mx-auto">
-            Join us in making a difference in the lives of young people.
+            Participate in a programme, volunteer, or help us take learning, guidance and development opportunities to more young people.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

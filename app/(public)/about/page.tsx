@@ -6,47 +6,77 @@ import {
   Eye,
   Rocket,
   GraduationCap,
-  Cpu,
-  MapPin,
   Trophy,
   CheckCircle2,
   Heart,
   Handshake,
   Quote,
+  Lightbulb,
+  Scale,
+  Globe,
 } from 'lucide-react';
 import { generateSEOMetadata } from '@/components/SEOHead';
+import { ORG_FOUNDED_YEAR, ORG_REGISTRATION_YEAR, ORG_RC_NUMBER } from '@/lib/org';
 
 export function generateMetadata() {
   return generateSEOMetadata({
-    title: 'About Us',
+    title: 'About YTOP Global | Our Mission, Leadership and Youth Development Work',
     description:
-      'YTOP Global (RC179444) — founded in Lagos in 2016. We empower young people through leadership, mentorship, career guidance, and community impact programs across Nigeria and beyond. Learn our story, mission, and vision.',
+      'Learn about YTOP Global, our mission, history, leadership and commitment to developing young people through education, mentorship and community engagement.',
     url: '/about',
     image: '/media/2021/11/1-scaled.jpg',
     type: 'website',
-    keywords: 'about YTOP Global, RC179444, youth NGO Nigeria, leadership NGO Lagos, YTOP mission vision',
+    keywords: 'about YTOP Global, RC179444, youth NGO Nigeria, youth development organisation, YTOP mission vision',
   });
 }
 
-const JOURNEY = [
-  { year: '2016', title: 'Founded in Lagos', desc: 'YTOP Global started as a small community group passionate about youth literacy.', icon: Rocket },
-  { year: '2018', title: 'First School Outreach', desc: 'Partnered with 5 local high schools to deliver leadership seminars.', icon: GraduationCap },
-  { year: '2019', title: 'Launched Tech Bootcamp', desc: 'Introduced digital skills training, graduating our first cohort of 50 developers.', icon: Cpu },
-  { year: '2021', title: 'Expanded to 3 States', desc: 'Established regional chapters to broaden our impact beyond the capital.', icon: MapPin },
-  { year: '2023', title: 'Global Partnership Award', desc: 'Recognized internationally for our contribution to youth empowerment.', icon: Trophy },
+// Copy: Master Website Content document, Part Two. Only facts confirmed by YTOP (conceived 2015,
+// activities began 2017) or already documented on the Events page are used.
+const JOURNEY_ENTRIES = [
+  { year: '2015', title: 'Conceived', desc: 'YTOP Global was conceived from a recognition that young people needed more opportunities to develop their leadership abilities and contribute meaningfully to society.', icon: Lightbulb },
+  { year: String(ORG_FOUNDED_YEAR), title: 'Activities begin', desc: 'The organisation began its activities, focusing on youth engagement, personal development, leadership and community participation.', icon: Rocket },
+  { year: '2020', title: 'Rise of Warriors launched', desc: 'Rise of Warriors was launched to raise community leaders and change-makers, alongside a ten-day development webinar.', icon: Flag },
+  { year: '2022', title: 'YTOP Global Conference', desc: 'The conference brought young people and speakers together at Obafemi Awolowo University, Ile-Ife.', icon: GraduationCap },
+  { year: '2024', title: 'Conference 2.0', desc: 'Youth On A Mission: beCOMING drew participants from secondary schools, 32 universities and five countries.', icon: Trophy },
 ];
 
-const IMPACT = [
-  { value: '5,000+', label: 'Students Reached', icon: GraduationCap },
-  { value: '50+', label: 'Projects Executed', icon: Handshake },
-  { value: '12', label: 'Communities Served', icon: Users },
-  { value: '200+', label: 'Volunteers', icon: Heart },
-];
+// Registration milestone is inserted in chronological order when ORG_REGISTRATION_YEAR is set in lib/org.ts.
+const JOURNEY = ORG_REGISTRATION_YEAR
+  ? [
+      ...JOURNEY_ENTRIES,
+      {
+        year: String(ORG_REGISTRATION_YEAR),
+        title: 'Registered with the CAC',
+        desc: `YTOP Global registered with the Corporate Affairs Commission in Nigeria (${ORG_RC_NUMBER}).`,
+        icon: CheckCircle2,
+      },
+    ].sort((a, b) => Number(a.year) - Number(b.year))
+  : JOURNEY_ENTRIES;
 
 const VALUES = [
-  { title: 'Integrity', desc: 'We operate with transparency and hold ourselves accountable to the highest ethical standards in all our actions.', icon: CheckCircle2 },
-  { title: 'Honesty', desc: 'We believe in building trust through open communication and truthfulness with our partners, beneficiaries, and team.', icon: Heart },
-  { title: 'Collaboration', desc: 'We achieve more together. We actively seek partnerships to maximize impact and create shared value.', icon: Handshake },
+  { title: 'Integrity', desc: 'We promote honesty, transparency, accountability and ethical conduct in our decisions and activities.', icon: CheckCircle2 },
+  { title: 'Excellence', desc: 'We strive to maintain high standards in programme design, implementation, learning and organisational management.', icon: Trophy },
+  { title: 'Inclusiveness', desc: 'We recognise the importance of equal opportunities, diversity and meaningful participation.', icon: Scale },
+  { title: 'Service', desc: 'We encourage individuals to use their knowledge, abilities and resources to contribute to the wellbeing of others.', icon: Heart },
+  { title: 'Collaboration', desc: 'We believe that sustainable development requires cooperation, shared responsibility and collective action.', icon: Handshake },
+  { title: 'Innovation', desc: 'We encourage practical thinking, learning and solutions that respond to emerging development challenges.', icon: Lightbulb },
+];
+
+const APPROACH_STEPS = [
+  'Identify relevant development needs among young people and communities.',
+  'Design interventions that respond to those needs.',
+  'Provide opportunities for learning and practical engagement.',
+  'Encourage participation and collaboration.',
+  'Monitor programme implementation and results.',
+  'Document lessons and improve future interventions.',
+];
+
+const SDGS = [
+  'SDG 4: Quality Education',
+  'SDG 5: Gender Equality',
+  'SDG 8: Decent Work and Economic Growth',
+  'SDG 10: Reduced Inequalities',
+  'SDG 17: Partnerships for the Goals',
 ];
 
 export default function AboutPage() {
@@ -64,11 +94,10 @@ export default function AboutPage() {
         />
         <div className="absolute inset-0 bg-black/60" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center text-white relative z-10">
-          <h1 className="font-display text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">
-            Empowering young people to <span className="text-primary">learn</span>, <span className="text-primary">innovate</span> and <span className="text-primary">engage</span>
-          </h1>
-          <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto font-medium">
-            We bridge the critical gap between potential and opportunity for youth worldwide through mentorship, education, and community action.
+          <h1 className="font-display text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">About YTOP Global</h1>
+          <p className="text-xl md:text-2xl font-semibold mb-4">Developing people. Strengthening communities. Expanding opportunities.</p>
+          <p className="text-lg text-gray-200 max-w-2xl mx-auto font-medium">
+            We believe that investing in young people is essential to building inclusive, resilient and sustainable communities.
           </p>
         </div>
       </section>
@@ -81,25 +110,15 @@ export default function AboutPage() {
               <Users className="w-4 h-4" /> Who We Are
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold leading-tight">
-              Transforming Struggles into <span className="text-primary">Sustainable Solutions</span>
+              Empowering young people through <span className="text-primary">leadership, education and community engagement</span>
             </h2>
             <div className="prose prose-lg text-slate-600 dark:text-slate-300 max-w-none">
               <p>
-                Young people today face unprecedented challenges, from staggering unemployment rates to a lack of accessible mentorship. The traditional education system often leaves a gap between academic knowledge and real-world application.
+                YTOP Global is committed to empowering young people through leadership development, education, capacity building, mentorship and community engagement.
               </p>
               <p>
-                YTOP Global was founded to fill this void. We provide sustainable solutions through practical education, skill-building workshops, and active community engagement. We are a youth-led movement committed to transforming potential into tangible impact.
+                Our work focuses on helping young people acquire the knowledge, competencies, confidence and opportunities required to participate meaningfully in society.
               </p>
-            </div>
-            <div className="grid grid-cols-2 gap-6 pt-4">
-              <div className="pl-4 border-l-4 border-primary">
-                <span className="block text-3xl font-black text-slate-900 dark:text-white">15+</span>
-                <span className="text-sm text-slate-500 font-medium">Partner Schools</span>
-              </div>
-              <div className="pl-4 border-l-4 border-primary">
-                <span className="block text-3xl font-black text-slate-900 dark:text-white">5k+</span>
-                <span className="text-sm text-slate-500 font-medium">Lives Impacted</span>
-              </div>
             </div>
           </div>
           <div className="relative">
@@ -117,7 +136,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Mission & Vision */}
+      {/* Mission & Vision — check against the formally approved wording before publishing (master copy 2.4). */}
       <section className="py-20 bg-slate-50 dark:bg-background-dark">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -127,7 +146,7 @@ export default function AboutPage() {
               </div>
               <h3 className="font-display text-2xl font-bold mb-4">Our Mission</h3>
               <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                To provide sustainable solutions for youth development through inclusive education, innovative skill-building programs, and community-driven engagement initiatives that bridge the gap between talent and opportunity.
+                To empower young people through leadership development, education, mentorship, capacity building and community engagement, enabling them to realise their potential and contribute meaningfully to society.
               </p>
             </div>
             <div className="group bg-white dark:bg-surface-dark p-10 rounded-2xl border-2 border-transparent hover:border-primary transition-all duration-300 shadow-sm hover:shadow-xl">
@@ -136,18 +155,18 @@ export default function AboutPage() {
               </div>
               <h3 className="font-display text-2xl font-bold mb-4">Our Vision</h3>
               <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                A world where every young person, regardless of their background, has access to the mentorship, resources, and platforms needed to lead, innovate, and contribute meaningfully to society.
+                A generation of empowered, responsible and visionary young people contributing to inclusive and sustainable communities.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Our Journey Timeline */}
+      {/* Our Journey */}
       <section className="py-24 px-4 sm:px-6 max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Our 8 Years Journey</h2>
-          <p className="text-slate-500 max-w-xl mx-auto">From a small idea in Lagos to a global movement impacting thousands.</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Our Journey</h2>
+          <p className="text-slate-500 max-w-xl mx-auto">Our history reflects a continuing commitment to youth development, meaningful participation and community impact.</p>
         </div>
         <div className="relative">
           <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-0.5 bg-red-100 dark:bg-red-900/30 -ml-px md:-translate-x-1/2" aria-hidden />
@@ -166,11 +185,13 @@ export default function AboutPage() {
                     <p className="text-slate-500 text-sm">{item.desc}</p>
                   </div>
                 </div>
-                <div className={`absolute left-0 md:left-1/2 size-10 rounded-full border-4 flex items-center justify-center z-10 shadow-lg transform md:-translate-x-1/2 ${
-                  i === 0 || i === JOURNEY.length - 1
-                    ? 'bg-primary border-white dark:border-background-dark'
-                    : 'bg-white dark:bg-surface-dark border-primary'
-                }`}>
+                <div
+                  className={`absolute left-0 md:left-1/2 size-10 rounded-full border-4 flex items-center justify-center z-10 shadow-lg transform md:-translate-x-1/2 ${
+                    i === 0 || i === JOURNEY.length - 1
+                      ? 'bg-primary border-white dark:border-background-dark'
+                      : 'bg-white dark:bg-surface-dark border-primary'
+                  }`}
+                >
                   <Icon className={`w-5 h-5 ${i === 0 || i === JOURNEY.length - 1 ? 'text-white' : 'text-primary'}`} />
                 </div>
                 <div className="md:w-[calc(50%-2rem)] hidden md:block" />
@@ -178,23 +199,29 @@ export default function AboutPage() {
             );
           })}
         </div>
+        <p className="mt-12 text-center text-slate-500 max-w-2xl mx-auto">
+          Today, YTOP Global remains committed to a simple but important principle: young people should have the knowledge, opportunities and support required to participate in shaping their communities and their future.
+        </p>
       </section>
 
-      {/* Impact Counters */}
+      {/* Approach */}
       <section className="py-20 bg-primary text-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {IMPACT.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.label} className="flex flex-col items-center p-4">
-                  <Icon className="w-10 h-10 mb-4 text-white/80" aria-hidden />
-                  <span className="font-display text-4xl md:text-5xl font-black mb-2">{item.value}</span>
-                  <span className="text-white/80 font-medium">{item.label}</span>
-                </div>
-              );
-            })}
-          </div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-4">Beyond Inspiration. Towards Sustainable Development.</h2>
+          <p className="text-white/90 text-center max-w-2xl mx-auto mb-10">
+            Effective youth development requires more than one-off activities. Our approach combines learning, practical engagement, mentorship, leadership development and opportunities for community participation.
+          </p>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {APPROACH_STEPS.map((step) => (
+              <li key={step} className="flex gap-3 rounded-xl bg-white/10 p-4">
+                <CheckCircle2 className="w-5 h-5 mt-0.5 flex-shrink-0" aria-hidden />
+                <span>{step}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-10 text-center text-white/90">
+            Young people are not simply recipients of development interventions. They are active participants and contributors to the development of their communities.
+          </p>
         </div>
       </section>
 
@@ -219,8 +246,27 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Founder Note */}
+      {/* Sustainable development */}
       <section className="py-20 bg-slate-50 dark:bg-background-dark">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <Globe className="w-10 h-10 text-primary mx-auto mb-4" aria-hidden />
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Contributing to Sustainable Development</h2>
+          <p className="text-slate-600 dark:text-slate-300 mb-8">
+            YTOP Global&apos;s work aligns with the broader objectives of inclusive development and the Sustainable Development Goals. Our activities contribute particularly to:
+          </p>
+          <ul className="flex flex-wrap justify-center gap-3 mb-8">
+            {SDGS.map((g) => (
+              <li key={g} className="px-4 py-2 rounded-full bg-secondary/10 text-secondary dark:text-blue-200 text-sm font-semibold">{g}</li>
+            ))}
+          </ul>
+          <p className="text-slate-600 dark:text-slate-300">
+            Alignment with the Sustainable Development Goals requires more than using their language. It requires interventions that respond to relevant development needs and produce measurable results. We therefore seek to strengthen the connection between our programme objectives, implementation activities and measurable outcomes.
+          </p>
+        </div>
+      </section>
+
+      {/* Founder Note */}
+      <section className="py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-2 h-full bg-primary" aria-hidden />
@@ -229,7 +275,7 @@ export default function AboutPage() {
               <h3 className="font-display text-2xl font-bold mb-6">A Note from Our Founder</h3>
               <div className="prose prose-lg text-slate-600 dark:text-slate-300 italic mb-8 max-w-none">
                 <p>
-                  &ldquo;When we started YTOP Global, the vision was simple: give young people a chance. Today, that vision has grown into a movement. We aren&apos;t just teaching skills; we are igniting hope. Every child we reach represents a future leader, a future innovator, and a future changemaker. Our journey has just begun, and I invite you to be part of this incredible story.&rdquo;
+                  &ldquo;We warmly welcome you to our platform, where we are committed to training, empowering, and raising Leading Leaders who leave a remarkable impact on the world. Our mission is to nurture change-makers, providing comprehensive training and mentorship to unlock their potential.&rdquo;
                 </p>
               </div>
               <div className="flex items-center gap-4">
@@ -253,16 +299,16 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-4 text-center">
+      <section className="py-24 px-4 text-center bg-slate-50 dark:bg-background-dark">
         <div className="max-w-2xl mx-auto">
-          <h2 className="font-display text-4xl font-black mb-6">Ready to make a difference?</h2>
-          <p className="text-slate-500 text-lg mb-8">Join the movement today. Whether as a volunteer, donor, or partner, your contribution shapes the future.</p>
+          <h2 className="font-display text-4xl font-black mb-6">Join us in creating opportunities</h2>
+          <p className="text-slate-500 text-lg mb-8">Whether as a volunteer, donor or partner, your contribution helps young people participate meaningfully in shaping their future.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/get-involved"
               className="bg-primary hover:bg-primary-hover text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
             >
-              Join the Movement
+              Get Involved
             </Link>
             <Link
               href="/contact"

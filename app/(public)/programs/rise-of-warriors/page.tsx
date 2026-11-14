@@ -3,9 +3,20 @@ import Link from 'next/link';
 import { ArrowRight, Shield, Users, Target, Calendar } from 'lucide-react';
 
 export const metadata = {
-  title: 'Rise of Warriors (ROW) - Programs | YTOP Global',
-  description: 'Rise of Warriors: A high-energy program cultivating resilience, emotional intelligence, and leadership in the next generation of changemakers.',
+  title: 'Rise of Warriors | YTOP Global',
+  description: 'Rise of Warriors is a YTOP Global initiative focused on leadership development, personal growth and responsible participation among young people.',
 };
+
+// Copy: Master Website Content document, 3.2. Edition facts (boot camp for ages 16-24, four weeks,
+// fifth edition September 8 to October 8, 2023, 28 Warriors) come from the Events page.
+const OBJECTIVES = [
+  'Strengthen leadership awareness and competencies.',
+  'Encourage personal responsibility and self-development.',
+  'Develop communication and collaboration skills.',
+  'Promote ethical leadership.',
+  'Encourage community participation.',
+  'Connect participants with learning and development opportunities.',
+];
 
 export default function RiseOfWarriorsPage() {
   return (
@@ -28,7 +39,7 @@ export default function RiseOfWarriorsPage() {
               Rise of Warriors <span className="text-primary">(ROW)</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-200 font-medium max-w-2xl mb-8 leading-relaxed">
-              Unleashing the potential within. A high-energy journey to cultivate resilience, emotional intelligence, and leadership in the next generation of changemakers.
+              Developing the Next Generation of Responsible Leaders.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
@@ -52,13 +63,16 @@ export default function RiseOfWarriorsPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-background-dark">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Forging Resilient Leaders</h2>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Leadership Is About Responsibility</h2>
             <div className="w-16 h-1 bg-primary rounded-full" />
             <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-              Rise of Warriors is an intensive boot camp for ages 16–24. Over four weeks, participants build leadership, communication, critical thinking, and time management skills through project execution, networking, and mentorship. Each edition brings together facilitators, clan coaches, and Warriors in a supportive community.
+              Leadership development requires more than holding positions or receiving recognition. It requires the ability to make responsible decisions, work with others, respond to challenges and contribute meaningfully to society.
             </p>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              The program has run multiple editions with game nights, final sessions on global opportunities, and lasting connections. Whether virtual or in-person, ROW is designed to unlock potential and create the next wave of changemakers.
+              Rise of Warriors is a YTOP Global initiative focused on encouraging leadership development, personal growth and responsible participation among young people. It provides opportunities for participants to examine their leadership abilities, strengthen their personal competencies and better understand their responsibilities within their communities.
+            </p>
+            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+              The programme is a boot camp for ages 16–24. The fifth edition ran for four weeks (September 8 – October 8, 2023) with six facilitators, six clan coaches and 28 Warriors.
             </p>
           </div>
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
@@ -97,19 +111,45 @@ export default function RiseOfWarriorsPage() {
         </div>
       </section>
 
+      {/* Objectives */}
+      <section className="py-16 bg-white dark:bg-background-dark">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-3xl font-bold text-slate-900 dark:text-white mb-6">Programme objectives</h2>
+          <ul className="grid gap-3 md:grid-cols-2">
+            {OBJECTIVES.map((o) => (
+              <li key={o} className="rounded-xl border-l-4 border-primary bg-slate-50 dark:bg-slate-800 p-4 text-slate-700 dark:text-slate-200">{o}</li>
+            ))}
+          </ul>
+          <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mt-10 mb-2">Who should participate?</h3>
+          <p className="text-slate-600 dark:text-slate-400">
+            Young people interested in leadership, personal development, community engagement and becoming more effective contributors to society.
+          </p>
+          <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mt-8 mb-2">Support Rise of Warriors</h3>
+          <p className="text-slate-600 dark:text-slate-400">
+            Your support helps provide programme resources, learning materials, facilitation and opportunities for young people to participate.
+          </p>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 bg-primary text-white">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="font-display text-3xl font-bold mb-4">Ready to Rise?</h2>
+          <h2 className="font-display text-3xl font-bold mb-4">Be part of the next edition</h2>
           <p className="text-white/90 text-lg mb-8">
-            Registrations open for each cohort. Contact us to join the next Rise of Warriors or to get updates on dates.
+            Contact us to join the next Rise of Warriors or to get updates on dates, or sponsor the programme.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-white text-primary font-bold rounded-full hover:bg-gray-100 transition"
             >
-              Register / Inquire <ArrowRight className="w-5 h-5" />
+              Participate in Rise of Warriors <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/donate"
+              className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full border border-white/30 transition"
+            >
+              Sponsor the Programme
             </Link>
             <Link
               href="/events"

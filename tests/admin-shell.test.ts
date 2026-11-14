@@ -24,8 +24,8 @@ test('returns route-specific metadata for managed sections', () => {
 });
 
 test('marks admin root as active only on the exact dashboard path', () => {
-  assert.equal(isAdminNavItemActive('/admin', '/admin'), true);
-  assert.equal(isAdminNavItemActive('/admin/posts', '/admin'), false);
+  assert.equal(isAdminNavItemActive('/yadmin', '/yadmin'), true);
+  assert.equal(isAdminNavItemActive('/yadmin/posts', '/yadmin'), false);
 });
 
 test('marks nested admin routes active by prefix', () => {
@@ -34,9 +34,18 @@ test('marks nested admin routes active by prefix', () => {
   assert.equal(isAdminNavItemActive('/admin/gallery', '/admin/users'), false);
 });
 
-test('defines the four primary admin sections from the Stitch designs', () => {
+test('defines the primary admin sections under the public /yadmin prefix', () => {
   assert.deepEqual(
     ADMIN_NAV_ITEMS.map((item) => item.href),
-    ['/admin', '/admin/users', '/admin/posts', '/admin/gallery']
+    [
+      '/yadmin',
+      '/yadmin/settings',
+      '/yadmin/users',
+      '/yadmin/posts',
+      '/yadmin/gallery',
+      '/yadmin/team',
+      '/yadmin/programs',
+      '/yadmin/comments',
+    ]
   );
 });

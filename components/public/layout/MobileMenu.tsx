@@ -8,35 +8,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
 import SocialIconLinks from '../SocialIconLinks';
 
-const menuItems = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  {
-    label: 'Programs',
-    href: '/programs',
-    children: [
-      { label: 'All Programs', href: '/programs' },
-      { label: 'Project 300', href: '/programs/project-300' },
-      { label: 'Rise of Warriors', href: '/programs/rise-of-warriors' },
-      { label: 'Leadership Development', href: '/programs#leadership' },
-      { label: 'Career Guidance', href: '/programs#career' },
-      { label: 'Community Impact', href: '/programs#community' },
-    ],
-  },
-  { label: 'Events', href: '/events' },
-  { label: 'Gallery', href: '/gallery' },
-  { label: 'Blog', href: '/blog' },
-  {
-    label: 'Get Involved',
-    href: '/get-involved',
-    children: [
-      { label: 'Campus Ambassadors', href: '/get-involved/campus-ambassadors' },
-      { label: 'Become a Sponsor', href: '/get-involved/sponsor' },
-      { label: 'Partner With Us', href: '/get-involved/partner' },
-    ],
-  },
-  { label: 'Contact', href: '/contact' },
-];
+import { menuItems } from './menu-items';
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);

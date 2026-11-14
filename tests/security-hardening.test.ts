@@ -23,7 +23,7 @@ test('builds a callback-aware admin login redirect URL', () => {
 
   assert.equal(
     redirectUrl,
-    'https://example.com/admin/login?callbackUrl=%2Fadmin%2Fposts%3Fdraft%3D1'
+    'https://example.com/yadmin/login?callbackUrl=%2Fyadmin%2Fposts%3Fdraft%3D1'
   );
 });
 
