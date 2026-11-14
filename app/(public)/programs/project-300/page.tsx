@@ -5,7 +5,7 @@ import { ArrowRight, Users, Target, Shield, BookOpen } from 'lucide-react';
 export const metadata = {
   title: 'Project 300 – Secondary School Outreach | YTOP Global',
   description:
-    'Project 300 is a nationwide secondary school outreach program in Nigeria helping students discover identity, build confidence, and grow as young leaders.',
+    'Project 300 is a secondary school outreach program in Nigeria helping students discover identity, build confidence, and grow as young leaders.',
 };
 
 export default function Project300Page() {
@@ -25,13 +25,13 @@ export default function Project300Page() {
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-white py-20">
           <div className="max-w-3xl">
             <span className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-wider uppercase bg-primary rounded-full">
-              Nationwide School Outreach
+              School Outreach Initiative
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-black leading-tight tracking-tight mb-4">
               Project 300
             </h1>
             <p className="text-lg md:text-xl text-gray-100 font-medium max-w-2xl mb-8 leading-relaxed">
-              A nationwide secondary school outreach and youth empowerment program helping students understand who
+              A secondary school outreach and youth empowerment program helping students understand who
               they are, discover their potential, and build a strong foundation for academic success and responsible
               living.
             </p>
@@ -71,15 +71,15 @@ export default function Project300Page() {
             </h2>
             <div className="w-16 h-1 bg-primary rounded-full" />
             <p className="text-slate-700 dark:text-slate-300 text-lg leading-relaxed">
-              Project 300 is a nationwide secondary school outreach program in Nigeria led by YTOP Global, a
+              Project 300 is a secondary school outreach program in Nigeria led by YTOP Global, a
               youth-focused nonprofit organization committed to youth empowerment, mentorship, and identity
               development.
             </p>
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-              From February to November, Project 300 aims to reach{' '}
-              <span className="font-semibold text-primary">300 secondary schools</span> across Nigeria, impacting over{' '}
-              <span className="font-semibold text-primary">100,000 students</span> through structured mentorship
-              sessions, identity development workshops, and youth leadership training.
+              Project 300 aims to reach{' '}
+              <span className="font-semibold text-primary">300 secondary schools</span> through structured outreach
+              activities within the approved implementation period, including mentorship sessions, identity
+              development workshops, and youth leadership training.
             </p>
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
               Our mission is clear: to help students understand who they are, discover their potential, and build a
@@ -107,15 +107,11 @@ export default function Project300Page() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                 <div>
-                  <p className="text-3xl font-black text-primary">300+</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">Secondary Schools Reached</p>
+                  <p className="text-3xl font-black text-primary">300</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Secondary Schools Targeted</p>
                 </div>
                 <div>
-                  <p className="text-3xl font-black text-primary">100k+</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">Students Empowered</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-black text-primary">Nationwide</p>
+                  <p className="text-3xl font-black text-primary">Volunteer-led</p>
                   <p className="text-xs text-slate-600 dark:text-slate-300">Volunteer Network</p>
                 </div>
               </div>

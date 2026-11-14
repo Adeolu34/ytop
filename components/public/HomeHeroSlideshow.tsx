@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ORG_FOUNDED_YEAR, ORG_RC_NUMBER } from '@/lib/org';
 
 const SLIDE_INTERVAL_MS = 5000;
 
@@ -72,27 +73,27 @@ export default function HomeHeroSlideshow() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <span className="inline-block py-1 px-3 rounded-full bg-blue-100/90 dark:bg-blue-900/50 text-secondary dark:text-blue-300 text-sm font-bold tracking-wide mb-6 uppercase">
-            Since 2016 • Rc179444
+            Since {ORG_FOUNDED_YEAR} • {ORG_RC_NUMBER}
           </span>
           <h1 className="font-display text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-white leading-tight drop-shadow-lg">
-            Empowering Young <br />
-            <span className="hero-text-gradient">Changemakers</span>
+            Developing Young People. Strengthening Communities. <br />
+            <span className="hero-text-gradient">Building the Future.</span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-white/95 mb-10 leading-relaxed drop-shadow-md">
-            We expand to that future by fostering leadership, personal development, and social impact across the globe. Join the movement.
+            Creating opportunities for young people to lead, grow and contribute to sustainable development.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/donate"
               className="bg-primary hover:bg-primary-hover text-white text-lg px-8 py-4 rounded-full font-bold shadow-lg shadow-primary/30 transition-all transform hover:-translate-y-1"
             >
-              Donate to Support
+              Support Our Work
             </Link>
             <Link
-              href="/about"
+              href="/impact"
               className="bg-white/95 dark:bg-gray-800/95 text-secondary dark:text-white border-2 border-white/80 dark:border-gray-600 hover:bg-secondary hover:text-white dark:hover:bg-gray-700 text-lg px-8 py-4 rounded-full font-bold transition-all transform hover:-translate-y-1"
             >
-              Read More
+              Explore Our Impact
             </Link>
           </div>
         </div>

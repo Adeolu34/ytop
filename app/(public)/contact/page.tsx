@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { z } from 'zod';
 import SocialIconLinks from '@/components/public/SocialIconLinks';
@@ -23,6 +23,14 @@ export default function ContactPage() {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Links such as /contact?subject=Monthly%20giving pre-fill the subject line.
+  useEffect(() => {
+    const subject = new URLSearchParams(window.location.search).get('subject');
+    if (subject) {
+      setFormData((prev) => (prev.subject ? prev : { ...prev, subject: subject.slice(0, 120) }));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,9 +75,9 @@ export default function ContactPage() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Contact Us</h1>
+            <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Let&apos;s Start a Conversation.</h1>
             <p className="text-xl text-white/95">
-              Get in touch with us. We&apos;d love to hear from you.
+              Whether you are interested in our programmes, considering a partnership, seeking to volunteer or looking for ways to support our work, we would be pleased to hear from you.
             </p>
           </div>
         </div>
@@ -82,8 +90,7 @@ export default function ContactPage() {
             <div>
               <h2 className="font-display text-3xl font-bold text-slate-900 dark:text-white mb-6">Get In Touch</h2>
               <p className="text-slate-700 dark:text-slate-400 mb-8 leading-relaxed">
-                Have a question or want to learn more about our programs? Feel free to reach out
-                to us using the contact information below or fill out the form.
+                Contact the relevant team using the details below, or complete the form and our team will review your enquiry.
               </p>
 
               <div className="space-y-6">
@@ -106,8 +113,11 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors duration-200">Phone</h3>
-                    <a href="tel:+2348012345678" className="text-slate-600 hover:text-primary transition-colors duration-200">
-                      +234 801 234 5678
+                    <a href="tel:+2348100218117" className="block text-slate-600 hover:text-primary transition-colors duration-200">
+                      +234 810 021 8117
+                    </a>
+                    <a href="tel:+46727702361" className="block text-slate-600 hover:text-primary transition-colors duration-200">
+                      +46 72 770 2361
                     </a>
                   </div>
                 </div>
@@ -118,8 +128,13 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors duration-200">Email</h3>
-                    <a href="mailto:info@ytopglobal.org" className="text-slate-600 hover:text-primary transition-colors duration-200">
+                    <p className="text-sm text-slate-500">General and programme enquiries</p>
+                    <a href="mailto:info@ytopglobal.org" className="block text-slate-600 hover:text-primary transition-colors duration-200">
                       info@ytopglobal.org
+                    </a>
+                    <p className="mt-2 text-sm text-slate-500">Partnership enquiries</p>
+                    <a href="mailto:admin@ytopglobal.org" className="block text-slate-600 hover:text-primary transition-colors duration-200">
+                      admin@ytopglobal.org
                     </a>
                   </div>
                 </div>
@@ -214,8 +229,8 @@ export default function ContactPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <div>
-                      <p className="font-bold mb-1">Message Sent!</p>
-                      <p className="text-sm">Thank you for your message! We'll get back to you soon.</p>
+                      <p className="font-bold mb-1">Enquiry submitted</p>
+                      <p className="text-sm">Thank you for contacting YTOP Global. Your enquiry has been submitted. Our team will review your message and respond through the contact information you provided.</p>
                     </div>
                   </div>
                 )}
@@ -247,7 +262,7 @@ export default function ContactPage() {
                     </>
                   ) : (
                     <>
-                      Send Message
+                      Submit Enquiry
                       <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
                     </>
                   )}

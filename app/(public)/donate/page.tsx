@@ -1,17 +1,54 @@
 import Link from 'next/link';
-import { Heart, Users, BookOpen, Globe } from 'lucide-react';
+import { Heart, GraduationCap, Repeat, Building2, Globe } from 'lucide-react';
 import DonateWidget from './DonateWidget';
 
 export const metadata = {
-  title: 'Donate - YTOP Global',
-  description: 'Your contribution fuels the future of youth. Support YTOP Global programs through a secure donation.',
+  title: 'Donate to YTOP Global | Support Youth Development in Nigeria',
+  description:
+    "Support YTOP Global's youth leadership, education, mentorship and community development initiatives through one-time or recurring donations.",
 };
 
-const IMPACT_STATS = [
-  { icon: Users, value: '5,000+', label: 'Young people reached' },
-  { icon: BookOpen, value: '12+', label: 'Programs running' },
-  { icon: Globe, value: '6', label: 'States across Nigeria' },
-  { icon: Heart, value: '100%', label: 'Goes to youth programs' },
+// Copy: Master Website Content document, Part Six. No impact figures, unit costs or fund
+// allocations are stated: they must be verified against approved budgets before publication.
+const SUPPORT_AREAS = [
+  'Extend educational and leadership outreach to schools.',
+  'Provide learning materials and programme resources.',
+  'Expand access to mentorship.',
+  'Support youth development activities.',
+  'Mobilise volunteers and facilitators.',
+  'Implement community-based initiatives.',
+  'Strengthen monitoring and reporting.',
+];
+
+const WAYS = [
+  {
+    icon: GraduationCap,
+    title: 'Sponsor a Young Leader',
+    body: 'Contribute towards the cost of participation in structured leadership and personal development programmes. Your sponsorship can help cover approved programme expenses, including learning materials, facilitation, mentorship activities and participant support.',
+    cta: 'Sponsor a Young Leader Today',
+    href: '/contact?subject=Sponsor%20a%20Young%20Leader',
+  },
+  {
+    icon: Repeat,
+    title: 'Monthly Giving',
+    body: 'Consistent support helps organisations plan, implement and improve their programmes. A recurring contribution provides a more predictable funding base for programme implementation and organisational planning.',
+    cta: 'Become a Monthly Supporter',
+    href: '/contact?subject=Monthly%20giving',
+  },
+  {
+    icon: Building2,
+    title: 'Corporate Sponsorship',
+    body: 'Put your organisation’s commitment to youth development into action by sponsoring specific programmes, supporting school outreach, funding leadership development or contributing technical expertise.',
+    cta: 'Discuss Corporate Sponsorship',
+    href: '/get-involved/sponsor',
+  },
+  {
+    icon: Globe,
+    title: 'International and Diaspora Giving',
+    body: 'We welcome support from Nigerians in the diaspora, international individuals, foundations and organisations. We aim to make international giving straightforward, secure and transparent.',
+    cta: 'Donate Internationally',
+    href: '/contact?subject=International%20donation',
+  },
 ];
 
 export default function DonatePage() {
@@ -19,47 +56,23 @@ export default function DonatePage() {
     <div className="min-h-screen">
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#0a0f1e] via-[#1a1040] to-[#2d0a0e] py-24 md:py-32">
-        {/* Decorative circles */}
         <div className="pointer-events-none absolute -left-32 -top-32 h-[500px] w-[500px] rounded-full bg-[#ba0013]/20 blur-3xl" />
         <div className="pointer-events-none absolute -right-32 bottom-0 h-[400px] w-[400px] rounded-full bg-[#3b1fff]/20 blur-3xl" />
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ba0013]/10 blur-2xl" />
 
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
-          <span className="mb-4 inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-widest text-white/80 backdrop-blur-sm">
-            Make a Difference
-          </span>
-          <h1 className="mt-4 font-display text-4xl font-black leading-tight tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl">
-            Empower a{' '}
-            <span className="text-transparent [-webkit-text-stroke:2px_#ba0013] [text-stroke:2px_#ba0013] md:text-white md:[text-shadow:0_0_40px_#ba0013]">
-              Dream
-            </span>{' '}
-            Today
+          <h1 className="font-display text-4xl font-black leading-tight tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl">
+            Your Support Helps Create Opportunities for Young People.
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-white/80 sm:text-xl">
-            Your contribution fuels the future of African youth. Join us in
-            making a lasting impact through education, leadership, and community
-            building.
+          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-white/85 sm:text-xl">
+            Many young people have the potential to lead, innovate and contribute to social and economic development. Your contribution helps us expand access to the learning, mentorship, resources and platforms that support their growth.
           </p>
           <a
             href="#donate-widget"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#ba0013] px-8 py-4 font-bold text-white shadow-lg shadow-[#ba0013]/40 transition-all hover:scale-105 hover:bg-[#93000d] hover:shadow-[#ba0013]/60"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#ba0013] px-8 py-4 font-bold text-white shadow-lg shadow-[#ba0013]/40 transition-all hover:scale-105 hover:bg-[#93000d]"
           >
             <Heart className="h-5 w-5" />
-            Donate Now
+            Give Once
           </a>
-        </div>
-
-        {/* Impact stats bar */}
-        <div className="relative z-10 mx-auto mt-16 max-w-5xl px-4">
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm md:grid-cols-4">
-            {IMPACT_STATS.map(({ icon: Icon, value, label }) => (
-              <div key={label} className="flex flex-col items-center gap-2 px-6 py-6 text-center">
-                <Icon className="h-5 w-5 text-[#ba0013]" />
-                <p className="font-display text-2xl font-black text-white md:text-3xl">{value}</p>
-                <p className="text-xs font-medium uppercase tracking-wide text-white/60">{label}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -74,26 +87,61 @@ export default function DonatePage() {
               Choose Your Contribution
             </h2>
             <p className="mt-2 text-slate-500 dark:text-slate-400">
-              All amounts are in Nigerian Naira (₦). Secure payment via Paystack.
+              Every contribution matters because it supports a defined part of the work required to deliver our programmes. Amounts are in Nigerian Naira (₦).
             </p>
           </div>
           <DonateWidget />
         </div>
       </section>
 
-      {/* Why Donate */}
+      {/* Why your support matters */}
       <section className="bg-white py-20 dark:bg-slate-900">
-        <div className="mx-auto max-w-4xl px-4 text-center">
-          <h2 className="font-display text-3xl font-bold text-slate-900 dark:text-white">
-            Why Donate to YTOP?
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="text-center font-display text-3xl font-bold text-slate-900 dark:text-white">
+            Why Your Support Matters
           </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-            Every naira supports mentorship sessions, leadership bootcamps, and
-            community outreach. We are a registered nonprofit (RC179444) — your
-            gift creates measurable, transparent impact in Nigerian youth
-            communities.
+          <p className="mt-4 text-center text-slate-600 dark:text-slate-400">Your contribution can help YTOP:</p>
+          <ul className="mt-8 grid gap-3 md:grid-cols-2">
+            {SUPPORT_AREAS.map((item) => (
+              <li key={item} className="rounded-xl border-l-4 border-primary bg-slate-50 p-4 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 text-center text-slate-600 dark:text-slate-400">
+            We are committed to communicating how contributions support our activities and documenting the results of funded interventions.
           </p>
-          <p className="mt-8 text-sm text-slate-500 dark:text-slate-500">
+        </div>
+      </section>
+
+      {/* Ways to give */}
+      <section className="bg-slate-50 py-20 dark:bg-background-dark">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h2 className="mb-12 text-center font-display text-3xl font-bold text-slate-900 dark:text-white">
+            Other Ways to Give
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {WAYS.map(({ icon: Icon, title, body, cta, href }) => (
+              <div key={title} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-surface-dark">
+                <Icon className="mb-4 h-8 w-8 text-primary" aria-hidden />
+                <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white">{title}</h3>
+                <p className="mt-3 flex-1 text-slate-600 dark:text-slate-400">{body}</p>
+                <Link href={href} className="mt-6 inline-flex font-semibold text-primary hover:underline">
+                  {cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Accountability */}
+      <section className="bg-white py-16 dark:bg-slate-900">
+        <div className="mx-auto max-w-3xl px-4 text-center">
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            YTOP Global is registered with the Corporate Affairs Commission (RC179444). We are committed to responsible resource management and transparent reporting.
+          </p>
+          <p className="mt-6 text-sm text-slate-500">
             Prefer to give via bank transfer?{' '}
             <Link href="/contact" className="font-semibold text-[#ba0013] hover:underline">
               Contact us

@@ -111,24 +111,32 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'NGO',
     name: 'YTOP Global',
-    alternateName: 'Young Talented Optimistic and Potential Organization',
+    alternateName: 'YTOP Youth Empowerment Foundation',
     url: siteUrl(),
-    logo: `${siteUrl()}/logo.png`,
+    logo: `${siteUrl()}/media/2023/02/YTOP-LOGO.png`,
+    foundingDate: '2017',
+    identifier: 'RC179444',
     description:
-      'Empowering young people through leadership development, career guidance, financial education, and community impact initiatives.',
+      'YTOP Global empowers young people through leadership development, education, mentorship, capacity building and community engagement in Nigeria and beyond.',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '123 Youth Street',
-      addressLocality: 'Community City',
-      postalCode: '12345',
-      addressCountry: 'US',
+      streetAddress: 'H6, Omole line 4, Omisore Street, Modakeke',
+      addressRegion: 'Osun State',
+      addressCountry: 'NG',
     },
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+1-234-567-890',
-      contactType: 'customer service',
-      email: 'info@ytopglobal.org',
-    },
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        telephone: '+2348100218117',
+        contactType: 'customer service',
+        email: 'info@ytopglobal.org',
+      },
+      {
+        '@type': 'ContactPoint',
+        contactType: 'partnerships',
+        email: 'admin@ytopglobal.org',
+      },
+    ],
     sameAs: YTOP_SOCIAL_SAME_AS,
   };
 }

@@ -52,8 +52,8 @@ const TEAM_IN_ACTION_IMAGES = [
 ];
 
 export const metadata = {
-  title: 'Our Team – YTOP Global',
-  description: 'Meet the dedicated team and faculty behind YTOP Global. We are a happy team and we believe we can create a community of great minds.',
+  title: 'Our Team | YTOP Global',
+  description: 'Meet the leadership, faculty, mentors, volunteers and team members behind YTOP Global and its youth development work.',
 };
 
 /** CDN ISR — lib/public-page-config.ts */
@@ -121,10 +121,10 @@ export default async function TeamPage() {
         <div className="container mx-auto px-4 relative z-10 py-20 text-center">
           <div className="max-w-3xl mx-auto rounded-2xl bg-black/50 backdrop-blur-sm px-6 py-8 md:px-10 md:py-10 border border-white/10 shadow-2xl">
             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight [text-shadow:0_2px_20px_rgba(0,0,0,0.6),0_0_40px_rgba(0,0,0,0.4)]">
-              Our Team
+              The People Behind Our Work.
             </h1>
             <p className="text-xl md:text-2xl text-white font-semibold [text-shadow:0_1px_12px_rgba(0,0,0,0.8)]">
-              We are a happy team. We love what we do and we believe we can create a community of great minds.
+              Our leadership, faculty, mentors, volunteers and team members contribute different skills and perspectives to support programme development, institutional engagement and organisational growth.
             </p>
           </div>
         </div>

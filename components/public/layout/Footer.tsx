@@ -41,9 +41,10 @@ export default function Footer({
               </div>
             </div>
             <p className="text-sm leading-relaxed mb-5">
-              Empowering young people through leadership development, career guidance,
-              and community impact initiatives.
+              Developing young people through leadership, education, mentorship, capacity
+              building and community engagement.
             </p>
+            <p className="text-xs text-slate-400 mb-5">Registration: CAC RC179444</p>
             <SocialIconLinks variant="footer" />
           </div>
 
@@ -52,7 +53,7 @@ export default function Footer({
             <ul className="space-y-3 text-sm">
               {[
                 { href: '/about', label: 'About Us' },
-                { href: '/programs', label: 'Our Programs' },
+                { href: '/programs', label: 'Our Programmes' },
                 { href: '/team', label: 'Our Team' },
                 { href: '/events', label: 'Events' },
                 { href: '/gallery', label: 'Gallery' },
@@ -60,6 +61,9 @@ export default function Footer({
                 { href: '/get-involved', label: 'Get Involved' },
                 { href: '/donate', label: 'Donate' },
                 { href: '/impact', label: 'Impact' },
+                { href: '/reports', label: 'Reports and Publications' },
+                { href: '/governance', label: 'Governance' },
+                { href: '/faq', label: 'FAQ' },
                 { href: '/contact', label: 'Contact' },
               ].map(({ href, label }) => (
                 <li key={href}>
@@ -87,7 +91,7 @@ export default function Footer({
                 <Link href="/get-involved/partner" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Partner With Us</Link>
               </li>
               <li>
-                <Link href="/get-involved/sponsor" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Become a Sponsor</Link>
+                <Link href="/get-involved/sponsor" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Corporate Partnerships</Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Contact Us</Link>
@@ -104,11 +108,17 @@ export default function Footer({
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-5 h-5 text-primary" />
-                <a href="tel:+2348012345678" className="hover:text-white transition-colors duration-200 cursor-pointer">+234 801 234 5678</a>
+                <span className="flex flex-col">
+                  <a href="tel:+2348100218117" className="hover:text-white transition-colors duration-200 cursor-pointer">+234 810 021 8117</a>
+                  <a href="tel:+46727702361" className="hover:text-white transition-colors duration-200 cursor-pointer">+46 72 770 2361</a>
+                </span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-5 h-5 text-primary" />
-                <a href="mailto:info@ytopglobal.org" className="hover:text-white transition-colors duration-200 cursor-pointer">info@ytopglobal.org</a>
+                <span className="flex flex-col">
+                  <a href="mailto:info@ytopglobal.org" className="hover:text-white transition-colors duration-200 cursor-pointer">info@ytopglobal.org</a>
+                  <a href="mailto:admin@ytopglobal.org" className="hover:text-white transition-colors duration-200 cursor-pointer">admin@ytopglobal.org</a>
+                </span>
               </li>
             </ul>
             <div>
@@ -123,7 +133,7 @@ export default function Footer({
         <div className="container mx-auto px-4 py-5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
             <div className="text-slate-400">
-              © {currentYear} {siteName}. All rights reserved.
+              © {currentYear} YTOP Youth Empowerment Foundation. All rights reserved.
             </div>
             <div className="flex gap-6">
               <Link href="/privacy" className="hover:text-white transition-colors duration-200 cursor-pointer">Privacy</Link>
