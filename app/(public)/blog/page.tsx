@@ -32,9 +32,9 @@ export const revalidate = 60;
 
 export function generateMetadata() {
   return generateSEOMetadata({
-    title: 'Blog — Insights & Stories',
+    title: 'News and Insights | YTOP Global',
     description:
-      'Explore articles on youth leadership, personal development, community impact, and the latest news from YTOP Global. Stories that inspire the next generation.',
+      'Insights on leadership, education, career development, community participation and sustainable development from YTOP Global.',
     url: '/blog',
     image: '/media/2025/10/DSC0289.jpg',
     type: 'website',
@@ -194,10 +194,10 @@ export default async function BlogPage({
         <div className="max-w-7xl mx-auto">
           <div className="mb-10 text-center">
             <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
-              Insights &amp; <span className="text-primary">Stories</span>
+              Knowledge, Perspectives and <span className="text-primary">Conversations That Matter.</span>
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Explore articles on leadership, personal development, and community impact from the YTOP Global team.
+              Through our publications, YTOP Global shares insights on leadership, education, career development, community participation and sustainable development.
             </p>
           </div>
           {!loadError && featuredPost && (

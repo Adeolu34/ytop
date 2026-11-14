@@ -11,8 +11,17 @@ const SIDEBAR_LINKS = [
 
 export const metadata = {
   title: 'Get Involved - YTOP Global',
-  description: 'Become a part of the YTOP Global family. Partner, sponsor, or join as a campus ambassador.',
+  description: 'Volunteer, become a mentor, join as a campus ambassador, partner with us or join the YTOP Global community.',
 };
+
+// Copy: Master Website Content document, Part Seven. Volunteer, mentor and community routes use the
+// contact form until dedicated application forms exist.
+const WAYS = [
+  { href: '/contact?subject=Volunteer%20application', icon: Users, title: 'Volunteer With Us', body: 'Contribute your time, knowledge and abilities to programme coordination, research, communications, mobilisation, administration, learning activities and community engagement.', cta: 'Apply to Volunteer' },
+  { href: '/contact?subject=Mentor%20application', icon: Heart, title: 'Become a Mentor', body: 'Share your experience and support the personal, educational and career development of young people.', cta: 'Become a Mentor' },
+  { href: '/get-involved/campus-ambassadors', icon: GraduationCap, title: 'Campus Ambassadors', body: 'Represent youth development in your institution: promote activities, support mobilisation and encourage student participation.', cta: 'Apply to Become a Campus Ambassador' },
+  { href: '/contact?subject=Join%20the%20YTOP%20community', icon: Handshake, title: 'Join Our Community', body: 'Connect with young people, professionals and volunteers. Receive learning opportunities, programme announcements and development resources.', cta: 'Join the YTOP Community' },
+];
 
 export default function GetInvolvedPage() {
   return (
@@ -47,12 +56,15 @@ export default function GetInvolvedPage() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <span className="text-primary font-semibold tracking-wide uppercase text-sm mb-2 block">Empowerment Starts Here</span>
+                <span className="text-primary font-semibold tracking-wide uppercase text-sm mb-2 block">Get Involved</span>
                 <h1 className="font-display text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
-                  Become a part of the <span className="text-primary">YTOP Global</span> Family
+                  Your Skills, Time and Experience Can <span className="text-primary">Make a Difference.</span>
                 </h1>
+                <p className="text-lg text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                  Youth development requires more than financial contributions. It also requires people who are willing to share knowledge, provide mentorship, support programme delivery, and contribute to community initiatives.
+                </p>
                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                  Connect with like-minded youth, access exclusive resources, and start your journey towards personal and professional excellence. We are building a future where every young person thrives.
+                  There are several ways to participate in the work of YTOP Global.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
@@ -87,25 +99,15 @@ export default function GetInvolvedPage() {
         <section id="ways" className="py-20 bg-background dark:bg-background-dark">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-10 text-center">Ways to Get Involved</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Link href="/get-involved/partner" className="p-8 rounded-2xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-primary/30 transition-all group">
-                <Handshake className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">Partner With Us</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Align your organization with youth empowerment. Explore partnership opportunities.</p>
-                <span className="inline-flex items-center text-primary font-semibold text-sm">Learn more <ArrowRight className="w-4 h-4 ml-1" /></span>
-              </Link>
-              <Link href="/get-involved/sponsor" className="p-8 rounded-2xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-primary/30 transition-all group">
-                <Heart className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">Become a Sponsor</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Fund programs and events. Your support directly impacts young lives.</p>
-                <span className="inline-flex items-center text-primary font-semibold text-sm">Learn more <ArrowRight className="w-4 h-4 ml-1" /></span>
-              </Link>
-              <Link href="/get-involved/campus-ambassadors" className="p-8 rounded-2xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-primary/30 transition-all group">
-                <GraduationCap className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">Campus Ambassadors</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Represent YTOP on your campus. Lead and grow with us.</p>
-                <span className="inline-flex items-center text-primary font-semibold text-sm">Learn more <ArrowRight className="w-4 h-4 ml-1" /></span>
-              </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {WAYS.map(({ href, icon: Icon, title, body, cta }) => (
+                <Link key={title} href={href} className="p-8 rounded-2xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-primary/30 transition-all group">
+                  <Icon className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">{title}</h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">{body}</p>
+                  <span className="inline-flex items-center text-primary font-semibold text-sm">{cta} <ArrowRight className="w-4 h-4 ml-1" /></span>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

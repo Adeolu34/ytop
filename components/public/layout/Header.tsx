@@ -28,7 +28,13 @@ export default function Header({ logoUrl, siteName }: HeaderProps) {
             </Link>
           </div>
 
-          <div className="lg:hidden">
+          <div className="lg:hidden flex items-center gap-2">
+            <Link
+              href="/donate"
+              className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-sm font-bold shadow-md shadow-primary/30 transition-colors"
+            >
+              Donate
+            </Link>
             <MobileMenu />
           </div>
         </div>
