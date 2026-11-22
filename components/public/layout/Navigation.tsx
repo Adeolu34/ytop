@@ -13,7 +13,7 @@ export default function Navigation() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <nav className="flex items-center gap-1">
+    <nav className="flex items-center gap-0.5 2xl:gap-1 whitespace-nowrap">
       {menuItems.map((item) => {
         const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
         const hasChildren = item.children && item.children.length > 0;
@@ -30,7 +30,7 @@ export default function Navigation() {
                 href={item.href}
                 aria-current={isActive ? 'page' : undefined}
                 className={clsx(
-                  'flex items-center gap-1 px-4 py-2 text-sm font-semibold transition-colors duration-200 rounded-lg cursor-pointer',
+                  'flex items-center gap-1 px-3 2xl:px-4 py-2 text-sm font-semibold transition-colors duration-200 rounded-lg cursor-pointer',
                   isActive
                     ? 'text-primary'
                     : 'text-gray-700 dark:text-gray-300 hover:text-primary'
@@ -47,7 +47,7 @@ export default function Navigation() {
                 href={item.href}
                 aria-current={isActive ? 'page' : undefined}
                 className={clsx(
-                  'block px-4 py-2 text-sm font-semibold transition-colors duration-200 rounded-lg cursor-pointer',
+                  'block px-3 2xl:px-4 py-2 text-sm font-semibold transition-colors duration-200 rounded-lg cursor-pointer',
                   isActive
                     ? 'text-primary'
                     : 'text-gray-700 dark:text-gray-300 hover:text-primary'

@@ -143,7 +143,7 @@ export default function EnquiryForm({
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="group w-full px-8 py-4 bg-primary text-white rounded-xl hover:bg-primary-hover hover:shadow-xl transition-all duration-300 font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="group w-full px-8 py-4 bg-primary text-white rounded-full hover:bg-primary-hover hover:shadow-xl transition-all duration-300 font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status === 'loading' ? 'Sending...' : submitLabel}
         <Send className="w-5 h-5" aria-hidden />

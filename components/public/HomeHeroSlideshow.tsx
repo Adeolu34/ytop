@@ -70,24 +70,18 @@ export default function HomeHeroSlideshow() {
       </div>
 
       {/* Content - stitch hero */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <span className="inline-block py-1 px-3 rounded-full bg-blue-100/90 dark:bg-blue-900/50 text-secondary dark:text-blue-300 text-sm font-bold tracking-wide mb-6 uppercase">
             Since {ORG_FOUNDED_YEAR} • {ORG_RC_NUMBER}
           </span>
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight drop-shadow-lg">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight drop-shadow-lg text-balance">
             Developing Young People. Strengthening Communities. <br />
             <span className="hero-text-gradient">Building the Future.</span>
           </h1>
-          <p className="max-w-2xl mx-auto text-xl md:text-2xl font-semibold text-white mb-6 leading-relaxed drop-shadow-md">
+          <p className="max-w-2xl mx-auto text-xl md:text-2xl font-semibold text-white mb-8 leading-relaxed drop-shadow-md">
             Creating opportunities for young people to lead, grow and contribute to sustainable development.
           </p>
-          <div className="max-w-2xl mx-auto space-y-3 text-base md:text-lg text-white/95 mb-10 leading-relaxed drop-shadow-md">
-            <p>Young people are a powerful force for social and economic development. However, talent and ambition alone do not guarantee opportunity.</p>
-            <p>Access to quality learning, mentorship, leadership development, professional networks and meaningful participation remains uneven.</p>
-            <p>YTOP Global addresses these gaps by equipping young people with the knowledge, skills, confidence, and opportunities they need to become responsible leaders and active contributors to their communities.</p>
-            <p>Through leadership development, capacity building, mentorship, education and community-based initiatives, we support young people to turn their potential into meaningful action.</p>
-          </div>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/donate"
@@ -102,11 +96,17 @@ export default function HomeHeroSlideshow() {
               Explore Our Impact
             </Link>
           </div>
-          <p className="mt-6">
-            <Link href="/programs" className="text-white font-semibold underline underline-offset-4 hover:text-primary drop-shadow-md">
+          <p className="mt-6 text-center">
+            <Link href="/programs" className="text-white font-semibold underline underline-offset-4 hover:text-white/80 drop-shadow-md">
               Discover Our Programmes
             </Link>
           </p>
+          <div className="max-w-2xl mx-auto space-y-3 text-base md:text-lg text-white/95 mt-10 leading-relaxed text-pretty drop-shadow-md">
+            <p>Young people are a powerful force for social and economic development. However, talent and ambition alone do not guarantee opportunity.</p>
+            <p>Access to quality learning, mentorship, leadership development, professional networks and meaningful participation remains uneven.</p>
+            <p>YTOP Global addresses these gaps by equipping young people with the knowledge, skills, confidence, and opportunities they need to become responsible leaders and active contributors to their communities.</p>
+            <p>Through leadership development, capacity building, mentorship, education and community-based initiatives, we support young people to turn their potential into meaningful action.</p>
+          </div>
         </div>
       </div>
 

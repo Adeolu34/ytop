@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import UnsubscribeForm from './UnsubscribeForm';
 import { verifyUnsubscribeToken } from '@/lib/unsubscribe';
+import PageHeader from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Unsubscribe | YTOP Global',
@@ -20,8 +21,9 @@ export default async function UnsubscribePage({
   const valid = email.length > 0 && token.length > 0 && verifyUnsubscribeToken(email, token);
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-20 text-center">
-      <h1 className="mb-6 font-display text-3xl font-bold text-slate-900">Unsubscribe from YTOP Global updates</h1>
+    <>
+      <PageHeader title="Unsubscribe from YTOP Global updates" />
+      <div className="mx-auto max-w-xl px-4 py-12 text-center">
       {valid ? (
         <UnsubscribeForm email={email} token={token} />
       ) : (
@@ -33,6 +35,7 @@ export default async function UnsubscribePage({
           <Link href="/" className="inline-block font-semibold text-primary hover:underline">Back to the homepage</Link>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

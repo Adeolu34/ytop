@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { FileText } from 'lucide-react';
 import { getPublicDocuments } from '@/lib/public-documents';
+import PageHeader from '@/components/public/PageHeader';
 
 /** CDN ISR: documents published in the admin appear within a minute. */
 export const revalidate = 60;
@@ -25,8 +26,9 @@ export default async function ReportsPage() {
   const reports = (await getPublicDocuments()).filter((d) => d.category === 'REPORT');
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="font-display text-4xl font-bold text-slate-900 dark:text-white mb-6">Reports and Resources</h1>
+    <>
+      <PageHeader title="Reports and Resources" />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <p className="text-lg text-slate-600 dark:text-slate-300 mb-4">
         Access selected publications that document our work, share programme findings and provide information about our development priorities.
       </p>
@@ -60,6 +62,7 @@ export default async function ReportsPage() {
           and <Link href="/impact" className="text-primary font-semibold hover:underline">impact framework</Link>.
         </p>
       )}
-    </div>
+      </div>
+    </>
   );
 }

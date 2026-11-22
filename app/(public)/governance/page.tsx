@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { FileText } from 'lucide-react';
 import { GOVERNANCE_DOCUMENT_TITLES, getPublicDocuments, governanceUrl } from '@/lib/public-documents';
+import PageHeader from '@/components/public/PageHeader';
 
 /** CDN ISR: documents published in the admin appear within a minute. */
 export const revalidate = 60;
@@ -17,10 +18,9 @@ export default async function GovernancePage() {
   const docs = await getPublicDocuments();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="font-display text-4xl font-bold text-slate-900 dark:text-white mb-6">
-        Responsible Leadership. Transparent Governance.
-      </h1>
+    <>
+      <PageHeader title="Responsible Leadership. Transparent Governance." />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="space-y-4 text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
         <p>Strong governance supports organisational accountability, responsible decision-making and public confidence.</p>
         <p>YTOP Global recognises the importance of clear leadership responsibilities, institutional oversight and ethical conduct.</p>
@@ -43,7 +43,7 @@ export default async function GovernancePage() {
               ) : (
                 <span>
                   {title}
-                  <span className="block text-xs text-slate-500">Will be published when approved</span>
+                  <span className="block text-sm text-slate-600">Will be published when approved</span>
                 </span>
               )}
             </li>
@@ -53,6 +53,7 @@ export default async function GovernancePage() {
       <p className="mt-10 text-slate-600 dark:text-slate-400">
         Questions about our governance? <Link href="/contact" className="text-primary font-semibold hover:underline">Contact us</Link>.
       </p>
-    </div>
+      </div>
+    </>
   );
 }

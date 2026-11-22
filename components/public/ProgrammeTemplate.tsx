@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import PageHeader from '@/components/public/PageHeader';
 
 export type ProgrammeContent = {
   name: string;
@@ -18,15 +19,16 @@ export type ProgrammeContent = {
 export default function ProgrammeTemplate({ content }: { content: ProgrammeContent }) {
   return (
     <div>
-      <section className="bg-secondary text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/programs" className="inline-flex items-center text-blue-100 hover:text-white mb-6 text-sm">
-            ← All programmes
-          </Link>
-          <p className="text-primary font-bold uppercase tracking-wider text-sm mb-3">{content.name}</p>
-          <h1 className="font-display text-4xl md:text-5xl font-extrabold leading-tight">{content.headline}</h1>
-        </div>
-      </section>
+      <PageHeader
+        align="left"
+        eyebrow={
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <Link href="/programs" className="hover:underline">← All programmes</Link>
+            <span className="font-bold uppercase tracking-wider text-white">{content.name}</span>
+          </div>
+        }
+        title={content.headline}
+      />
 
       {content.image ? (
         <div className="relative h-56 sm:h-72 md:h-96 w-full">

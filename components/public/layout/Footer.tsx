@@ -60,7 +60,7 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
   },
 ];
 
-const linkClass = 'hover:text-primary hover:pl-2 transition-all duration-200 inline-block';
+const linkClass = 'text-gray-200 hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block';
 
 export default function Footer({ logoUrl, siteName = 'YTOP Global' }: FooterProps) {
   const currentYear = new Date().getFullYear();
@@ -77,7 +77,7 @@ export default function Footer({ logoUrl, siteName = 'YTOP Global' }: FooterProp
               </div>
               <div>
                 <div className="font-bold text-white text-lg uppercase">{siteName}</div>
-                <div className="text-xs text-slate-300">YTOP Youth Empowerment Foundation</div>
+                <div className="text-sm text-slate-200">YTOP Youth Empowerment Foundation</div>
               </div>
             </div>
             <p className="text-sm leading-relaxed mb-3">

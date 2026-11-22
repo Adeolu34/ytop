@@ -1,24 +1,17 @@
 import { Mail, Phone, MapPin } from 'lucide-react';
 import SocialIconLinks from '@/components/public/SocialIconLinks';
 import EnquiryForm from '@/components/public/EnquiryForm';
+import PageHeader from '@/components/public/PageHeader';
 
 // Copy: Master Website Content document, Part Eleven.
 export default function ContactPage() {
   return (
     <div>
-      <section className="relative min-h-[40vh] flex items-center justify-center bg-secondary text-white py-20">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Let&apos;s Start a Conversation.</h1>
-            <p className="text-xl text-white/95">
-              Whether you are interested in our programmes, considering a partnership, seeking to volunteer or looking for ways to support our work, we would be pleased to hear from you.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHeader title="Let&apos;s Start a Conversation.">
+        <p>Whether you are interested in our programmes, considering a partnership, seeking to volunteer or looking for ways to support our work, we would be pleased to hear from you.</p>
+      </PageHeader>
 
-      <section className="py-20 bg-white dark:bg-background-dark">
+      <section className="py-14 md:py-16 bg-white dark:bg-background-dark">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>

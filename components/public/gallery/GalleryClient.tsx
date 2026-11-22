@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { X, ZoomIn } from 'lucide-react';
 import type { CloudinaryGalleryItem } from '@/lib/cloudinary';
+import PageHeader from '@/components/public/PageHeader';
 
 const STATIC_GALLERY: Array<{
   src: string;
@@ -67,26 +68,9 @@ export default function GalleryClient({
 
   return (
     <div>
-      <section className="relative min-h-[50vh] flex items-center justify-center bg-secondary text-white py-20">
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)',
-            backgroundSize: '30px 30px',
-          }}
-          aria-hidden
-        />
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">
-              Our Gallery
-            </h1>
-            <p className="text-xl text-white/95 leading-relaxed">
-              Moments of impact, growth, and community from our programs and events
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHeader title="Our Gallery">
+        <p>Moments of impact, growth, and community from our programs and events</p>
+      </PageHeader>
 
       <section className="py-20 md:py-24 bg-background-light dark:bg-background-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -149,7 +133,7 @@ export default function GalleryClient({
                 <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-secondary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-4">
                   <div className="text-white">
                     <p className="font-bold text-sm">{image.alt}</p>
-                    <p className="text-xs text-white/80">{image.category}</p>
+                    <p className="text-sm text-white/90">{image.category}</p>
                   </div>
                   <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
                     <ZoomIn className="w-5 h-5 text-white" />

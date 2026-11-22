@@ -15,11 +15,11 @@ export default function Header({ logoUrl, siteName }: HeaderProps) {
         <div className="flex justify-between items-center h-20">
           <Logo logoUrl={logoUrl} siteName={siteName} />
 
-          <div className="hidden lg:block">
+          <div className="hidden xl:block">
             <Navigation />
           </div>
 
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-3">
             <Link
               href="/donate"
               className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-primary/30 transition-all duration-200 cursor-pointer transform hover:-translate-y-0.5"
@@ -28,7 +28,7 @@ export default function Header({ logoUrl, siteName }: HeaderProps) {
             </Link>
           </div>
 
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="xl:hidden flex items-center gap-2">
             <Link
               href="/donate"
               className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-sm font-bold shadow-md shadow-primary/30 transition-colors"

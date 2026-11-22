@@ -327,7 +327,7 @@ export default async function AboutPage() {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/get-involved"
-              className="bg-primary hover:bg-primary-hover text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+              className="bg-primary hover:bg-primary-hover text-white font-bold py-4 px-8 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
             >
               Get Involved
             </Link>

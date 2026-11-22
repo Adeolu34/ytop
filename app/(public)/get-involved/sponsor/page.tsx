@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Heart } from 'lucide-react';
 import { getSiteContent } from '@/lib/site-content';
+import PageHeader from '@/components/public/PageHeader';
 
 /** CDN ISR: packages edited in the admin appear within a minute. */
 export const revalidate = 60;
@@ -25,18 +25,12 @@ const INTERESTS = [
 export default async function SponsorPage() {
   const { sponsorshipPackages: SPONSORSHIP_PACKAGES } = await getSiteContent();
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <Link href="/get-involved" className="inline-flex items-center text-primary font-medium hover:underline mb-8">
-        ← Get Involved
-      </Link>
-      <div className="flex items-start gap-4 mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <Heart className="w-8 h-8 text-primary" aria-hidden />
-        </div>
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
-          Put Your Organisation&apos;s Commitment to Youth Development into Action.
-        </h1>
-      </div>
+    <>
+      <PageHeader
+        title="Put Your Organisation&apos;s Commitment to Youth Development into Action."
+        eyebrow={<Link href="/get-involved" className="hover:underline">← Get Involved</Link>}
+      />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="space-y-4 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
         <p>Corporate organisations play an important role in expanding opportunities for young people.</p>
         <p>Through corporate sponsorship, your organisation can support programmes that strengthen leadership, education, skills development and community participation.</p>
@@ -78,6 +72,7 @@ export default async function SponsorPage() {
           Discuss Corporate Sponsorship
         </Link>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

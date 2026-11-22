@@ -44,11 +44,14 @@ export default function MobileMenu() {
       {/* Slide-in panel */}
       <div
         className={clsx(
-          'fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-background dark:bg-background-dark shadow-2xl z-[210] transform transition-transform duration-300 ease-in-out overflow-y-auto',
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+          'fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-background dark:bg-background-dark z-[210] transform transition-[transform,visibility,box-shadow] duration-300 ease-in-out overflow-y-auto',
+          // Closed: off-screen, no shadow bleeding into the page, removed from the tab order.
+          isOpen ? 'translate-x-0 visible shadow-2xl' : 'translate-x-full invisible shadow-none'
         )}
         role="dialog"
-        aria-modal="true"
+        aria-modal={isOpen ? 'true' : undefined}
+        aria-hidden={!isOpen}
+        inert={!isOpen}
         aria-label="Navigation menu"
       >
         <div className="p-6">
@@ -62,7 +65,7 @@ export default function MobileMenu() {
 
           <div className="mb-8">
             <div className="font-display font-bold text-xl text-gray-900 dark:text-white">YTOP Global</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Young Talented Optimistic and Potential Org.</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Young Talented Optimistic and Potential Org.</div>
           </div>
 
           <nav className="space-y-2">

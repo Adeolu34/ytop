@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import EnquiryForm from '@/components/public/EnquiryForm';
+import PageHeader from '@/components/public/PageHeader';
 
 type Props = {
   headline: string;
@@ -22,13 +23,14 @@ export default function ApplyPage({
   formType,
 }: Props) {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <Link href="/get-involved" className="inline-flex items-center text-primary font-medium hover:underline mb-8">
-        ← Get Involved
-      </Link>
+    <>
+      <PageHeader
+        title={headline}
+        eyebrow={<Link href="/get-involved" className="hover:underline">← Get Involved</Link>}
+      />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid gap-12 lg:grid-cols-2">
         <div>
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">{headline}</h1>
           <div className="space-y-4 text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             {paragraphs.map((p) => (
               <p key={p}>{p}</p>
@@ -45,6 +47,7 @@ export default function ApplyPage({
           />
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

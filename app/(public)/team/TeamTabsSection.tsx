@@ -168,7 +168,7 @@ function TeamTabsSection({
                     {person.name}
                   </p>
                   {person.role && (
-                    <p className="text-xs text-ytop-blue font-medium mt-1">
+                    <p className="text-sm text-ytop-blue font-medium mt-1">
                       {person.role}
                     </p>
                   )}

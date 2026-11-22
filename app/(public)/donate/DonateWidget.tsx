@@ -275,7 +275,7 @@ export default function DonateWidget({ campaigns, givingLinks, monthlyUrl, check
               <button
                 type="submit"
                 disabled={status === 'working' || (needsAmount && displayAmount === null)}
-                className="w-full py-4 bg-primary hover:bg-primary-hover disabled:bg-slate-300 disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2"
+                className="w-full py-4 bg-primary hover:bg-primary-hover disabled:bg-slate-300 disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-full shadow-md transition-colors flex items-center justify-center gap-2"
               >
                 <Lock className="w-4 h-4" aria-hidden />
                 {status === 'working' ? 'Starting secure payment...' : buttonLabel}
@@ -292,7 +292,7 @@ export default function DonateWidget({ campaigns, givingLinks, monthlyUrl, check
             <p role="alert" className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-lg p-3">{message}</p>
           ) : null}
 
-          <p className="text-xs text-center text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1">
+          <p className="text-sm text-center text-slate-600 dark:text-slate-400 flex items-center justify-center gap-1">
             <Lock className="w-3 h-3" aria-hidden />
             Secure payment processed by Paystack
           </p>

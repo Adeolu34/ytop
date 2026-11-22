@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Quote } from 'lucide-react';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
 import { mongoTestimonialsList } from '@/lib/mongo-testimonials-store';
+import PageHeader from '@/components/public/PageHeader';
 
 /** CDN ISR: stories added in the admin appear within a minute. */
 export const revalidate = 60;
@@ -64,11 +65,11 @@ export default async function StoriesPage() {
   const stories = dbStories.length > 0 ? dbStories : STORIES;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="font-display text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">People Behind the Progress</h1>
-      <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mb-12">
-        Every development intervention involves people with different experiences, needs and aspirations. These are experiences shared by people who have taken part in YTOP programmes, in their own words.
-      </p>
+    <>
+      <PageHeader title="People Behind the Progress">
+        <p>Every development intervention involves people with different experiences, needs and aspirations. These are experiences shared by people who have taken part in YTOP programmes, in their own words.</p>
+      </PageHeader>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid gap-6 md:grid-cols-2">
         {stories.map((s) => (
           <figure key={s.name} className="relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark p-8 shadow-sm">
@@ -84,6 +85,7 @@ export default async function StoriesPage() {
       <div className="mt-12 text-center">
         <Link href="/impact" className="text-primary font-semibold hover:underline">Back to our impact framework</Link>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

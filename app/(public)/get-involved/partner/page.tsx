@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { Handshake } from 'lucide-react';
 import { getPublicDocuments, profileUrl } from '@/lib/public-documents';
 
 /** CDN ISR: the profile appears within a minute of publishing it in the admin. */
 export const revalidate = 60;
 import EnquiryForm from '@/components/public/EnquiryForm';
+import PageHeader from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Partner With YTOP Global | Youth Development and CSR Partnerships',
@@ -40,20 +40,14 @@ const lightButton =
 export default async function PartnerPage() {
   const ORG_PROFILE_URL = profileUrl(await getPublicDocuments());
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <Link href="/get-involved" className="inline-flex items-center text-primary font-medium hover:underline mb-8">
-        ← Get Involved
-      </Link>
+    <>
+      <PageHeader
+        title="Partner With YTOP to Expand Opportunities for Young People."
+        eyebrow={<Link href="/get-involved" className="hover:underline">← Get Involved</Link>}
+      />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
       {/* 5.1 */}
-      <div className="flex items-start gap-4 mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <Handshake className="w-8 h-8 text-primary" aria-hidden />
-        </div>
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
-          Partner With YTOP to Expand Opportunities for Young People.
-        </h1>
-      </div>
       <div className="space-y-4 text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl">
         <p>Sustainable youth development requires collaboration across institutions, communities, businesses and development organisations.</p>
         <p>No single organisation can address the full range of challenges affecting young people.</p>
@@ -115,6 +109,7 @@ export default async function PartnerPage() {
           defaultSubject="Partnership enquiry"
         />
       </div>
-    </div>
+      </div>
+    </>
   );
 }

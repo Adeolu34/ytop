@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
+import PageHeader from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Thank You for Supporting YTOP Global',
@@ -44,9 +45,10 @@ export default async function ThankYouPage({
 
   if (result === 'success') {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+      <>
+      <PageHeader title="Thank You for Supporting YTOP Global." />
+      <div className="max-w-2xl mx-auto px-4 py-14 text-center">
         <CheckCircle2 className="w-14 h-14 text-green-600 mx-auto mb-6" aria-hidden />
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">Thank You for Supporting YTOP Global.</h1>
         <div className="space-y-4 text-lg text-slate-600 dark:text-slate-300">
           <p className="font-semibold">Your contribution has been received.</p>
           <p>Thank you for supporting our work to expand opportunities for young people and strengthen communities.</p>
@@ -58,15 +60,15 @@ export default async function ThankYouPage({
           Explore Our Impact
         </Link>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+    <>
+    <PageHeader title={result === 'failed' ? 'We could not confirm your payment.' : 'We are confirming your payment.'} />
+    <div className="max-w-2xl mx-auto px-4 py-14 text-center">
       <AlertCircle className="w-14 h-14 text-amber-600 mx-auto mb-6" aria-hidden />
-      <h1 className="font-display text-3xl font-bold text-slate-900 dark:text-white mb-6">
-        {result === 'failed' ? 'We could not confirm your payment.' : 'We are confirming your payment.'}
-      </h1>
       <p className="text-lg text-slate-600 dark:text-slate-300">
         {result === 'failed'
           ? 'We could not confirm your payment. Please check your payment method or try again. Contact our support team if the issue continues.'
@@ -77,5 +79,6 @@ export default async function ThankYouPage({
         <Link href="/contact?subject=Donation%20support" className="inline-flex justify-center px-8 py-3 border-2 border-secondary text-secondary font-bold rounded-full hover:bg-secondary hover:text-white transition">Contact our support team</Link>
       </div>
     </div>
+    </>
   );
 }

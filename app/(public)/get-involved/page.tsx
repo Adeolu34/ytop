@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Users, Heart, GraduationCap, Handshake, ArrowRight } from 'lucide-react';
+import PageHeader from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Get Involved | YTOP Global',
@@ -60,31 +61,22 @@ const OPTIONS = [
 export default function GetInvolvedPage() {
   return (
     <div>
-      <section className="bg-surface-light dark:bg-surface-dark">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
-            Your Skills, Time and Experience Can Make a Difference.
-          </h1>
-          <div className="space-y-4 text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl">
-            <p>Youth development requires more than financial contributions.</p>
-            <p>
-              It also requires people willing to share knowledge, provide mentorship, support programme delivery, and contribute to community initiatives.
-            </p>
-            <p>There are several ways to participate in the work of YTOP Global.</p>
-          </div>
-          <nav aria-label="Ways to get involved" className="mt-8 flex flex-wrap gap-3">
-            {OPTIONS.map((o) => (
-              <a
-                key={o.title}
-                href={`#${o.href.split('/').pop()}`}
-                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-primary hover:text-primary dark:border-slate-600 dark:text-slate-200"
-              >
-                {o.title}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </section>
+      <PageHeader title="Your Skills, Time and Experience Can Make a Difference.">
+        <p>Youth development requires more than financial contributions.</p>
+        <p>It also requires people willing to share knowledge, provide mentorship, support programme delivery, and contribute to community initiatives.</p>
+        <p>There are several ways to participate in the work of YTOP Global.</p>
+        <nav aria-label="Ways to get involved" className="pt-3 flex flex-wrap justify-center gap-3">
+          {OPTIONS.map((o) => (
+            <a
+              key={o.title}
+              href={`#${o.href.split('/').pop()}`}
+              className="rounded-full border border-white/50 px-4 py-2 text-sm font-semibold text-white hover:bg-white hover:text-secondary transition-colors"
+            >
+              {o.title}
+            </a>
+          ))}
+        </nav>
+      </PageHeader>
 
       {OPTIONS.map((o, i) => {
         const Icon = o.icon;

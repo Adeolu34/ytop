@@ -129,7 +129,7 @@ export default function TeamProfilePage() {
             >
               {photoPreview ? 'Change photo' : 'Upload a photo'}
             </button>
-            <p className="text-xs text-slate-400">JPG, PNG or WebP · max 5 MB</p>
+            <p className="text-sm text-slate-600">JPG, PNG or WebP · max 5 MB</p>
           </div>
 
           {/* Name */}

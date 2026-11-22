@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getPublicDocuments, governanceUrl } from '@/lib/public-documents';
+import PageHeader from '@/components/public/PageHeader';
 
 /** CDN ISR: the policy link appears within a minute of publishing it in the admin. */
 export const revalidate = 60;
@@ -15,8 +16,9 @@ export const metadata = {
 export default async function SafeguardingPage() {
   const policyUrl = governanceUrl(await getPublicDocuments(), 'Safeguarding Policy');
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="font-display text-4xl font-bold text-slate-900 dark:text-white mb-6">Safeguarding</h1>
+    <>
+      <PageHeader title="Safeguarding" />
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="space-y-4 text-lg text-slate-600 dark:text-slate-300">
         <p>Our mentorship engagement follows clear expectations, appropriate safeguarding arrangements and defined participation guidelines.</p>
         {policyUrl ? (
@@ -29,6 +31,7 @@ export default async function SafeguardingPage() {
         )}
         <p>If you have a safeguarding concern, please contact us immediately at <a href="mailto:info@ytopglobal.org" className="text-primary font-semibold hover:underline">info@ytopglobal.org</a>.</p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

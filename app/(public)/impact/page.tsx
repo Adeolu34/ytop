@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 import { getSiteContent } from '@/lib/site-content';
+import PageHeader from '@/components/public/PageHeader';
 
 /** CDN ISR: figures edited in the admin appear within a minute. */
 export const revalidate = 60;
@@ -48,21 +49,14 @@ export default async function ImpactPage() {
   return (
     <div>
       {/* 4.1 Introduction */}
-      <section className="w-full px-4 py-16 md:py-24 bg-white dark:bg-background-dark">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="font-display text-slate-900 dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-8">
-            Measuring Progress. Documenting Results. <span className="text-primary">Strengthening Accountability.</span>
-          </h1>
-          <div className="space-y-4 text-slate-600 dark:text-slate-400 text-lg md:text-xl leading-relaxed">
-            <p>At YTOP Global, we believe that development work should be supported by evidence.</p>
-            <p>Our impact is reflected in the opportunities we create, the people we engage, the institutions we work with, and the changes that our programmes seek to achieve.</p>
-            <p>We are committed to strengthening our monitoring, evaluation and learning practices to understand what works, identify areas for improvement and communicate our results transparently.</p>
-          </div>
-        </div>
-      </section>
+      <PageHeader title="Measuring Progress. Documenting Results. Strengthening Accountability.">
+        <p>At YTOP Global, we believe that development work should be supported by evidence.</p>
+        <p>Our impact is reflected in the opportunities we create, the people we engage, the institutions we work with, and the changes that our programmes seek to achieve.</p>
+        <p>We are committed to strengthening our monitoring, evaluation and learning practices to understand what works, identify areas for improvement and communicate our results transparently.</p>
+      </PageHeader>
 
       {IMPACT_FIGURES.length > 0 ? (
-        <section className="w-full bg-secondary text-white py-16" aria-labelledby="impact-figures-heading">
+        <section className="w-full bg-slate-50 dark:bg-surface-dark text-slate-900 dark:text-white py-16" aria-labelledby="impact-figures-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 id="impact-figures-heading" className="font-display text-3xl font-bold text-center mb-10">Our Work. Our Reach. Our Results.</h2>
             <dl className="grid grid-cols-2 lg:grid-cols-3 gap-8 text-center">
@@ -70,7 +64,7 @@ export default async function ImpactPage() {
                 <div key={f.label}>
                   <dd className="font-display text-4xl md:text-5xl font-extrabold text-primary">{f.value}</dd>
                   <dt className="mt-2 font-semibold first-letter:uppercase">{f.label}</dt>
-                  {f.period || f.source ? <p className="mt-1 text-xs text-white/70">{[f.period, f.source].filter(Boolean).join(' · ')}</p> : null}
+                  {f.period || f.source ? <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{[f.period, f.source].filter(Boolean).join(' · ')}</p> : null}
                 </div>
               ))}
             </dl>
@@ -87,7 +81,7 @@ export default async function ImpactPage() {
             <div key={level.title} className="bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col">
               <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">{level.title}</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">{level.intro}</p>
-              <p className="text-xs font-bold text-slate-500 uppercase mb-3">Examples:</p>
+              <p className="text-sm font-bold text-slate-600 uppercase mb-3">Examples:</p>
               <ul className="flex flex-col gap-3">
                 {level.examples.map((e) => (
                   <li key={e} className="flex gap-3 items-start">

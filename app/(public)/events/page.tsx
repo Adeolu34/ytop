@@ -396,7 +396,7 @@ export default async function EventsPage() {
                         </span>
                       )}
                       {event.sdg && (
-                        <span className="px-2.5 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full">
+                        <span className="px-3 py-1 bg-secondary/10 text-secondary text-sm font-semibold rounded-full">
                           {event.sdg}
                         </span>
                       )}
@@ -422,7 +422,7 @@ export default async function EventsPage() {
                         {event.tags.slice(0, 4).map((tag) => (
                           <span
                             key={tag}
-                            className="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full"
+                            className="px-3 py-1 bg-slate-100 text-slate-700 text-sm font-medium rounded-full"
                           >
                             {tag}
                           </span>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PageHeader from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Frequently Asked Questions | YTOP Global',
@@ -43,8 +44,9 @@ const FAQ_GROUPS = [
 
 export default function FaqPage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="font-display text-4xl font-bold text-slate-900 dark:text-white mb-10">Frequently Asked Questions</h1>
+    <>
+      <PageHeader title="Frequently Asked Questions" />
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {FAQ_GROUPS.map((g) => (
         <section key={g.group} className="mb-10">
           <h2 className="font-display text-2xl font-bold text-secondary dark:text-white mb-4">{g.group}</h2>
@@ -64,6 +66,7 @@ export default function FaqPage() {
       <p className="text-slate-600 dark:text-slate-400">
         Still have a question? <Link href="/contact" className="text-primary font-semibold hover:underline">Contact us</Link>.
       </p>
-    </div>
+      </div>
+    </>
   );
 }

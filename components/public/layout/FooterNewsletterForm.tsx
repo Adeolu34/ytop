@@ -84,7 +84,7 @@ export default function FooterNewsletterForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-hover transition-all duration-200 text-sm font-semibold cursor-pointer transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+          className="px-4 py-2.5 bg-primary text-white rounded-full hover:bg-primary-hover transition-all duration-200 text-sm font-semibold cursor-pointer transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? 'Saving...' : 'Subscribe to Our Newsletter'}
         </button>
@@ -92,7 +92,7 @@ export default function FooterNewsletterForm() {
 
       {submissionState.message ? (
         <p
-          className={`mt-3 text-xs ${
+          className={`mt-3 text-sm ${
             submissionState.type === 'success'
               ? 'text-emerald-300'
               : 'text-[#ffb4ab]'

@@ -6,8 +6,9 @@
   --background: #ffffff;
   --foreground: #0f172a;
   /* Stitch-unified theme (primary red, secondary navy) */
-  --primary: #EF4444;
-  --primary-hover: #dc2626;
+  /* Primary red darkened from #EF4444: white text on it is 4.83:1 (WCAG AA needs 4.5:1; the old red was 3.76:1). */
+  --primary: #DC2626;
+  --primary-hover: #B91C1C;
   --secondary: #1E3A8A;
   --secondary-hover: #1e40af;
   --background-light: #f8f6f6;
@@ -15,8 +16,8 @@
   --surface-light: #F3F4F6;
   --surface-dark: #1E293B;
   /* YTOP brand (kept for compatibility) */
-  --ytop-red: #EF4444;
-  --ytop-red-hover: #dc2626;
+  --ytop-red: #DC2626;
+  --ytop-red-hover: #B91C1C;
   --ytop-red-light: #fef2f2;
   --ytop-blue: #1E3A8A;
   --ytop-blue-hover: #1e40af;
@@ -199,9 +200,12 @@ body {
 
 /* Focus visible states for accessibility */
 @layer base {
+  /* Two-tone ring: the navy outline shows on light backgrounds, the white inner ring shows on navy
+     and photo backgrounds (footer, banners, hero), where a navy outline alone would vanish. */
   *:focus-visible {
     outline: 2px solid var(--ytop-blue);
     outline-offset: 2px;
+    box-shadow: 0 0 0 2px #ffffff;
     border-radius: 0.25rem;
   }
 

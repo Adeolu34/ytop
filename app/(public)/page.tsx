@@ -118,7 +118,7 @@ export default async function HomePage() {
                   <dd className="font-display text-4xl md:text-6xl font-extrabold text-primary">{f.value}</dd>
                   <dt className="mt-2 font-semibold text-white first-letter:uppercase">{f.label}</dt>
                   {f.period || f.source ? (
-                    <p className="mt-1 text-xs text-white/70">{[f.period, f.source].filter(Boolean).join(' · ')}</p>
+                    <p className="mt-1 text-sm text-blue-100">{[f.period, f.source].filter(Boolean).join(' · ')}</p>
                   ) : null}
                 </div>
               ))}
@@ -282,7 +282,7 @@ export default async function HomePage() {
           <h2 id="newsletter-heading" className="font-display text-3xl font-bold mb-3">Stay Connected to the Work We Do.</h2>
           <p className="text-blue-100 mb-6">Receive updates on our programmes, community initiatives, development insights, and opportunities to support young people.</p>
           <FooterNewsletterForm />
-          <p className="mt-3 text-xs text-blue-200">By subscribing, you agree to receive relevant updates from YTOP Global. You may unsubscribe at any time.</p>
+          <p className="mt-3 text-sm text-blue-100">By subscribing, you agree to receive relevant updates from YTOP Global. You may unsubscribe at any time.</p>
         </div>
       </section>
 
@@ -297,13 +297,13 @@ export default async function HomePage() {
             <p>Join YTOP Global in supporting initiatives that strengthen young people and create pathways for meaningful community participation.</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/donate" className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-bold rounded-xl hover:bg-gray-100 shadow-xl transition-all text-lg">
+            <Link href="/donate" className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-bold rounded-full hover:bg-gray-100 shadow-xl transition-all text-lg">
               Support Our Mission
             </Link>
-            <Link href="/get-involved/volunteer" className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-primary transition-all text-lg">
+            <Link href="/get-involved/volunteer" className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-primary transition-all text-lg">
               Become a Volunteer
             </Link>
-            <Link href="/get-involved/partner" className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-primary transition-all text-lg">
+            <Link href="/get-involved/partner" className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-primary transition-all text-lg">
               Partner With Us
             </Link>
           </div>

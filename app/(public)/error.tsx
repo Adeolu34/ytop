@@ -27,7 +27,7 @@ export default function PublicError({
           </pre>
         )}
         {error?.digest && (
-          <p className="text-xs text-slate-400 mb-4">Digest: {error.digest}</p>
+          <p className="text-sm text-slate-600 mb-4">Digest: {error.digest}</p>
         )}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button

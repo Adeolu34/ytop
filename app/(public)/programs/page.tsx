@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
 import { mongoListActivePrograms } from '@/lib/mongo-public';
 import { generateSEOMetadata } from '@/components/SEOHead';
+import PageHeader from '@/components/public/PageHeader';
 
 /** CDN ISR — lib/public-page-config.ts */
 export const revalidate = 60;
@@ -44,17 +45,11 @@ export default async function ProgramsPage() {
 
   return (
     <div>
-      <section className="relative bg-secondary text-white py-20">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />
-        <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
-          <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Creating Opportunities Through Action.</h1>
-          <div className="space-y-4 text-lg md:text-xl text-white/95">
-            <p>YTOP Global implements programmes that support leadership development, education, capacity building, mentorship and community participation.</p>
-            <p>Our initiatives respond to different needs and provide opportunities for young people to develop their abilities, expand their knowledge and contribute to positive change.</p>
-            <p>Explore our programmes and find out how you can participate or support their implementation.</p>
-          </div>
-        </div>
-      </section>
+      <PageHeader title="Creating Opportunities Through Action.">
+        <p>YTOP Global implements programmes that support leadership development, education, capacity building, mentorship and community participation.</p>
+        <p>Our initiatives respond to different needs and provide opportunities for young people to develop their abilities, expand their knowledge and contribute to positive change.</p>
+        <p>Explore our programmes and find out how you can participate or support their implementation.</p>
+      </PageHeader>
 
       <section className="py-20 bg-white dark:bg-background-dark">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">

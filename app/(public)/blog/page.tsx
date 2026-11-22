@@ -220,7 +220,7 @@ export default async function BlogPage({
       <section className="relative bg-white dark:bg-background-dark pt-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10 text-center">
-            <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
+            <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight text-balance">
               Knowledge, Perspectives and <span className="text-primary">Conversations That Matter.</span>
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
@@ -282,8 +282,8 @@ export default async function BlogPage({
 
       {/* Sticky category pills - stitch style */}
       {!loadError && (
-        <div className="sticky top-[73px] z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 py-4 px-4 overflow-x-auto">
-          <div className="max-w-7xl mx-auto flex gap-3 min-w-max">
+        <div className="sticky top-20 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 py-4 px-4 overflow-x-auto [mask-image:linear-gradient(to_right,#000_92%,transparent)]">
+          <div className="max-w-7xl mx-auto flex gap-3 min-w-max pr-12">
             <Link
               href="/blog"
               className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all ${
@@ -365,7 +365,7 @@ export default async function BlogPage({
                   </Link>
 
                   <div className="flex flex-col flex-1 p-6">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+                    <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 mb-3">
                       <Calendar className="w-4 h-4" />
                       <time>
                         {post.publishedAt
@@ -456,7 +456,7 @@ export default async function BlogPage({
                   </p>
                   <Link
                     href="/admin/posts"
-                    className="mt-6 inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-hover transition-colors"
+                    className="mt-6 inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-semibold rounded-full hover:bg-primary-hover transition-colors"
                   >
                     Go to Admin → Posts
                   </Link>
