@@ -106,7 +106,15 @@ export async function mongoNewsletterUpsert(input: {
   if (result.upsertedCount > 0) {
     return { status: 'created', id: newId };
   }
-  // Already existed — fetch its id for the response
+  // Already existed. If they had unsubscribed, subscribing again re-activates them.
+  const reactivated = await db.collection(COLLECTION).findOneAndUpdate(
+    { type: 'NEWSLETTER', email: normalizedEmail, 'data.unsubscribedAt': { $exists: true } },
+    { $unset: { 'data.unsubscribedAt': '' }, $set: { updatedAt: now } },
+    { projection: { id: 1 } }
+  );
+  if (reactivated) {
+    return { status: 'created', id: (reactivated as { id?: string }).id ?? '' };
+  }
   const existing = await db
     .collection<MongoFormSubmission>(COLLECTION)
     .findOne({ type: 'NEWSLETTER', email: normalizedEmail }, { projection: { id: 1 } });
@@ -117,7 +125,7 @@ export async function mongoNewsletterSubscriberEmails(): Promise<string[]> {
   const db = await getMongoDb();
   const rows = await db
     .collection<MongoFormSubmission>(COLLECTION)
-    .find({ type: 'NEWSLETTER', email: { $ne: null } })
+    .find({ type: 'NEWSLETTER', email: { $ne: null }, 'data.unsubscribedAt': { $exists: false } })
     .project({ email: 1 })
     .toArray();
   const set = new Set<string>();
@@ -126,4 +134,56 @@ export async function mongoNewsletterSubscriberEmails(): Promise<string[]> {
     if (e) set.add(e);
   }
   return [...set];
+}
+
+export type FormSubmissionListFilter = {
+  type?: FormType;
+  limit?: number;
+};
+
+export async function mongoFormSubmissionsList(
+  filter: FormSubmissionListFilter = {}
+): Promise<MongoFormSubmission[]> {
+  const db = await getMongoDb();
+  const where: Record<string, unknown> = {};
+  if (filter.type) where.type = filter.type;
+  return db
+    .collection<MongoFormSubmission>(COLLECTION)
+    .find(where, { projection: { _id: 0 } })
+    .sort({ createdAt: -1 })
+    .limit(filter.limit ?? 100)
+    .toArray();
+}
+
+export async function mongoFormSubmissionCounts(): Promise<{ total: number; unread: number }> {
+  const db = await getMongoDb();
+  const col = db.collection(COLLECTION);
+  const [total, unread] = await Promise.all([
+    col.countDocuments({}),
+    col.countDocuments({ isRead: false }),
+  ]);
+  return { total, unread };
+}
+
+export async function mongoFormSubmissionSetState(
+  id: string,
+  state: { isRead?: boolean; isProcessed?: boolean }
+): Promise<boolean> {
+  const db = await getMongoDb();
+  const res = await db
+    .collection(COLLECTION)
+    .updateOne({ id }, { $set: { ...state, updatedAt: new Date() } });
+  return res.matchedCount > 0;
+}
+
+
+/** Marks a newsletter subscriber as unsubscribed. Returns false when the address was never subscribed. */
+export async function mongoNewsletterUnsubscribe(email: string): Promise<boolean> {
+  const db = await getMongoDb();
+  const now = new Date();
+  const res = await db.collection(COLLECTION).updateOne(
+    { type: 'NEWSLETTER', email: email.trim().toLowerCase() },
+    { $set: { 'data.unsubscribedAt': now.toISOString(), updatedAt: now } }
+  );
+  return res.matchedCount > 0;
 }

@@ -1,5 +1,10 @@
 import Link from 'next/link';
 import { Quote } from 'lucide-react';
+import { loadWithDatabaseFallback } from '@/lib/public-db';
+import { mongoTestimonialsList } from '@/lib/mongo-testimonials-store';
+
+/** CDN ISR: stories added in the admin appear within a minute. */
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Participant Stories | YTOP Global',
@@ -42,7 +47,22 @@ const STORIES = [
   },
 ];
 
-export default function StoriesPage() {
+export default async function StoriesPage() {
+  // Stories managed in the admin (Stories) replace the built-in examples once any exist.
+  const dbStories = await loadWithDatabaseFallback({
+    load: async () =>
+      (await mongoTestimonialsList({ featuredOnly: false, limit: 60 })).map((t) => ({
+        name: t.name,
+        programme: [t.position, t.company].filter(Boolean).join(' · '),
+        text: t.content,
+      })),
+    fallback: [] as { name: string; programme: string; text: string }[],
+    onError(error) {
+      console.error('Stories page database query failed:', error);
+    },
+  });
+  const stories = dbStories.length > 0 ? dbStories : STORIES;
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <h1 className="font-display text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">People Behind the Progress</h1>
@@ -50,13 +70,13 @@ export default function StoriesPage() {
         Every development intervention involves people with different experiences, needs and aspirations. These are experiences shared by people who have taken part in YTOP programmes, in their own words.
       </p>
       <div className="grid gap-6 md:grid-cols-2">
-        {STORIES.map((s) => (
+        {stories.map((s) => (
           <figure key={s.name} className="relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark p-8 shadow-sm">
             <Quote className="w-8 h-8 text-primary/30 mb-3" aria-hidden />
             <blockquote className="text-slate-700 dark:text-slate-200 leading-relaxed">{s.text}</blockquote>
             <figcaption className="mt-6">
               <p className="font-bold text-slate-900 dark:text-white">{s.name}</p>
-              <p className="text-sm text-primary font-semibold">{s.programme}</p>
+              {s.programme ? <p className="text-sm text-primary font-semibold">{s.programme}</p> : null}
             </figcaption>
           </figure>
         ))}

@@ -1,15 +1,18 @@
 import Link from 'next/link';
-import { Heart, ArrowRight } from 'lucide-react';
-import { SPONSORSHIP_PACKAGES } from '@/lib/org';
+import { Heart } from 'lucide-react';
+import { getSiteContent } from '@/lib/site-content';
+
+/** CDN ISR: packages edited in the admin appear within a minute. */
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Corporate Sponsorship | YTOP Global',
   description:
-    'Put your organisation’s commitment to youth development into action by sponsoring YTOP Global programmes that strengthen leadership, education, skills and community participation.',
+    "Put your organisation's commitment to youth development into action by sponsoring YTOP Global programmes that strengthen leadership, education, skills and community participation.",
 };
 
-// Copy: Master Website Content document, 6.5. Sponsorship packages and prices are intentionally
-// not shown: they must be defined from approved programme budgets before publication.
+// Copy: Master Website Content document, 6.5. Sponsorship packages and prices are not shown: the
+// document says prices must be verified from approved budgets (add them in lib/org.ts when ready).
 const INTERESTS = [
   'Sponsoring specific programmes.',
   'Supporting school outreach.',
@@ -19,24 +22,23 @@ const INTERESTS = [
   'Contributing technical expertise.',
 ];
 
-export default function SponsorPage() {
+export default async function SponsorPage() {
+  const { sponsorshipPackages: SPONSORSHIP_PACKAGES } = await getSiteContent();
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div className="mb-8">
-        <Link href="/get-involved" className="inline-flex items-center text-primary font-medium hover:underline">
-          ← Get Involved
-        </Link>
-      </div>
+      <Link href="/get-involved" className="inline-flex items-center text-primary font-medium hover:underline mb-8">
+        ← Get Involved
+      </Link>
       <div className="flex items-start gap-4 mb-8">
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <Heart className="w-8 h-8 text-primary" />
+          <Heart className="w-8 h-8 text-primary" aria-hidden />
         </div>
         <h1 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
           Put Your Organisation&apos;s Commitment to Youth Development into Action.
         </h1>
       </div>
       <div className="space-y-4 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-        <p>Corporate organisations have an important role to play in expanding opportunities for young people.</p>
+        <p>Corporate organisations play an important role in expanding opportunities for young people.</p>
         <p>Through corporate sponsorship, your organisation can support programmes that strengthen leadership, education, skills development and community participation.</p>
         <p>We welcome discussions with organisations interested in:</p>
       </div>
@@ -46,8 +48,9 @@ export default function SponsorPage() {
         ))}
       </ul>
       <p className="mt-8 text-lg text-slate-600 dark:text-slate-400">
-        YTOP works with sponsors to define programme objectives, implementation responsibilities, reporting arrangements and appropriate recognition.
+        YTOP works with sponsors to define programme objectives, implementation responsibilities, reporting arrangements, and appropriate recognition.
       </p>
+
       {SPONSORSHIP_PACKAGES.length > 0 ? (
         <div className="mt-12">
           <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white mb-6">Sponsorship packages</h2>
@@ -66,18 +69,13 @@ export default function SponsorPage() {
           </div>
         </div>
       ) : null}
-      <div className="mt-12 flex flex-wrap gap-4">
+
+      <div className="mt-12">
         <Link
           href="/contact?subject=Corporate%20sponsorship"
-          className="inline-flex items-center px-6 py-3 bg-primary text-white font-bold rounded-full hover:bg-primary-hover shadow-lg shadow-primary/30 transition"
+          className="inline-flex items-center px-8 py-3 bg-primary text-white font-bold rounded-full hover:bg-primary-hover shadow-lg shadow-primary/30 transition"
         >
-          Discuss Corporate Sponsorship <ArrowRight className="w-5 h-5 ml-2" />
-        </Link>
-        <Link
-          href="/donate"
-          className="inline-flex items-center px-6 py-3 border-2 border-secondary text-secondary dark:border-gray-500 dark:text-white font-bold rounded-full hover:bg-secondary hover:text-white transition"
-        >
-          Make a Donation
+          Discuss Corporate Sponsorship
         </Link>
       </div>
     </div>

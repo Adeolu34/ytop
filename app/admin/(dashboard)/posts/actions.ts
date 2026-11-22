@@ -12,6 +12,7 @@ import {
   sendBulkNewsletterEmail,
 } from '@/lib/email';
 import { mongoNewsletterSubscriberEmails } from '@/lib/mongo-forms-store';
+import { unsubscribeUrl } from '@/lib/unsubscribe';
 import { isMongoDuplicateKeyError } from '@/lib/mongo-media';
 import {
   mongoCreateUniquePostSlug,
@@ -201,11 +202,18 @@ export async function notifyNewsletterSubscribersAction(
   `;
 
   try {
-    await sendBulkNewsletterEmail({
-      recipients: emails,
-      subject,
-      html,
-    });
+    // One message per subscriber so each carries their own signed unsubscribe link.
+    for (let i = 0; i < emails.length; i += 8) {
+      await Promise.all(
+        emails.slice(i, i + 8).map((to) => {
+          const link = unsubscribeUrl(to);
+          const footer = link
+            ? `<p style="font-size:12px;color:#666;"><a href="${link}">Unsubscribe</a> from these updates at any time.</p>`
+            : '';
+          return sendBulkNewsletterEmail({ recipients: [to], subject, html: html + footer });
+        })
+      );
+    }
   } catch (e) {
     return {
       error:

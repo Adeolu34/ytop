@@ -1,165 +1,52 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { ArrowRight, Shield, Users, Target, Calendar } from 'lucide-react';
+import ProgrammeTemplate from '@/components/public/ProgrammeTemplate';
 
 export const metadata = {
   title: 'Rise of Warriors | YTOP Global',
-  description: 'Rise of Warriors is a YTOP Global initiative focused on leadership development, personal growth and responsible participation among young people.',
+  description:
+    'Rise of Warriors is a YTOP Global initiative focused on encouraging leadership development, personal growth and responsible participation among young people.',
 };
 
-// Copy: Master Website Content document, 3.2. Edition facts (boot camp for ages 16-24, four weeks,
-// fifth edition September 8 to October 8, 2023, 28 Warriors) come from the Events page.
-const OBJECTIVES = [
-  'Strengthen leadership awareness and competencies.',
-  'Encourage personal responsibility and self-development.',
-  'Develop communication and collaboration skills.',
-  'Promote ethical leadership.',
-  'Encourage community participation.',
-  'Connect participants with learning and development opportunities.',
-];
-
+// Copy: Master Website Content document, 3.2.
 export default function RiseOfWarriorsPage() {
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative w-full min-h-[500px] md:min-h-[600px] overflow-hidden flex items-center justify-center bg-gray-900">
-        <Image
-          src="/media/2021/11/006.jpg"
-          alt="Rise of Warriors"
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-white py-20">
-          <div className="max-w-3xl">
-            <span className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-wider uppercase bg-primary rounded-full">Project Spotlight</span>
-            <h1 className="font-display text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6">
-              Rise of Warriors <span className="text-primary">(ROW)</span>
-            </h1>
-            <p className="text-lg md:text-xl text-gray-200 font-medium max-w-2xl mb-8 leading-relaxed">
-              Developing the Next Generation of Responsible Leaders.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/contact"
-                className="h-12 px-8 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg transition-all shadow-lg flex items-center gap-2"
-              >
-                Join the Movement <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                href="/events"
-                className="h-12 px-8 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/30 font-bold rounded-lg transition-all"
-              >
-                See Events
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About the program */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-background-dark">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Leadership Is About Responsibility</h2>
-            <div className="w-16 h-1 bg-primary rounded-full" />
-            <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-              Leadership development requires more than holding positions or receiving recognition. It requires the ability to make responsible decisions, work with others, respond to challenges and contribute meaningfully to society.
-            </p>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Rise of Warriors is a YTOP Global initiative focused on encouraging leadership development, personal growth and responsible participation among young people. It provides opportunities for participants to examine their leadership abilities, strengthen their personal competencies and better understand their responsibilities within their communities.
-            </p>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              The programme is a boot camp for ages 16–24. The fifth edition ran for four weeks (September 8 – October 8, 2023) with six facilitators, six clan coaches and 28 Warriors.
-            </p>
-          </div>
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-            <Image src="/media/2021/11/005.jpg" alt="ROW participants" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
-          </div>
-        </div>
-      </section>
-
-      {/* Highlights */}
-      <section className="py-20 bg-surface-light dark:bg-surface-dark">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-display text-3xl font-bold text-slate-900 dark:text-white mb-10 text-center">What You Gain</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-6">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                <Target className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">Leadership & Communication</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">Build confidence and clarity to lead and collaborate effectively.</p>
-            </div>
-            <div className="flex flex-col items-center text-center p-6">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                <Users className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">Community & Networking</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">Join a global network of Warriors and mentors.</p>
-            </div>
-            <div className="flex flex-col items-center text-center p-6">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                <Shield className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">Project Experience</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">Execute real projects and add impact to your portfolio.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Objectives */}
-      <section className="py-16 bg-white dark:bg-background-dark">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-display text-3xl font-bold text-slate-900 dark:text-white mb-6">Programme objectives</h2>
-          <ul className="grid gap-3 md:grid-cols-2">
-            {OBJECTIVES.map((o) => (
-              <li key={o} className="rounded-xl border-l-4 border-primary bg-slate-50 dark:bg-slate-800 p-4 text-slate-700 dark:text-slate-200">{o}</li>
-            ))}
-          </ul>
-          <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mt-10 mb-2">Who should participate?</h3>
-          <p className="text-slate-600 dark:text-slate-400">
-            Young people interested in leadership, personal development, community engagement and becoming more effective contributors to society.
-          </p>
-          <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mt-8 mb-2">Support Rise of Warriors</h3>
-          <p className="text-slate-600 dark:text-slate-400">
-            Your support helps provide programme resources, learning materials, facilitation and opportunities for young people to participate.
-          </p>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 bg-primary text-white">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="font-display text-3xl font-bold mb-4">Be part of the next edition</h2>
-          <p className="text-white/90 text-lg mb-8">
-            Contact us to join the next Rise of Warriors or to get updates on dates, or sponsor the programme.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-white text-primary font-bold rounded-full hover:bg-gray-100 transition"
-            >
-              Participate in Rise of Warriors <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="/donate"
-              className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full border border-white/30 transition"
-            >
-              Sponsor the Programme
-            </Link>
-            <Link
-              href="/events"
-              className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full border border-white/30 transition"
-            >
-              <Calendar className="w-5 h-5" /> View Events
-            </Link>
-          </div>
-        </div>
-      </section>
-    </div>
+    <ProgrammeTemplate
+      content={{
+        name: 'Rise of Warriors',
+        image: { src: '/media/2021/11/006.jpg', alt: 'Rise of Warriors participants' },
+        headline: 'Developing the Next Generation of Responsible Leaders.',
+        intro: [
+          'Leadership development requires more than holding positions or receiving recognition. It requires the ability to make responsible decisions, work with others, respond to challenges, and contribute meaningfully to society.',
+          'Rise of Warriors is a YTOP Global initiative focused on encouraging leadership development, personal growth, and responsible participation among young people.',
+          'The initiative provides opportunities for participants to examine their leadership abilities, strengthen their personal competencies and develop a greater understanding of their responsibilities within their communities.',
+        ],
+        objectivesHeading: 'Programme objectives',
+        objectives: [
+          'Strengthen leadership awareness and competencies.',
+          'Encourage personal responsibility and self-development.',
+          'Develop communication and collaboration skills.',
+          'Promote ethical leadership.',
+          'Encourage community participation.',
+          'Connect participants with learning and development opportunities.',
+        ],
+        extraSections: [
+          {
+            heading: 'Who should participate?',
+            body: 'Young people interested in leadership, personal development, community engagement, and becoming more effective contributors to society.',
+          },
+          {
+            heading: 'Support Rise of Warriors',
+            body: 'Your support helps provide programme resources, learning materials, facilitation, and opportunities for young people to participate.',
+          },
+        ],
+        callToAction: {
+          heading: 'Be part of Rise of Warriors',
+          body: 'Take part in the programme, or help another young person take part.',
+        },
+        buttons: [
+          { label: 'Participate in Rise of Warriors', href: '/contact?subject=Participate%20in%20Rise%20of%20Warriors', primary: true },
+          { label: 'Sponsor the Programme', href: '/donate' },
+        ],
+      }}
+    />
   );
 }

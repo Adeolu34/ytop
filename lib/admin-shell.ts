@@ -6,7 +6,14 @@ export type AdminIconKey =
   | 'settings'
   | 'team'
   | 'programs'
-  | 'comments';
+  | 'comments'
+  | 'enquiries'
+  | 'events'
+  | 'testimonials'
+  | 'campaigns'
+  | 'documents'
+  | 'content'
+  | 'donations';
 
 export type AdminNavItem = {
   href: string;
@@ -29,7 +36,14 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { href: '/yadmin/gallery', label: 'Gallery', icon: 'gallery' },
   { href: '/yadmin/team', label: 'Team', icon: 'team' },
   { href: '/yadmin/programs', label: 'Programs', icon: 'programs' },
+  { href: '/yadmin/events', label: 'Events', icon: 'events' },
+  { href: '/yadmin/testimonials', label: 'Stories', icon: 'testimonials' },
+  { href: '/yadmin/campaigns', label: 'Campaigns', icon: 'campaigns' },
+  { href: '/yadmin/donations', label: 'Donations', icon: 'donations' },
+  { href: '/yadmin/documents', label: 'Documents', icon: 'documents' },
+  { href: '/yadmin/content', label: 'Site content', icon: 'content' },
   { href: '/yadmin/comments', label: 'Comments', icon: 'comments' },
+  { href: '/yadmin/enquiries', label: 'Enquiries', icon: 'enquiries' },
 ];
 
 const DASHBOARD_META: AdminPageMeta = {
@@ -89,7 +103,84 @@ const PROGRAMS_META: AdminPageMeta = {
   searchPlaceholder: 'Search programs...',
 };
 
+const ENQUIRIES_META: AdminPageMeta = {
+  eyebrow: 'Inbox',
+  title: 'Enquiries',
+  description: 'Read contact, volunteer, partnership and newsletter submissions.',
+  searchPlaceholder: 'Search enquiries...',
+};
+
+const EVENTS_META: AdminPageMeta = {
+  eyebrow: 'Public site',
+  title: 'Events',
+  description: 'Publish upcoming events and keep the archive current.',
+  searchPlaceholder: 'Search events...',
+};
+
+const TESTIMONIALS_META: AdminPageMeta = {
+  eyebrow: 'Public site',
+  title: 'Participant stories',
+  description: 'Manage the stories shown on the homepage and Stories page.',
+  searchPlaceholder: 'Search stories...',
+};
+
+const CAMPAIGNS_META: AdminPageMeta = {
+  eyebrow: 'Fundraising',
+  title: 'Campaigns',
+  description: 'Manage fundraising campaigns shown on the Donate page.',
+  searchPlaceholder: 'Search campaigns...',
+};
+
+const DOCUMENTS_META: AdminPageMeta = {
+  eyebrow: 'Public site',
+  title: 'Documents',
+  description: 'Publish reports, governance documents and the organisational profile.',
+  searchPlaceholder: 'Search documents...',
+};
+
+const CONTENT_META: AdminPageMeta = {
+  eyebrow: 'Public site',
+  title: 'Site content',
+  description: 'Edit impact figures, sponsorship packages and the registration year.',
+  searchPlaceholder: 'Search content...',
+};
+
+const DONATIONS_META: AdminPageMeta = {
+  eyebrow: 'Fundraising',
+  title: 'Donations',
+  description: 'Gifts confirmed by Paystack.',
+  searchPlaceholder: 'Search donations...',
+};
+
 export function getAdminPageMeta(pathname: string): AdminPageMeta {
+  if (pathname.startsWith('/yadmin/donations') || pathname.startsWith('/admin/donations')) {
+    return DONATIONS_META;
+  }
+
+  if (pathname.startsWith('/yadmin/documents') || pathname.startsWith('/admin/documents')) {
+    return DOCUMENTS_META;
+  }
+
+  if (pathname.startsWith('/yadmin/content') || pathname.startsWith('/admin/content')) {
+    return CONTENT_META;
+  }
+
+  if (pathname.startsWith('/yadmin/events') || pathname.startsWith('/admin/events')) {
+    return EVENTS_META;
+  }
+
+  if (pathname.startsWith('/yadmin/testimonials') || pathname.startsWith('/admin/testimonials')) {
+    return TESTIMONIALS_META;
+  }
+
+  if (pathname.startsWith('/yadmin/campaigns') || pathname.startsWith('/admin/campaigns')) {
+    return CAMPAIGNS_META;
+  }
+
+  if (pathname.startsWith('/yadmin/enquiries') || pathname.startsWith('/admin/enquiries')) {
+    return ENQUIRIES_META;
+  }
+
   if (pathname.startsWith('/yadmin/settings') || pathname.startsWith('/admin/settings')) {
     return SETTINGS_META;
   }

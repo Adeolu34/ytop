@@ -1,6 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowDown, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import { getSiteContent } from '@/lib/site-content';
+
+/** CDN ISR: figures edited in the admin appear within a minute. */
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Our Impact | YTOP Global Youth Development Initiatives',
@@ -8,16 +11,7 @@ export const metadata = {
     "Explore YTOP Global's documented programme results, beneficiary stories, annual reports and community development activities.",
 };
 
-// Copy: Master Website Content document, Part Four. Every figure below is documented on the Events
-// page. Organisation-wide totals (people reached, institutions, countries, volunteers) are not shown
-// until verified against records, with a reporting period and source.
-const HIGHLIGHTS = [
-  { value: '2,000+', label: 'participants in the ten-day development webinar', detail: 'April–May 2020, virtual' },
-  { value: '800+', label: 'students at one Talent Discovery school visit', detail: 'Urban Day Secondary School, Ibadan, 2020' },
-  { value: '300+', label: 'changemakers at YTOP Conference 2.0', detail: '2024, from 32 universities' },
-  { value: '5', label: 'countries represented at Conference 2.0', detail: 'Nigeria, Namibia, Zimbabwe, Zambia and Ghana' },
-];
-
+// Copy: Master Website Content document, Part Four (4.1 to 4.4).
 const LEVELS = [
   {
     title: 'Outputs',
@@ -46,71 +40,54 @@ const REPORTING = [
   'Future priorities.',
 ];
 
-export default function ImpactPage() {
+const solidButton =
+  'inline-flex items-center justify-center px-8 py-3 bg-primary hover:bg-primary-hover text-white font-bold rounded-full transition-colors';
+
+export default async function ImpactPage() {
+  const { impactFigures: IMPACT_FIGURES } = await getSiteContent();
   return (
     <div>
-      <section className="w-full px-4 py-12 md:py-20 lg:py-24 bg-white dark:bg-background-dark relative overflow-hidden">
-        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" aria-hidden />
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-center relative z-10">
-          <div className="flex-1 flex flex-col gap-6 text-center md:text-left">
-            <span className="inline-flex items-center justify-center md:justify-start gap-2 text-primary font-bold uppercase tracking-wider text-xs">
-              Our Impact
-            </span>
-            <h1 className="font-display text-slate-900 dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
-              Measuring Progress. Documenting Results. <span className="text-primary">Strengthening Accountability.</span>
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 text-lg md:text-xl leading-relaxed max-w-xl mx-auto md:mx-0">
-              At YTOP Global, we believe that development work should be supported by evidence. We are committed to strengthening our monitoring, evaluation and learning practices to understand what works, identify areas for improvement and communicate our results transparently.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
-              <a href="#highlights" className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold transition-all shadow-lg shadow-primary/20">
-                See Documented Results <ArrowDown className="w-5 h-5" />
-              </a>
-              <Link href="/about" className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg font-medium transition-all">
-                Learn about us
-              </Link>
-            </div>
-          </div>
-          <div className="flex-1 w-full max-w-md">
-            <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl bg-slate-200 dark:bg-slate-800">
-              <Image src="/media/2025/10/DSC0289.jpg" alt="YTOP Global conference participants" fill className="object-cover" sizes="500px" />
-            </div>
+      {/* 4.1 Introduction */}
+      <section className="w-full px-4 py-16 md:py-24 bg-white dark:bg-background-dark">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="font-display text-slate-900 dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-8">
+            Measuring Progress. Documenting Results. <span className="text-primary">Strengthening Accountability.</span>
+          </h1>
+          <div className="space-y-4 text-slate-600 dark:text-slate-400 text-lg md:text-xl leading-relaxed">
+            <p>At YTOP Global, we believe that development work should be supported by evidence.</p>
+            <p>Our impact is reflected in the opportunities we create, the people we engage, the institutions we work with, and the changes that our programmes seek to achieve.</p>
+            <p>We are committed to strengthening our monitoring, evaluation and learning practices to understand what works, identify areas for improvement and communicate our results transparently.</p>
           </div>
         </div>
       </section>
 
-      <section id="highlights" className="w-full bg-secondary text-white py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-display text-3xl font-bold text-center mb-2">Documented Programme Results</h2>
-          <p className="text-center text-white/80 mb-10">Figures from specific programme editions, as recorded on our events page.</p>
-          <dl className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            {HIGHLIGHTS.map((h) => (
-              <div key={h.label}>
-                <dd className="font-display text-4xl md:text-5xl font-extrabold text-primary">{h.value}</dd>
-                <dt className="mt-2 text-sm text-white/90">{h.label}</dt>
-                <p className="mt-1 text-xs text-white/60">{h.detail}</p>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-10 text-center">
-            <Link href="/events#previous-events" className="inline-flex items-center font-semibold underline underline-offset-4 hover:text-primary">
-              See the full event record <ArrowRight className="ml-1 w-5 h-5" />
-            </Link>
+      {IMPACT_FIGURES.length > 0 ? (
+        <section className="w-full bg-secondary text-white py-16" aria-labelledby="impact-figures-heading">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 id="impact-figures-heading" className="font-display text-3xl font-bold text-center mb-10">Our Work. Our Reach. Our Results.</h2>
+            <dl className="grid grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+              {IMPACT_FIGURES.map((f) => (
+                <div key={f.label}>
+                  <dd className="font-display text-4xl md:text-5xl font-extrabold text-primary">{f.value}</dd>
+                  <dt className="mt-2 font-semibold first-letter:uppercase">{f.label}</dt>
+                  {f.period || f.source ? <p className="mt-1 text-xs text-white/70">{[f.period, f.source].filter(Boolean).join(' · ')}</p> : null}
+                </div>
+              ))}
+            </dl>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
+      {/* 4.2 Impact Framework */}
       <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h2 className="font-display text-slate-900 dark:text-white text-3xl font-bold text-center mb-3">How We Measure Our Work</h2>
-        <p className="text-slate-600 dark:text-slate-400 text-center max-w-2xl mx-auto mb-12">
-          We distinguish between three levels of programme results, and report them according to available evidence and appropriate measurement periods.
-        </p>
+        <p className="text-slate-600 dark:text-slate-400 text-center max-w-2xl mx-auto mb-12">We distinguish between three levels of programme results.</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {LEVELS.map((level) => (
             <div key={level.title} className="bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col">
               <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">{level.title}</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">{level.intro}</p>
-              <p className="text-xs font-bold text-slate-400 uppercase mb-3">Examples</p>
+              <p className="text-xs font-bold text-slate-500 uppercase mb-3">Examples:</p>
               <ul className="flex flex-col gap-3">
                 {level.examples.map((e) => (
                   <li key={e} className="flex gap-3 items-start">
@@ -122,33 +99,35 @@ export default function ImpactPage() {
             </div>
           ))}
         </div>
+        <p className="mt-10 text-center text-slate-600 dark:text-slate-400">We will report these results according to available evidence and appropriate measurement periods.</p>
       </section>
 
+      {/* 4.3 Impact Reporting */}
       <section className="w-full bg-slate-50 dark:bg-surface-dark py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="font-display text-slate-900 dark:text-white text-3xl font-bold mb-4">Accountability Through Reporting</h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-8">
-            Beneficiaries, donors, partners and the public have a legitimate interest in understanding our work. Our reporting process aims to communicate:
+          <p className="text-slate-600 dark:text-slate-400 mb-4">
+            We recognise that beneficiaries, donors, partners and the public have a legitimate interest in understanding our work.
           </p>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">Our reporting process aims to communicate:</p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left mb-8">
             {REPORTING.map((r) => (
               <li key={r} className="rounded-xl border-l-4 border-primary bg-white dark:bg-background-dark p-4 text-slate-700 dark:text-slate-200">{r}</li>
             ))}
           </ul>
-          <Link href="/reports" className="inline-flex items-center font-semibold text-primary">
-            View Our Reports <ArrowRight className="ml-1 w-5 h-5" />
-          </Link>
+          <Link href="/reports" className={solidButton}>View Our Reports</Link>
         </div>
       </section>
 
+      {/* 4.4 Beneficiary Stories */}
       <section className="w-full max-w-4xl mx-auto px-4 py-20 text-center">
         <h2 className="font-display text-slate-900 dark:text-white text-3xl font-bold mb-4">People Behind the Progress</h2>
-        <p className="text-slate-600 dark:text-slate-400 mb-8">
-          We document selected participant experiences to demonstrate how opportunities for learning, mentorship and participation can influence individual development. Each story is based on an actual participant&apos;s experience and published with informed consent.
-        </p>
-        <Link href="/impact/stories" className="inline-flex items-center font-semibold text-primary">
-          Read Their Stories <ArrowRight className="ml-1 w-5 h-5" />
-        </Link>
+        <div className="space-y-4 text-slate-600 dark:text-slate-400 mb-8">
+          <p>Every development intervention involves people with different experiences, needs and aspirations.</p>
+          <p>We document selected participant experiences to show how learning, mentorship, and participation can influence individual development.</p>
+          <p>Each story must be based on an actual participant&apos;s experience and published with informed consent.</p>
+        </div>
+        <Link href="/impact/stories" className={solidButton}>Read More Stories</Link>
       </section>
     </div>
   );

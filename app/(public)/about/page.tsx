@@ -16,7 +16,11 @@ import {
   Globe,
 } from 'lucide-react';
 import { generateSEOMetadata } from '@/components/SEOHead';
-import { ORG_FOUNDED_YEAR, ORG_REGISTRATION_YEAR, ORG_RC_NUMBER } from '@/lib/org';
+import { ORG_FOUNDED_YEAR, ORG_RC_NUMBER } from '@/lib/org';
+import { getSiteContent } from '@/lib/site-content';
+
+/** CDN ISR: registration year edited in the admin appears within a minute. */
+export const revalidate = 60;
 
 export function generateMetadata() {
   return generateSEOMetadata({
@@ -40,19 +44,6 @@ const JOURNEY_ENTRIES = [
   { year: '2024', title: 'Conference 2.0', desc: 'Youth On A Mission: beCOMING drew participants from secondary schools, 32 universities and five countries.', icon: Trophy },
 ];
 
-// Registration milestone is inserted in chronological order when ORG_REGISTRATION_YEAR is set in lib/org.ts.
-const JOURNEY = ORG_REGISTRATION_YEAR
-  ? [
-      ...JOURNEY_ENTRIES,
-      {
-        year: String(ORG_REGISTRATION_YEAR),
-        title: 'Registered with the CAC',
-        desc: `YTOP Global registered with the Corporate Affairs Commission in Nigeria (${ORG_RC_NUMBER}).`,
-        icon: CheckCircle2,
-      },
-    ].sort((a, b) => Number(a.year) - Number(b.year))
-  : JOURNEY_ENTRIES;
-
 const VALUES = [
   { title: 'Integrity', desc: 'We promote honesty, transparency, accountability and ethical conduct in our decisions and activities.', icon: CheckCircle2 },
   { title: 'Excellence', desc: 'We strive to maintain high standards in programme design, implementation, learning and organisational management.', icon: Trophy },
@@ -72,14 +63,28 @@ const APPROACH_STEPS = [
 ];
 
 const SDGS = [
-  'SDG 4: Quality Education',
-  'SDG 5: Gender Equality',
-  'SDG 8: Decent Work and Economic Growth',
-  'SDG 10: Reduced Inequalities',
-  'SDG 17: Partnerships for the Goals',
+  'SDG 4: Quality Education.',
+  'SDG 5: Gender Equality.',
+  'SDG 8: Decent Work and Economic Growth.',
+  'SDG 10: Reduced Inequalities.',
+  'SDG 17: Partnerships for the Goals.',
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { registrationYear } = await getSiteContent();
+  // Registration milestone is inserted in chronological order when a year is set (admin: Site content).
+  const JOURNEY = registrationYear
+    ? [
+        ...JOURNEY_ENTRIES,
+        {
+          year: String(registrationYear),
+          title: 'Registered with the CAC',
+          desc: `YTOP Global registered with the Corporate Affairs Commission in Nigeria (${ORG_RC_NUMBER}).`,
+          icon: CheckCircle2,
+        },
+      ].sort((a, b) => Number(a.year) - Number(b.year))
+    : JOURNEY_ENTRIES;
+
   return (
     <div>
       {/* Hero */}
@@ -137,7 +142,7 @@ export default function AboutPage() {
       </section>
 
       {/* Mission & Vision — check against the formally approved wording before publishing (master copy 2.4). */}
-      <section className="py-20 bg-slate-50 dark:bg-background-dark">
+      <section id="mission" className="py-20 bg-slate-50 dark:bg-background-dark scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="group bg-white dark:bg-surface-dark p-10 rounded-2xl border-2 border-transparent hover:border-primary transition-all duration-300 shadow-sm hover:shadow-xl">
@@ -164,9 +169,17 @@ export default function AboutPage() {
 
       {/* Our Journey */}
       <section className="py-24 px-4 sm:px-6 max-w-4xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Our Journey</h2>
-          <p className="text-slate-500 max-w-xl mx-auto">Our history reflects a continuing commitment to youth development, meaningful participation and community impact.</p>
+        <div className="text-center mb-10">
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Our Journey</h2>
+          <div className="space-y-4 text-slate-600 dark:text-slate-300 text-lg text-left max-w-3xl mx-auto">
+            <p>YTOP Global was conceived in 2015 from a recognition that young people needed more opportunities to develop their leadership abilities, discover their potential and contribute meaningfully to society.</p>
+            <p>The organisation began its activities in 2017, focusing on youth engagement, personal development, leadership and community participation.</p>
+            <p>Over the years, YTOP has continued to develop programmes and initiatives that create opportunities for young people to learn, connect, lead and contribute.</p>
+            <p>Our journey has involved working with young people, volunteers, educational institutions, professionals and organisations that share an interest in youth development.</p>
+            <p>We have continued to strengthen our organisational systems, programme delivery and institutional relationships as our work has expanded.</p>
+            <p>Today, YTOP Global remains committed to a simple but important principle: young people should have the knowledge, opportunities and support required to participate in shaping their communities and their future.</p>
+            <p className="font-bold text-slate-900 dark:text-white">Our history reflects a continuing commitment to youth development, meaningful participation and community impact.</p>
+          </div>
         </div>
         <div className="relative">
           <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-0.5 bg-red-100 dark:bg-red-900/30 -ml-px md:-translate-x-1/2" aria-hidden />
@@ -199,9 +212,6 @@ export default function AboutPage() {
             );
           })}
         </div>
-        <p className="mt-12 text-center text-slate-500 max-w-2xl mx-auto">
-          Today, YTOP Global remains committed to a simple but important principle: young people should have the knowledge, opportunities and support required to participate in shaping their communities and their future.
-        </p>
       </section>
 
       {/* Approach */}
@@ -209,8 +219,9 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-4">Beyond Inspiration. Towards Sustainable Development.</h2>
           <p className="text-white/90 text-center max-w-2xl mx-auto mb-10">
-            Effective youth development requires more than one-off activities. Our approach combines learning, practical engagement, mentorship, leadership development and opportunities for community participation.
+            At YTOP Global, we recognise that effective youth development requires more than one-off activities. Our approach combines learning, practical engagement, mentorship, leadership development and opportunities for community participation.
           </p>
+          <p className="font-semibold mb-4">We seek to:</p>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {APPROACH_STEPS.map((step) => (
               <li key={step} className="flex gap-3 rounded-xl bg-white/10 p-4">
@@ -220,7 +231,7 @@ export default function AboutPage() {
             ))}
           </ul>
           <p className="mt-10 text-center text-white/90">
-            Young people are not simply recipients of development interventions. They are active participants and contributors to the development of their communities.
+            We recognise that young people are not simply recipients of development interventions. They are active participants and contributors to the development of their communities.
           </p>
         </div>
       </section>
@@ -252,7 +263,7 @@ export default function AboutPage() {
           <Globe className="w-10 h-10 text-primary mx-auto mb-4" aria-hidden />
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Contributing to Sustainable Development</h2>
           <p className="text-slate-600 dark:text-slate-300 mb-8">
-            YTOP Global&apos;s work aligns with the broader objectives of inclusive development and the Sustainable Development Goals. Our activities contribute particularly to:
+            YTOP Global&apos;s work aligns with the broader objectives of inclusive development and the Sustainable Development Goals. Our activities contribute particularly to areas associated with:
           </p>
           <ul className="flex flex-wrap justify-center gap-3 mb-8">
             {SDGS.map((g) => (
@@ -260,7 +271,17 @@ export default function AboutPage() {
             ))}
           </ul>
           <p className="text-slate-600 dark:text-slate-300">
-            Alignment with the Sustainable Development Goals requires more than using their language. It requires interventions that respond to relevant development needs and produce measurable results. We therefore seek to strengthen the connection between our programme objectives, implementation activities and measurable outcomes.
+            Alignment with the Sustainable Development Goals requires more than using their language. It requires interventions that respond to relevant development needs and deliver measurable results.</p>
+          <p className="mt-4 text-slate-600 dark:text-slate-300">We therefore seek to strengthen the connection between our programme objectives, implementation activities and measurable outcomes.
+          </p>
+        </div>
+      </section>
+
+      {/* Central message (master copy, Final Communication Standard) */}
+      <section className="py-16 bg-primary text-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <p className="font-display text-xl md:text-2xl font-bold leading-relaxed">
+            We believe that developing young people is essential to building stronger communities. Through leadership, education, mentorship, capacity development and community engagement, YTOP Global works to expand opportunities for young people to participate meaningfully in shaping their future and the societies in which they live.
           </p>
         </div>
       </section>

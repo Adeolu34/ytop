@@ -45,7 +45,14 @@ test('defines the primary admin sections under the public /yadmin prefix', () =>
       '/yadmin/gallery',
       '/yadmin/team',
       '/yadmin/programs',
+      '/yadmin/events',
+      '/yadmin/testimonials',
+      '/yadmin/campaigns',
+      '/yadmin/donations',
+      '/yadmin/documents',
+      '/yadmin/content',
       '/yadmin/comments',
+      '/yadmin/enquiries',
     ]
   );
 });

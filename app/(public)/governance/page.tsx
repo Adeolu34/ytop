@@ -1,5 +1,9 @@
 import Link from 'next/link';
 import { FileText } from 'lucide-react';
+import { GOVERNANCE_DOCUMENT_TITLES, getPublicDocuments, governanceUrl } from '@/lib/public-documents';
+
+/** CDN ISR: documents published in the admin appear within a minute. */
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Governance and Accountability | YTOP Global',
@@ -7,19 +11,11 @@ export const metadata = {
     'How YTOP Global approaches responsible leadership, transparent governance and accountability to beneficiaries, donors and partners.',
 };
 
-// Copy: Master Website Content document, 10.3. Document links must only be added for approved,
-// current public versions. Until then the documents are listed without links.
-const DOCUMENTS = [
-  'Organisational Constitution',
-  'Governance Framework',
-  'Code of Conduct',
-  'Safeguarding Policy',
-  'Conflict of Interest Policy',
-  'Financial Accountability Policy',
-  'Privacy and Data Protection Policy',
-];
+// Copy: Master Website Content document, 10.3. A document is linked once it is published in the admin
+// (Documents) with exactly the title below; until then it is listed without a link.
+export default async function GovernancePage() {
+  const docs = await getPublicDocuments();
 
-export default function GovernancePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <h1 className="font-display text-4xl font-bold text-slate-900 dark:text-white mb-6">
@@ -36,16 +32,23 @@ export default function GovernancePage() {
       </p>
 
       <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white mt-12 mb-4">Public documents</h2>
-      <p className="text-slate-600 dark:text-slate-400 mb-6">
-        Approved, current versions will be published here as they are finalised.
-      </p>
       <ul className="grid gap-3 md:grid-cols-2">
-        {DOCUMENTS.map((d) => (
-          <li key={d} className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark p-4 text-slate-700 dark:text-slate-200">
-            <FileText className="w-5 h-5 text-primary flex-shrink-0" aria-hidden />
-            {d}
-          </li>
-        ))}
+        {GOVERNANCE_DOCUMENT_TITLES.map((title) => {
+          const url = governanceUrl(docs, title);
+          return (
+            <li key={title} className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark p-4 text-slate-700 dark:text-slate-200">
+              <FileText className="w-5 h-5 text-primary flex-shrink-0" aria-hidden />
+              {url ? (
+                <a href={url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">{title}</a>
+              ) : (
+                <span>
+                  {title}
+                  <span className="block text-xs text-slate-500">Will be published when approved</span>
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ul>
       <p className="mt-10 text-slate-600 dark:text-slate-400">
         Questions about our governance? <Link href="/contact" className="text-primary font-semibold hover:underline">Contact us</Link>.

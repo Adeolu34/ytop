@@ -6,14 +6,14 @@ export const metadata = {
     'Answers about YTOP Global, our programmes, donations, recurring giving, receipts and partnerships.',
 };
 
-// Copy: Master Website Content document, Part Fourteen.
+// Copy: Master Website Content document, Part Fourteen, word for word.
 const FAQ_GROUPS = [
   {
     group: 'About YTOP',
     items: [
       { q: 'What is YTOP Global?', a: 'YTOP Global is a youth development organisation committed to empowering young people through leadership development, education, mentorship, capacity building and community engagement.' },
-      { q: 'When was YTOP Global established?', a: 'YTOP was conceived in 2015 and began its activities in 2017. It subsequently registered as an organisation with the Corporate Affairs Commission in Nigeria (RC179444). Registration details are available through the organisation’s official documentation.' },
-      { q: 'Where does YTOP Global operate?', a: 'YTOP’s activities are based in Nigeria, with engagements and collaborations extending across other countries. Specific programme locations are communicated through relevant programme updates.' },
+      { q: 'When was YTOP Global established?', a: "YTOP was conceived in 2015 and began its activities in 2017. It was subsequently registered as an organisation with the Corporate Affairs Commission in Nigeria. Its registration details are available through the organisation's official documentation." },
+      { q: 'Where does YTOP Global operate?', a: "YTOP's activities are based in Nigeria, with engagements and collaborations extending across other countries. Specific programme locations are communicated through relevant programme updates." },
     ],
   },
   {
@@ -26,9 +26,9 @@ const FAQ_GROUPS = [
   {
     group: 'Donations',
     items: [
-      { q: 'Can I make a donation from outside Nigeria?', a: 'We welcome international and diaspora supporters. Please contact us and we will arrange the available payment methods and currencies with you.' },
-      { q: 'Can I support a specific programme?', a: 'Yes. Where an active campaign offers programme-specific giving, you can select the initiative you wish to support. Otherwise, contact us and tell us which programme you would like to support.' },
-      { q: 'Can I make monthly donations?', a: 'YTOP intends to provide recurring giving options through supported payment channels. For now, monthly giving is arranged directly: contact us and we will set it up with you.' },
+      { q: 'Can I donate from outside Nigeria?', a: 'We welcome international and diaspora supporters. Available payment methods and currencies are displayed through our approved donation channels.' },
+      { q: 'Can I support a specific programme?', a: 'Yes. Where an active campaign offers programme-specific giving, you can select the initiative you wish to support.' },
+      { q: 'Can I make monthly donations?', a: 'YTOP intends to provide recurring giving options through supported payment channels. The donation page will indicate available recurring payment arrangements.' },
       { q: 'Will I receive a donation receipt?', a: 'Successful donations should generate an electronic confirmation and receipt using the contact information provided.' },
     ],
   },

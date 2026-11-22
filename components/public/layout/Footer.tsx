@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, MapPin, Phone } from 'lucide-react';
 import FooterNewsletterForm from './FooterNewsletterForm';
 import SocialIconLinks from '../SocialIconLinks';
 
@@ -9,136 +8,124 @@ const DEFAULT_LOGO = '/media/2023/03/YTOP-PNGGG-2022.png';
 type FooterProps = {
   logoUrl?: string | null;
   siteName?: string;
+  /** Kept for compatibility; the footer shows the approved organisation name. */
   siteTagline?: string;
 };
 
-export default function Footer({
-  logoUrl,
-  siteName = 'YTOP Global',
-  siteTagline = 'Young Talented Optimistic and Potential Org.',
-}: FooterProps) {
+// Copy: Master Website Content document, Part Twelve.
+const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
+  {
+    title: 'About Us',
+    links: [
+      { href: '/about', label: 'Our Story' },
+      { href: '/about#mission', label: 'Our Mission and Vision' },
+      { href: '/team', label: 'Our Team' },
+      { href: '/governance', label: 'Governance' },
+    ],
+  },
+  {
+    title: 'Our Work',
+    links: [
+      { href: '/programs', label: 'Our Programmes' },
+      { href: '/impact', label: 'Our Impact' },
+      { href: '/reports', label: 'Reports and Publications' },
+      { href: '/events', label: 'Events' },
+    ],
+  },
+  {
+    title: 'Get Involved',
+    links: [
+      { href: '/get-involved/volunteer', label: 'Volunteer' },
+      { href: '/get-involved/mentor', label: 'Become a Mentor' },
+      { href: '/get-involved/campus-ambassadors', label: 'Campus Ambassador' },
+      { href: '/get-involved/community', label: 'Join Our Community' },
+    ],
+  },
+  {
+    title: 'Support Us',
+    links: [
+      { href: '/donate', label: 'Make a Donation' },
+      { href: '/donate#monthly-giving', label: 'Monthly Giving' },
+      { href: '/get-involved/sponsor', label: 'Sponsor a Programme' },
+      { href: '/get-involved/partner', label: 'Corporate Partnerships' },
+    ],
+  },
+  {
+    title: 'Contact',
+    links: [
+      { href: '/contact', label: 'Contact Us' },
+      { href: 'mailto:admin@ytopglobal.org', label: 'Partnership Enquiries' },
+      { href: 'mailto:info@ytopglobal.org', label: 'General Enquiries' },
+    ],
+  },
+];
+
+const linkClass = 'hover:text-primary hover:pl-2 transition-all duration-200 inline-block';
+
+export default function Footer({ logoUrl, siteName = 'YTOP Global' }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const logoSrc = logoUrl?.trim() || DEFAULT_LOGO;
 
   return (
     <footer className="bg-secondary text-gray-300">
       <div className="container mx-auto px-4 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10">
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
               <div className="relative h-11 w-[120px] flex-shrink-0">
-                <Image
-                  src={logoSrc}
-                  alt={siteName}
-                  fill
-                  className="object-contain object-left"
-                  sizes="120px"
-                />
+                <Image src={logoSrc} alt={siteName} fill className="object-contain object-left" sizes="120px" />
               </div>
               <div>
-                <div className="font-bold text-white text-lg">{siteName}</div>
-                <div className="text-xs text-slate-400">{siteTagline}</div>
+                <div className="font-bold text-white text-lg uppercase">{siteName}</div>
+                <div className="text-xs text-slate-300">YTOP Youth Empowerment Foundation</div>
               </div>
             </div>
-            <p className="text-sm leading-relaxed mb-5">
-              Developing young people through leadership, education, mentorship, capacity
-              building and community engagement.
+            <p className="text-sm leading-relaxed mb-3">
+              Developing young people through leadership, education, mentorship, capacity building and community engagement.
             </p>
-            <p className="text-xs text-slate-400 mb-5">Registration: CAC RC179444</p>
+            <p className="text-sm leading-relaxed mb-5">
+              We work to create opportunities for young people to develop their abilities, participate meaningfully in society and contribute to stronger communities.
+            </p>
             <SocialIconLinks variant="footer" />
           </div>
 
-          <div>
-            <h3 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Quick Links</h3>
-            <ul className="space-y-3 text-sm">
-              {[
-                { href: '/about', label: 'About Us' },
-                { href: '/programs', label: 'Our Programmes' },
-                { href: '/team', label: 'Our Team' },
-                { href: '/events', label: 'Events' },
-                { href: '/gallery', label: 'Gallery' },
-                { href: '/blog', label: 'Blog' },
-                { href: '/get-involved', label: 'Get Involved' },
-                { href: '/donate', label: 'Donate' },
-                { href: '/impact', label: 'Impact' },
-                { href: '/reports', label: 'Reports and Publications' },
-                { href: '/governance', label: 'Governance' },
-                { href: '/faq', label: 'FAQ' },
-                { href: '/contact', label: 'Contact' },
-              ].map(({ href, label }) => (
-                <li key={href}>
-                  <Link href={href} className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {COLUMNS.map((col) => (
+            <nav key={col.title} aria-label={col.title}>
+              <h3 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">{col.title}</h3>
+              <ul className="space-y-3 text-sm">
+                {col.links.map(({ href, label }) => (
+                  <li key={label}>
+                    {href.startsWith('mailto:') ? (
+                      <a href={href} className={linkClass}>{label}</a>
+                    ) : (
+                      <Link href={href} className={linkClass}>{label}</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
 
-          <div>
-            <h3 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Get Involved</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link href="/get-involved" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Get Involved</Link>
-              </li>
-              <li>
-                <Link href="/get-involved/campus-ambassadors" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Campus Ambassadors</Link>
-              </li>
-              <li>
-                <Link href="/donate" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Make a Donation</Link>
-              </li>
-              <li>
-                <Link href="/get-involved/partner" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Partner With Us</Link>
-              </li>
-              <li>
-                <Link href="/get-involved/sponsor" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Corporate Partnerships</Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-primary hover:pl-2 transition-all duration-200 cursor-pointer inline-block">Contact Us</Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Contact</h3>
-            <ul className="space-y-3 text-sm mb-6">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-5 h-5 flex-shrink-0 text-primary mt-0.5" />
-                <span className="hover:text-white transition-colors duration-200">H6, Omole line 4, Omisore Street, Modakeke, Osun State, Nigeria</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-5 h-5 text-primary" />
-                <span className="flex flex-col">
-                  <a href="tel:+2348100218117" className="hover:text-white transition-colors duration-200 cursor-pointer">+234 810 021 8117</a>
-                  <a href="tel:+46727702361" className="hover:text-white transition-colors duration-200 cursor-pointer">+46 72 770 2361</a>
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-5 h-5 text-primary" />
-                <span className="flex flex-col">
-                  <a href="mailto:info@ytopglobal.org" className="hover:text-white transition-colors duration-200 cursor-pointer">info@ytopglobal.org</a>
-                  <a href="mailto:admin@ytopglobal.org" className="hover:text-white transition-colors duration-200 cursor-pointer">admin@ytopglobal.org</a>
-                </span>
-              </li>
-            </ul>
-            <div>
-              <h4 className="text-white font-semibold mb-2 text-sm">Newsletter</h4>
-              <FooterNewsletterForm />
-            </div>
-          </div>
+        <div className="mt-10 max-w-sm">
+          <h3 className="text-white font-semibold mb-2 text-sm">Newsletter</h3>
+          <FooterNewsletterForm />
         </div>
       </div>
 
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-5">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-            <div className="text-slate-400">
+          <p className="text-sm text-slate-300 mb-3">Registration: CAC RC179444</p>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-sm">
+            <div className="text-slate-300">
               © {currentYear} YTOP Youth Empowerment Foundation. All rights reserved.
             </div>
-            <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-white transition-colors duration-200 cursor-pointer">Privacy</Link>
-              <Link href="/terms" className="hover:text-white transition-colors duration-200 cursor-pointer">Terms</Link>
-              <Link href="/site-map" className="hover:text-white transition-colors duration-200 cursor-pointer">Sitemap</Link>
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
+              <Link href="/safeguarding" className="hover:text-white transition-colors">Safeguarding</Link>
+              <Link href="/accessibility" className="hover:text-white transition-colors">Accessibility</Link>
+              <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
             </div>
           </div>
         </div>

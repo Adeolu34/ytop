@@ -9,7 +9,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: {
       default: `${identity.siteName} | Youth Empowerment Foundation`,
-      template: `%s | ${identity.siteName}`,
+      // Page titles already carry the brand where the approved copy wants it, so no suffix is added.
+      template: '%s',
     },
     icons: identity.siteFaviconUrl
       ? { icon: identity.siteFaviconUrl }

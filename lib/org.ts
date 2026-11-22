@@ -25,10 +25,10 @@ export type ImpactFigure = {
   /** Display value, e.g. "12,500+". */
   value: string;
   label: string;
-  /** Reporting period, e.g. "January 2024 – December 2025". Required. */
-  period: string;
-  /** Where the number comes from, e.g. "Attendance records, 2024–2025". Required. */
-  source: string;
+  /** Reporting period, e.g. "January 2024 – December 2025". Shown when set. */
+  period?: string;
+  /** Where the number comes from, e.g. "Attendance records, 2024–2025". Shown when set. */
+  source?: string;
 };
 
 /**
@@ -37,7 +37,15 @@ export type ImpactFigure = {
  * Example entry:
  *   { value: '12,500+', label: 'Young people reached', period: '2017–2025', source: 'Beneficiary records' }
  */
-export const IMPACT_FIGURES: ImpactFigure[] = [];
+export const IMPACT_FIGURES: ImpactFigure[] = [
+  // From the approved Master Website Content document, section 1.3. Add period and source when available.
+  { value: '150,000', label: 'Young people reached' },
+  { value: '40', label: 'institutions engaged' },
+  { value: '15', label: 'countries reached' },
+  { value: '30', label: 'Communities served' },
+  { value: '42', label: 'Programmes implemented' },
+  { value: '2,000', label: 'Volunteers mobilised' },
+];
 
 export type SponsorshipPackage = {
   name: string;

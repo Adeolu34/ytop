@@ -1,8 +1,10 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export type ProgrammeContent = {
   name: string;
+  image?: { src: string; alt: string };
   headline: string;
   intro: string[];
   objectivesHeading?: string;
@@ -25,6 +27,12 @@ export default function ProgrammeTemplate({ content }: { content: ProgrammeConte
           <h1 className="font-display text-4xl md:text-5xl font-extrabold leading-tight">{content.headline}</h1>
         </div>
       </section>
+
+      {content.image ? (
+        <div className="relative h-56 sm:h-72 md:h-96 w-full">
+          <Image src={content.image.src} alt={content.image.alt} fill className="object-cover" sizes="100vw" priority />
+        </div>
+      ) : null}
 
       <section className="py-16 bg-white dark:bg-background-dark">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 text-lg text-slate-600 dark:text-slate-300 leading-relaxed">

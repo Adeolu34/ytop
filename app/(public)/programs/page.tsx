@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { loadWithDatabaseFallback } from '@/lib/public-db';
 import { mongoListActivePrograms } from '@/lib/mongo-public';
 import { generateSEOMetadata } from '@/components/SEOHead';
+
 /** CDN ISR — lib/public-page-config.ts */
 export const revalidate = 60;
 
@@ -15,207 +16,93 @@ export function generateMetadata() {
     url: '/programs',
     image: '/media/2021/11/005.jpg',
     type: 'website',
-    keywords: 'YTOP programs, Project 300, Rise of Warriors, youth leadership Nigeria, career guidance, community impact',
+    keywords: 'youth development programmes, Rise of Warriors, Project 300, leadership programmes for young people',
   });
 }
 
+// Copy: Master Website Content document, 3.1 and 1.6. These six programmes always show; any extra
+// programmes created in the admin (Programs) are listed below them.
+const OFFICIAL = [
+  { slug: 'rise-of-warriors', title: 'Rise of Warriors', desc: 'A leadership and personal development initiative designed to encourage young people to recognise their potential, strengthen their leadership abilities and take responsibility for positive change.', cta: 'Explore Rise of Warriors', image: '/media/2021/11/006.jpg' },
+  { slug: 'rise-of-100-leaders', title: 'Rise of 100 Leaders', desc: 'An initiative focused on developing young leaders through structured learning, mentorship, professional exposure and leadership development opportunities.', cta: 'Explore Rise of 100 Leaders', image: '/media/2021/11/008.jpg' },
+  { slug: 'youth-on-a-mission', title: 'Youth on a Mission', desc: 'A youth development initiative that encourages young people to identify their strengths, pursue purposeful development, and contribute positively to society.', cta: 'Explore Youth on a Mission', image: '/media/2025/10/DSC0289.jpg' },
+  { slug: 'project-300', title: 'Project 300', desc: 'A school outreach initiative aimed at expanding access to leadership education, career guidance, and personal development opportunities among secondary school students.', cta: 'Explore Project 300', image: '/media/2021/10/IMG_9622-scaled.jpg' },
+  { slug: 'food4all', title: 'Food4All', desc: 'A community-focused initiative that contributes to food security and support for vulnerable populations through targeted interventions.', cta: 'Explore Food4All', image: '/media/2025/08/AAAA.jpg' },
+  { slug: 'ytop-conference', title: 'YTOP Conference', desc: 'A platform for bringing together young people, development practitioners and institutional stakeholders to exchange knowledge, discuss emerging challenges and explore opportunities for collaboration.', cta: 'Explore Our Conference', image: '/media/2025/04/DSC0326-scaled.jpg' },
+];
+const OFFICIAL_SLUGS = new Set(OFFICIAL.map((p) => p.slug));
+
 export default async function ProgramsPage() {
-  let isUsingFallbackPrograms = false;
-  const programs = await loadWithDatabaseFallback({
+  const dbPrograms = await loadWithDatabaseFallback({
     load: async () => mongoListActivePrograms(),
     fallback: [],
     onError(error) {
-      isUsingFallbackPrograms = true;
       console.error('Programs page database query failed after retry:', error);
     },
   });
+  const extra = dbPrograms.filter((p) => !OFFICIAL_SLUGS.has(p.slug));
 
   return (
     <div>
-      {isUsingFallbackPrograms ? (
-        <section className="border-b border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900">
-          <div className="mx-auto max-w-6xl">
-            Program records are temporarily unavailable. Static program highlights
-            are still available while the database reconnects.
+      <section className="relative bg-secondary text-white py-20">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />
+        <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
+          <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Creating Opportunities Through Action.</h1>
+          <div className="space-y-4 text-lg md:text-xl text-white/95">
+            <p>YTOP Global implements programmes that support leadership development, education, capacity building, mentorship and community participation.</p>
+            <p>Our initiatives respond to different needs and provide opportunities for young people to develop their abilities, expand their knowledge and contribute to positive change.</p>
+            <p>Explore our programmes and find out how you can participate or support their implementation.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-white dark:bg-background-dark">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {OFFICIAL.map((p) => (
+            <article key={p.slug} className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-shadow">
+              <div className="relative h-48">
+                <Image src={p.image} alt="" fill className="object-cover" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" />
+              </div>
+              <div className="flex flex-1 flex-col p-6">
+                <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white mb-2">{p.title}</h2>
+                <p className="flex-1 text-slate-600 dark:text-slate-400 mb-5">{p.desc}</p>
+                <Link href={`/programs/${p.slug}`} className="inline-flex items-center font-semibold text-primary hover:underline">
+                  {p.cta} <ArrowRight className="ml-2 w-4 h-4" aria-hidden />
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {extra.length > 0 ? (
+        <section className="pb-20 bg-white dark:bg-background-dark">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="font-display text-3xl font-bold text-slate-900 dark:text-white mb-8">More programmes</h2>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {extra.map((program) => (
+                <article key={program.id} className="flex flex-col rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+                  <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">{program.title}</h3>
+                  <div className="prose prose-sm dark:prose-invert flex-1 line-clamp-4" dangerouslySetInnerHTML={{ __html: program.description }} />
+                  <Link href={`/programs/${program.slug}`} className="mt-4 inline-flex items-center font-semibold text-primary hover:underline">
+                    Explore {program.title} <ArrowRight className="ml-2 w-4 h-4" aria-hidden />
+                  </Link>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
 
-      {/* Hero - stitch style */}
-      <section className="relative min-h-[50vh] flex items-center justify-center bg-secondary text-white py-20">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-6">Creating Opportunities Through Action.</h1>
-            <p className="text-xl text-white/95">
-              YTOP Global implements programmes that support leadership development, education, capacity building, mentorship and community participation. Explore our programmes and find out how you can participate or support their implementation.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Project 300 highlight */}
-      <section className="py-12 bg-surface-light dark:bg-surface-dark border-b border-slate-200/60 dark:border-slate-800/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-[1.4fr_minmax(0,1fr)] gap-8 items-center rounded-2xl bg-white dark:bg-background-dark shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">
-                School Outreach Initiative
-              </p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">
-                Project 300 – Secondary School Outreach
-              </h2>
-              <p className="text-sm md:text-base text-slate-700 dark:text-slate-300 mb-4 max-w-xl">
-                A school outreach initiative aimed at expanding access to leadership education, career guidance and
-                personal development opportunities among secondary school students. Our target is to reach 300
-                secondary schools through structured outreach activities.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/programs/project-300"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition shadow-md"
-                >
-                  Learn More About Project 300
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="https://forms.gle/s9DnAf5aZsivRm7a6"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-primary hover:text-primary transition"
-                >
-                  Apply to Volunteer
-                </Link>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-              <div className="relative h-40 sm:h-48 rounded-xl overflow-hidden shadow-md">
-                <Image
-                  src="/media/2021/10/IMG_9622-scaled.jpg"
-                  alt="Students during a Project 300 outreach session"
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 1024px) 240px, 50vw"
-                />
-              </div>
-              <div className="rounded-xl bg-secondary/5 dark:bg-secondary/20 p-4 flex flex-col justify-center">
-                <p className="text-2xl font-black text-secondary mb-1">300</p>
-                <p className="text-xs text-slate-700 dark:text-slate-200">Secondary schools targeted</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Programs */}
-      <section className="py-20 bg-white dark:bg-background-dark">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {programs.length > 0 ? (
-            <div className="space-y-16">
-              {programs.map((program, index) => {
-                const programHref = `/programs/${program.slug}`;
-                return (
-                <div
-                  key={program.id}
-                  className={`flex flex-col ${
-                    index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
-                  } gap-12 items-center max-w-6xl mx-auto`}
-                >
-                  {/* Image */}
-                  {program.image ? (
-                    <div className="w-full lg:w-1/2">
-                      <Link
-                        href={programHref}
-                        className="group block relative h-96 bg-slate-200 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
-                      >
-                        <Image
-                          src={program.image.url}
-                          alt={program.image.altText || program.title}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className="w-full lg:w-1/2">
-                      <Link
-                        href={programHref}
-                        className="group block h-96 bg-gradient-to-br from-secondary to-secondary rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center cursor-pointer transform hover:scale-[1.02]"
-                      >
-                        <span className="text-6xl font-bold text-white group-hover:scale-110 transition-transform duration-300">
-                          {program.title.charAt(0)}
-                        </span>
-                      </Link>
-                    </div>
-                  )}
-
-                  {/* Content */}
-                  <div className="w-full lg:w-1/2">
-                    <Link href={programHref} className="inline-block mb-4">
-                      <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white hover:text-primary transition-colors duration-200">
-                        {program.title}
-                      </h2>
-                    </Link>
-                    <div
-                      className="prose prose-lg dark:prose-invert max-w-none mb-6 text-slate-700 dark:text-slate-300"
-                      dangerouslySetInnerHTML={{ __html: program.description }}
-                    />
-                    {program.sdgGoals && program.sdgGoals.length > 0 && (
-                      <div className="mb-6">
-                        <p className="text-sm font-semibold text-slate-700 mb-3">
-                          UN SDG Alignment:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {program.sdgGoals.map((sdg, idx) => (
-                            <span
-                              key={sdg}
-                              className="px-4 py-2 bg-secondary/10 text-secondary rounded-full text-sm font-semibold hover:bg-secondary hover:text-white transition-all duration-300 cursor-pointer"
-                              style={{
-                                transitionDelay: `${idx * 50}ms`
-                              }}
-                            >
-                              SDG {sdg}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Program information coming soon.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA - stitch style */}
-      <section className="py-20 md:py-24 bg-secondary text-white">
+      <section className="py-20 bg-secondary text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-            Ready to Get Involved?
-          </h2>
-          <p className="text-xl mb-10 text-white/95 max-w-2xl mx-auto">
-            Participate in a programme, volunteer, or help us take learning, guidance and development opportunities to more young people.
-          </p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Take part. Or help someone else take part.</h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/get-involved"
-              className="group px-8 py-4 bg-white text-secondary rounded-full hover:shadow-2xl transition-all font-bold inline-flex items-center justify-center gap-2"
-            >
+            <Link href="/get-involved" className="px-8 py-4 bg-white text-secondary rounded-full font-bold hover:shadow-2xl transition-all">
               Get Involved
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
-            <Link
-              href="/donate"
-              className="group px-8 py-4 bg-primary text-white rounded-full hover:bg-primary-hover border-2 border-primary transition-all font-bold inline-flex items-center justify-center gap-2"
-            >
-              Support Our Programs
+            <Link href="/donate" className="px-8 py-4 bg-primary text-white rounded-full font-bold border-2 border-primary hover:bg-primary-hover transition-all">
+              Support Our Work
             </Link>
           </div>
         </div>

@@ -9,6 +9,12 @@ const serverActionFiles = [
   'app/admin/(dashboard)/posts/actions.ts',
   'app/admin/(dashboard)/users/actions.ts',
   'app/admin/(dashboard)/gallery/actions.ts',
+  'app/admin/(dashboard)/events/actions.ts',
+  'app/admin/(dashboard)/testimonials/actions.ts',
+  'app/admin/(dashboard)/campaigns/actions.ts',
+  'app/admin/(dashboard)/enquiries/actions.ts',
+  'app/admin/(dashboard)/documents/actions.ts',
+  'app/admin/(dashboard)/content/actions.ts',
   'app/(public)/blog/[slug]/comment-actions.ts',
 ];
 

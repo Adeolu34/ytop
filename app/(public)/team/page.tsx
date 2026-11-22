@@ -124,7 +124,7 @@ export default async function TeamPage() {
               The People Behind Our Work.
             </h1>
             <p className="text-xl md:text-2xl text-white font-semibold [text-shadow:0_1px_12px_rgba(0,0,0,0.8)]">
-              Our leadership, faculty, mentors, volunteers and team members contribute different skills and perspectives to support programme development, institutional engagement and organisational growth.
+              YTOP Global's work depends on the commitment, knowledge and leadership of individuals who share a common interest in youth development and community progress. Our leadership, faculty, mentors, volunteers and team members bring diverse skills and perspectives to the organisation. Together, they support programme development, institutional engagement and organisational growth.
             </p>
           </div>
         </div>

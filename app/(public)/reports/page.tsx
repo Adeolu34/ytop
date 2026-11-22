@@ -1,4 +1,9 @@
 import Link from 'next/link';
+import { FileText } from 'lucide-react';
+import { getPublicDocuments } from '@/lib/public-documents';
+
+/** CDN ISR: documents published in the admin appear within a minute. */
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Reports and Publications | YTOP Global',
@@ -6,10 +11,7 @@ export const metadata = {
     'Annual reports, programme reports, research publications, policy briefs and learning resources from YTOP Global.',
 };
 
-// Copy: Master Website Content document, 8.3 and 4.3. Entries must only be added for real,
-// approved documents: add { title, period, href } objects to REPORTS when files are published.
-const REPORTS: { title: string; period: string; href: string }[] = [];
-
+// Copy: Master Website Content document, 8.3 and 4.3. Documents are published in the admin (Documents).
 const RESOURCE_TYPES = [
   'Annual reports.',
   'Programme reports.',
@@ -19,13 +21,16 @@ const RESOURCE_TYPES = [
   'Organisational publications.',
 ];
 
-export default function ReportsPage() {
+export default async function ReportsPage() {
+  const reports = (await getPublicDocuments()).filter((d) => d.category === 'REPORT');
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <h1 className="font-display text-4xl font-bold text-slate-900 dark:text-white mb-6">Reports and Resources</h1>
-      <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
-        Access selected publications that document our work, share programme findings and provide information about our development priorities. Available resources may include:
+      <p className="text-lg text-slate-600 dark:text-slate-300 mb-4">
+        Access selected publications that document our work, share programme findings and provide information about our development priorities.
       </p>
+      <p className="text-lg text-slate-600 dark:text-slate-300 mb-4">Available resources may include:</p>
       <ul className="grid gap-3 md:grid-cols-2 mb-12">
         {RESOURCE_TYPES.map((r) => (
           <li key={r} className="rounded-xl border-l-4 border-primary bg-slate-50 dark:bg-slate-800 p-4 text-slate-700 dark:text-slate-200">{r}</li>
@@ -33,12 +38,18 @@ export default function ReportsPage() {
       </ul>
 
       <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white mb-4">Published documents</h2>
-      {REPORTS.length > 0 ? (
-        <ul className="space-y-3">
-          {REPORTS.map((r) => (
-            <li key={r.href}>
-              <a href={r.href} className="font-semibold text-primary hover:underline">{r.title}</a>
-              <span className="text-slate-500"> ({r.period})</span>
+      {reports.length > 0 ? (
+        <ul className="space-y-4">
+          {reports.map((r) => (
+            <li key={r.id} className="flex gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark p-5">
+              <FileText className="w-6 h-6 flex-shrink-0 text-primary mt-1" aria-hidden />
+              <div>
+                <a href={r.url} target="_blank" rel="noopener noreferrer" className="font-bold text-slate-900 dark:text-white hover:text-primary hover:underline">
+                  {r.title}
+                </a>
+                {r.period ? <p className="text-sm text-slate-500">{r.period}</p> : null}
+                {r.description ? <p className="mt-1 text-slate-600 dark:text-slate-400">{r.description}</p> : null}
+              </div>
             </li>
           ))}
         </ul>

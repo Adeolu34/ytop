@@ -1,6 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, MapPin, Users, ArrowRight } from 'lucide-react';
+import { loadWithDatabaseFallback } from '@/lib/public-db';
+import { mongoEventsList, type MongoEventDoc } from '@/lib/mongo-events-store';
+
+/** CDN ISR: events added in the admin appear within a minute. */
+export const revalidate = 60;
 
 /**
  * YTOP Events – content aligned with https://ytopglobal.org/ytop-events/
@@ -16,6 +21,9 @@ const upcomingEvents: Array<{
   description: string;
   image: string;
   cta?: string;
+  href?: string;
+  speakers?: string;
+  programme?: string;
 }> = [
   {
     id: 'coming-soon',
@@ -188,7 +196,59 @@ export const metadata = {
   description: 'Explore YTOP Global events: conferences, Rise of Warriors, International Youth Week, school outreach and community engagements, upcoming and previous.',
 };
 
-export default function EventsPage() {
+const FALLBACK_EVENT_IMAGE = '/media/2021/11/20210605_080734-scaled.jpg';
+
+function formatEventDate(start: Date, end: Date | null): string {
+  const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' };
+  const first = new Date(start).toLocaleDateString('en-GB', opts);
+  if (!end) return first;
+  const last = new Date(end).toLocaleDateString('en-GB', opts);
+  return last === first ? first : `${first} – ${last}`;
+}
+
+function toUpcoming(e: MongoEventDoc): (typeof upcomingEvents)[number] {
+  return {
+    id: e.id,
+    title: e.title,
+    date: formatEventDate(e.startDate, e.endDate),
+    time: new Date(e.startDate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC',
+    location: e.location || (e.isOnline ? 'Online' : 'To be announced'),
+    description: e.description,
+    image: e.image?.url || FALLBACK_EVENT_IMAGE,
+    cta: e.registrationUrl ? 'Register for This Event' : undefined,
+    href: e.registrationUrl ?? undefined,
+    speakers: e.speakers ?? undefined,
+    programme: e.programmeName ?? undefined,
+  };
+}
+
+function toPrevious(e: MongoEventDoc): (typeof previousEvents)[number] {
+  return {
+    id: e.id,
+    title: e.title,
+    date: formatEventDate(e.startDate, e.endDate),
+    location: e.location || (e.isOnline ? 'Online' : undefined),
+    description: e.description,
+    image: e.image?.url || undefined,
+  };
+}
+
+export default async function EventsPage() {
+  // Events managed in the admin (Events) come first; the built-in archive below is kept as history.
+  const [dbUpcoming, dbPast] = await loadWithDatabaseFallback({
+    load: async () =>
+      Promise.all([
+        mongoEventsList({ type: 'upcoming', limit: 20 }),
+        mongoEventsList({ type: 'past', limit: 50 }),
+      ]),
+    fallback: [[], []] as [MongoEventDoc[], MongoEventDoc[]],
+    onError(error) {
+      console.error('Events page database query failed:', error);
+    },
+  });
+  const upcomingList = dbUpcoming.length > 0 ? dbUpcoming.map(toUpcoming) : upcomingEvents;
+  const previousList = [...dbPast.map(toPrevious), ...previousEvents];
+
   return (
     <div>
       {/* Hero - stitch style */}
@@ -208,14 +268,13 @@ export default function EventsPage() {
         <div className="max-w-7xl mx-auto px-4 relative z-10 py-20 text-center">
           <div className="max-w-3xl mx-auto rounded-2xl bg-black/50 backdrop-blur-sm px-6 py-8 md:px-10 md:py-10 border border-white/10 shadow-2xl">
             <h1 className="font-display text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-              YTOP Events
-            </h1>
-            <p className="text-xl md:text-2xl text-white font-semibold mb-2">
               Bringing People Together to Learn, Lead and Collaborate.
-            </p>
-            <p className="text-base text-white/95 font-medium">
-              Our events provide opportunities for young people, professionals and institutional stakeholders to engage with important development issues and explore practical solutions.
-            </p>
+            </h1>
+            <div className="space-y-3 text-base md:text-lg text-white/95 font-medium">
+              <p>YTOP Global organises and supports activities that encourage learning, leadership development, knowledge exchange and community participation.</p>
+              <p>Our events provide opportunities for young people, professionals and institutional stakeholders to engage with important development issues and explore practical solutions.</p>
+              <p>Explore our upcoming events and previous activities.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -227,11 +286,11 @@ export default function EventsPage() {
             Upcoming Events
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-            Dates, venues and registration details are published here as each event is confirmed.
+            Date, time, venue or virtual platform, and registration information appear with each event.
           </p>
 
           <div className="space-y-8">
-            {upcomingEvents.map((event) => (
+            {upcomingList.map((event) => (
               <div
                 key={event.id}
                 className="group bg-surface-light dark:bg-surface-dark rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 dark:border-slate-800"
@@ -264,9 +323,17 @@ export default function EventsPage() {
                         {event.location}
                       </span>
                     </div>
+                    {(event.speakers || event.programme || event.id !== 'coming-soon') ? (
+                      <dl className="mt-4 space-y-1 text-sm text-slate-700 dark:text-slate-300">
+                        {event.speakers ? (<div><dt className="inline font-semibold">Speakers and facilitators: </dt><dd className="inline">{event.speakers}</dd></div>) : null}
+                        {event.programme ? (<div><dt className="inline font-semibold">Programme: </dt><dd className="inline">{event.programme}</dd></div>) : null}
+                        {event.id !== 'coming-soon' ? (<div><dt className="inline font-semibold">Contact information: </dt><dd className="inline"><a href="mailto:info@ytopglobal.org" className="text-primary hover:underline">info@ytopglobal.org</a></dd></div>) : null}
+                      </dl>
+                    ) : null}
                     {event.cta && (
                       <Link
-                        href="/contact"
+                        href={event.href ?? '/get-involved/community'}
+                        {...(event.href ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                         className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-full hover:bg-primary-hover shadow-md transition-all duration-300"
                       >
                         {event.cta}
@@ -281,18 +348,24 @@ export default function EventsPage() {
         </div>
       </section>
 
+      <div className="bg-white dark:bg-background-dark pb-10 text-center">
+        <a href="#previous-events" className="inline-flex px-8 py-3 border-2 border-secondary text-secondary font-bold rounded-full hover:bg-secondary hover:text-white transition-colors">
+          Explore Event Archive
+        </a>
+      </div>
+
       {/* Previous Events */}
       <section id="previous-events" className="py-20 md:py-24 bg-slate-50 dark:bg-background-dark scroll-mt-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2 text-center">
-            Previous Events
+            Documenting Our Engagement and Learning.
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-            Documenting Our Engagement and Learning. Conferences, workshops, school outreach activities and community engagements.
+            Explore previous conferences, workshops, school outreach activities, and community engagements. These records provide an overview of our activities and the people and institutions involved in our work.
           </p>
 
           <div className="space-y-12">
-            {previousEvents.map((event) => (
+            {previousList.map((event) => (
               <article
                 key={event.id}
                 className="bg-white dark:bg-surface-dark rounded-2xl shadow-sm overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl transition-shadow duration-300"

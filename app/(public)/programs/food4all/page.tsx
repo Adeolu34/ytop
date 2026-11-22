@@ -6,6 +6,7 @@ export const metadata = {
     'Food4All supports community-based efforts that address food-related needs and contribute to the wellbeing of vulnerable populations.',
 };
 
+// Copy: Master Website Content document, 3.6.
 export default function Page() {
   return (
     <ProgrammeTemplate
@@ -14,8 +15,9 @@ export default function Page() {
         headline: 'Supporting Community Wellbeing Through Food Security Initiatives.',
         intro: [
           'Access to adequate and nutritious food is fundamental to human wellbeing and development.',
-          'Food insecurity can affect education, health, productivity, and the ability of individuals and households to participate fully in society.',
-          'Through Food4All, YTOP Global seeks to support community-based efforts that address food-related needs and contribute to the wellbeing of vulnerable populations. Our approach focuses on identifying relevant needs, mobilising support and implementing appropriate community interventions.',
+          "Food insecurity can affect education, health, productivity, and individuals' and households' ability to participate fully in society.",
+          'Through Food4All, YTOP Global provides community-based efforts that address food-related needs and contribute to the wellbeing of vulnerable populations.',
+          'Our approach focuses on identifying relevant needs, mobilising support and implementing appropriate community interventions.',
         ],
         objectivesHeading: 'Our objectives',
         objectives: [
@@ -27,13 +29,13 @@ export default function Page() {
         ],
         extraSections: [
           {
-            heading: 'Support Food4All',
-            body: 'Your contribution can help provide resources for approved food security interventions.',
+            heading: 'Support Food4All.',
+            body: 'Your contribution can help fund approved food security interventions.',
           },
         ],
         callToAction: {
-          heading: 'Help support community wellbeing.',
-          body: 'Contribute to approved food security interventions, or partner with us.',
+          heading: 'Support Food4All.',
+          body: 'Contribute to approved food security interventions, or become a partner.',
         },
         buttons: [
           { label: 'Support Food4All', href: '/donate', primary: true },

@@ -13,9 +13,19 @@ const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   email: z.string().email('Invalid email address'),
   phone: z.string().optional(),
+  organisation: z.string().max(200).optional(),
+  formType: z.enum(['CONTACT', 'VOLUNTEER', 'PARTNERSHIP']).optional(),
   subject: z.string().min(5, 'Subject must be at least 5 characters').max(200),
   message: z.string().min(10, 'Message must be at least 10 characters').max(5000),
 });
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 /**
  * POST /api/forms/contact
@@ -57,13 +67,14 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
     const submissionId = await mongoFormSubmissionInsert({
-      type: 'CONTACT',
+      type: data.formType ?? 'CONTACT',
       name: data.name,
       email: data.email,
       phone: data.phone || null,
       data: {
         subject: data.subject,
         message: data.message,
+        organisation: data.organisation || null,
       },
       ipAddress: ip,
       userAgent,
@@ -75,29 +86,29 @@ export async function POST(request: NextRequest) {
 
       const adminHtml = `
         <h2>New Contact Form Submission</h2>
-        <p><strong>From:</strong> ${data.name} &lt;${data.email}&gt;</p>
-        ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ''}
-        <p><strong>Subject:</strong> ${data.subject}</p>
+        <p><strong>From:</strong> ${escapeHtml(data.name)} &lt;${escapeHtml(data.email)}&gt;</p>${data.organisation ? `<p><strong>Organisation:</strong> ${escapeHtml(data.organisation)}</p>` : ''}
+        ${data.phone ? `<p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>` : ''}
+        <p><strong>Subject:</strong> ${escapeHtml(data.subject)}</p>
         <p><strong>Message:</strong></p>
         <blockquote style="border-left:4px solid #ccc;padding:0 12px;color:#555">
-          ${data.message.replace(/\n/g, '<br>')}
+          ${escapeHtml(data.message).replace(/\n/g, '<br>')}
         </blockquote>
         <p style="color:#888;font-size:12px">Submission ID: ${submissionId}</p>
       `;
 
       const confirmHtml = `
-        <p>Hi ${data.name},</p>
+        <p>Hi ${escapeHtml(data.name)},</p>
         <p>Thank you for reaching out to YTOP Global. We have received your message and will get back to you within 2–3 business days.</p>
         <p><strong>Your message:</strong></p>
         <blockquote style="border-left:4px solid #ccc;padding:0 12px;color:#555">
-          ${data.message.replace(/\n/g, '<br>')}
+          ${escapeHtml(data.message).replace(/\n/g, '<br>')}
         </blockquote>
         <p>Warm regards,<br>The YTOP Global Team</p>
       `;
 
       await Promise.allSettled([
         notifyEmail
-          ? sendTransactionalEmail({ to: notifyEmail, subject: `[Contact] ${data.subject}`, html: adminHtml })
+          ? sendTransactionalEmail({ to: notifyEmail, subject: `[${data.formType ?? 'Contact'}] ${data.subject.replace(/[\r\n]+/g, ' ')}`, html: adminHtml })
           : Promise.resolve(),
         sendTransactionalEmail({ to: data.email, subject: 'We received your message — YTOP Global', html: confirmHtml }),
       ]);

@@ -37,7 +37,7 @@ export const menuItems: MenuItem[] = [
       { label: 'Impact Framework', href: '/impact' },
       { label: 'Participant Stories', href: '/impact/stories' },
       { label: 'Reports and Publications', href: '/reports' },
-      { label: 'Events Archive', href: '/events' },
+      { label: 'Events', href: '/events' },
       { label: 'Gallery', href: '/gallery' },
     ],
   },
@@ -45,8 +45,10 @@ export const menuItems: MenuItem[] = [
     label: 'Get Involved',
     href: '/get-involved',
     children: [
-      { label: 'Volunteer, Mentor, Join', href: '/get-involved' },
-      { label: 'Campus Ambassadors', href: '/get-involved/campus-ambassadors' },
+      { label: 'Volunteer', href: '/get-involved/volunteer' },
+      { label: 'Become a Mentor', href: '/get-involved/mentor' },
+      { label: 'Campus Ambassador', href: '/get-involved/campus-ambassadors' },
+      { label: 'Join Our Community', href: '/get-involved/community' },
     ],
   },
   {

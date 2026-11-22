@@ -180,6 +180,33 @@ export default async function BlogPage({
     }
   }
 
+  // Master copy 8.2: the nine approved categories always appear as filters, merged with any others in use.
+  const APPROVED_CATEGORIES = [
+    'Leadership and Governance',
+    'Personal Development',
+    'Career Development',
+    'Education and Skills',
+    'Entrepreneurship and Innovation',
+    'Community Development',
+    'Sustainable Development',
+    'Youth Participation',
+    'YTOP Programme Updates',
+  ];
+  const toSlug = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  const known = new Set(categories.map((c) => c.slug));
+  categories = [
+    ...categories,
+    ...APPROVED_CATEGORIES.filter((n) => !known.has(toSlug(n))).map((name) => ({
+      id: `approved-${toSlug(name)}`,
+      name,
+      slug: toSlug(name),
+      description: null,
+      createdAt: new Date(0),
+      updatedAt: new Date(0),
+      _count: { posts: 0 },
+    })),
+  ];
+
   const totalPages = Math.ceil(totalCount / limit);
   const selectedCategory = categorySlug
     ? categories.find(c => c.slug === categorySlug)
@@ -197,8 +224,11 @@ export default async function BlogPage({
               Knowledge, Perspectives and <span className="text-primary">Conversations That Matter.</span>
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Through our publications, YTOP Global shares insights on leadership, education, career development, community participation and sustainable development.
+              Youth development requires continuous learning, informed discussion and access to relevant information. Through our publications, YTOP Global shares insights on leadership, education, career development, community participation and sustainable development. We aim to contribute useful perspectives that help young people make informed decisions and encourage stakeholders to strengthen their approach to youth development.
             </p>
+            <Link href="/reports" className="mt-6 inline-flex px-8 py-3 bg-primary text-white font-bold rounded-full hover:bg-primary-hover transition-colors">
+              Explore Publications
+            </Link>
           </div>
           {!loadError && featuredPost && (
             <Link href={`/blog/${featuredPost.slug}`} className="block relative rounded-2xl overflow-hidden shadow-lg group">

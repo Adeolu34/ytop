@@ -12,6 +12,13 @@ import {
   Users,
   UsersRound,
   Layers,
+  Inbox,
+  CalendarDays,
+  Quote,
+  HeartHandshake,
+  FolderOpen,
+  SlidersHorizontal,
+  Wallet,
 } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -29,6 +36,13 @@ const iconMap: Record<AdminIconKey, typeof LayoutDashboard> = {
   team: UsersRound,
   programs: Layers,
   comments: MessageSquare,
+  enquiries: Inbox,
+  events: CalendarDays,
+  testimonials: Quote,
+  campaigns: HeartHandshake,
+  documents: FolderOpen,
+  content: SlidersHorizontal,
+  donations: Wallet,
 };
 
 export default function AdminSidebar() {

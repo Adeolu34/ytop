@@ -182,8 +182,14 @@ export default function PostEditorForm({
                   name="categories"
                   defaultValue={initialValues.categories}
                   className="w-full rounded-xl border border-[#e7d6d4] bg-white px-4 py-3 text-sm text-[#1b1c1c] outline-none transition-colors focus:border-[#ba0013]"
-                  placeholder="Leadership, News"
+                  placeholder="Leadership and Governance, Personal Development"
                 />
+                <span className="mt-2 block text-xs text-[#5d3f3c]">
+                  Approved categories, separated by commas: Leadership and Governance, Personal
+                  Development, Career Development, Education and Skills, Entrepreneurship and
+                  Innovation, Community Development, Sustainable Development, Youth Participation,
+                  YTOP Programme Updates.
+                </span>
               </label>
 
               <label className="block">

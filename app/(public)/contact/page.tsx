@@ -1,77 +1,12 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import { z } from 'zod';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import SocialIconLinks from '@/components/public/SocialIconLinks';
+import EnquiryForm from '@/components/public/EnquiryForm';
 
-const contactSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().optional(),
-  subject: z.string().min(5, 'Subject must be at least 5 characters'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-});
-
+// Copy: Master Website Content document, Part Eleven.
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Links such as /contact?subject=Monthly%20giving pre-fill the subject line.
-  useEffect(() => {
-    const subject = new URLSearchParams(window.location.search).get('subject');
-    if (subject) {
-      setFormData((prev) => (prev.subject ? prev : { ...prev, subject: subject.slice(0, 120) }));
-    }
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
-    setErrors({});
-
-    try {
-      // Validate
-      const validatedData = contactSchema.parse(formData);
-
-      // Submit
-      const response = await fetch('/api/forms/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(validatedData),
-      });
-
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      } else {
-        setStatus('error');
-      }
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors: Record<string, string> = {};
-        error.issues.forEach((err) => {
-          if (err.path[0] !== undefined) {
-            fieldErrors[String(err.path[0])] = err.message;
-          }
-        });
-        setErrors(fieldErrors);
-      }
-      setStatus('error');
-    }
-  };
-
   return (
     <div>
-      {/* Hero - stitch style */}
-      <section className="relative min-h-[50vh] flex items-center justify-center bg-secondary text-white py-20">
+      <section className="relative min-h-[40vh] flex items-center justify-center bg-secondary text-white py-20">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} aria-hidden />
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
@@ -83,191 +18,66 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="py-20 bg-white dark:bg-background-dark">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
-              <h2 className="font-display text-3xl font-bold text-slate-900 dark:text-white mb-6">Get In Touch</h2>
-              <p className="text-slate-700 dark:text-slate-400 mb-8 leading-relaxed">
-                Contact the relevant team using the details below, or complete the form and our team will review your enquiry.
-              </p>
+              <p className="text-slate-700 dark:text-slate-300 mb-8 text-lg">Contact the relevant team using the details below.</p>
 
               <div className="space-y-6">
-                <div className="group flex items-start gap-4 p-4 rounded-xl hover:bg-surface-light dark:hover:bg-surface-dark transition-all duration-300">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                    <MapPin className="w-6 h-6 text-primary group-hover:text-white transition-colors duration-300" />
+                <div className="flex items-start gap-4 p-4">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-6 h-6 text-primary" aria-hidden />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors duration-200">Address</h3>
-                    <p className="text-slate-600 leading-relaxed">
+                    <h2 className="font-bold text-slate-900 dark:text-white mb-1">General Enquiries</h2>
+                    <a href="mailto:info@ytopglobal.org" className="text-slate-600 hover:text-primary">info@ytopglobal.org</a>
+                    <h2 className="font-bold text-slate-900 dark:text-white mt-4 mb-1">Partnership Enquiries</h2>
+                    <a href="mailto:admin@ytopglobal.org" className="text-slate-600 hover:text-primary">admin@ytopglobal.org</a>
+                    <h2 className="font-bold text-slate-900 dark:text-white mt-4 mb-1">Programme Enquiries</h2>
+                    <a href="mailto:info@ytopglobal.org" className="text-slate-600 hover:text-primary">info@ytopglobal.org</a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-4">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-6 h-6 text-primary" aria-hidden />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-slate-900 dark:text-white mb-1">Telephone</h2>
+                    <a href="tel:+2348100218117" className="block text-slate-600 hover:text-primary">+234 810 021 8117</a>
+                    <a href="tel:+46727702361" className="block text-slate-600 hover:text-primary">+46 72 770 2361</a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-4">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-6 h-6 text-primary" aria-hidden />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-slate-900 dark:text-white mb-1">Head office</h2>
+                    <p className="text-slate-600">
                       H6, Omole line 4, Omisore Street<br />
                       Modakeke, Osun State, Nigeria
                     </p>
                   </div>
                 </div>
-
-                <div className="group flex items-start gap-4 p-4 rounded-xl hover:bg-primary/10 transition-all duration-300 cursor-pointer">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                    <Phone className="w-6 h-6 text-primary group-hover:text-white transition-colors duration-300" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors duration-200">Phone</h3>
-                    <a href="tel:+2348100218117" className="block text-slate-600 hover:text-primary transition-colors duration-200">
-                      +234 810 021 8117
-                    </a>
-                    <a href="tel:+46727702361" className="block text-slate-600 hover:text-primary transition-colors duration-200">
-                      +46 72 770 2361
-                    </a>
-                  </div>
-                </div>
-
-                <div className="group flex items-start gap-4 p-4 rounded-xl hover:bg-primary/10 transition-all duration-300 cursor-pointer">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                    <Mail className="w-6 h-6 text-primary group-hover:text-white transition-colors duration-300" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors duration-200">Email</h3>
-                    <p className="text-sm text-slate-500">General and programme enquiries</p>
-                    <a href="mailto:info@ytopglobal.org" className="block text-slate-600 hover:text-primary transition-colors duration-200">
-                      info@ytopglobal.org
-                    </a>
-                    <p className="mt-2 text-sm text-slate-500">Partnership enquiries</p>
-                    <a href="mailto:admin@ytopglobal.org" className="block text-slate-600 hover:text-primary transition-colors duration-200">
-                      admin@ytopglobal.org
-                    </a>
-                  </div>
-                </div>
               </div>
 
-              {/* Social Media */}
               <div className="mt-10 p-6 bg-slate-50 rounded-2xl dark:bg-surface-dark/50">
-                <h3 className="font-bold text-slate-900 dark:text-white mb-4">Follow Us</h3>
+                <h2 className="font-bold text-slate-900 dark:text-white mb-4">Follow Us</h2>
                 <SocialIconLinks variant="contact" />
               </div>
             </div>
 
-            {/* Contact Form */}
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-bold text-slate-900 mb-2">
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 hover:border-primary"
-                    required
-                  />
-                  {errors.name && <p className="text-primary text-sm mt-2 font-medium">{errors.name}</p>}
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-bold text-slate-900 mb-2">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 hover:border-primary"
-                    required
-                  />
-                  {errors.email && <p className="text-primary text-sm mt-2 font-medium">{errors.email}</p>}
-                </div>
-
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-bold text-slate-900 mb-2">
-                    Phone (Optional)
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 hover:border-primary"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-bold text-slate-900 mb-2">
-                    Subject *
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 hover:border-primary"
-                    required
-                  />
-                  {errors.subject && <p className="text-primary text-sm mt-2 font-medium">{errors.subject}</p>}
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-bold text-slate-900 mb-2">
-                    Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={6}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 hover:border-primary resize-none"
-                    required
-                  />
-                  {errors.message && <p className="text-primary text-sm mt-2 font-medium">{errors.message}</p>}
-                </div>
-
-                {status === 'success' && (
-                  <div className="p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                      <p className="font-bold mb-1">Enquiry submitted</p>
-                      <p className="text-sm">Thank you for contacting YTOP Global. Your enquiry has been submitted. Our team will review your message and respond through the contact information you provided.</p>
-                    </div>
-                  </div>
-                )}
-
-                {status === 'error' && (
-                  <div className="p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl flex items-start gap-3">
-                    <svg className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                      <p className="font-bold mb-1">Error</p>
-                      <p className="text-sm">Something went wrong. Please try again later.</p>
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="group w-full px-8 py-4 bg-primary text-white rounded-xl hover:bg-primary-hover hover:shadow-xl transition-all duration-300 font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  {status === 'loading' ? (
-                    <>
-                      <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      Submit Enquiry
-                      <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-                    </>
-                  )}
-                </button>
-              </form>
+              <h2 className="font-display text-2xl font-bold text-slate-900 mb-1">Have a question or proposal?</h2>
+              <p className="text-slate-700 mb-6">Complete the form below, and our team will review your enquiry.</p>
+              <EnquiryForm
+                formType="CONTACT"
+                submitLabel="Submit Enquiry"
+                confirmation="Thank you for contacting YTOP Global. Your enquiry has been submitted. Our team will review your message and respond through the contact information you provided."
+              />
             </div>
           </div>
         </div>

@@ -57,9 +57,7 @@ export default function FooterNewsletterForm() {
       setEmail('');
       setSubmissionState({
         type: 'success',
-        message:
-          payload?.message ||
-          'Thanks for subscribing. Please check your email for confirmation.',
+        message: 'Thank you for subscribing to YTOP Global updates.',
       });
     } catch {
       setSubmissionState({
@@ -73,12 +71,12 @@ export default function FooterNewsletterForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2 sm:flex-row">
         <input
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="Your email"
+          placeholder="Enter your email address."
           className="flex-1 px-3 py-2.5 bg-white/10 border border-white/20 rounded-lg text-sm placeholder:text-gray-400 text-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/50 transition-all duration-200"
           required
           aria-label="Email address"
@@ -88,7 +86,7 @@ export default function FooterNewsletterForm() {
           disabled={isSubmitting}
           className="px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-hover transition-all duration-200 text-sm font-semibold cursor-pointer transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
         >
-          {isSubmitting ? 'Saving...' : 'Subscribe'}
+          {isSubmitting ? 'Saving...' : 'Subscribe to Our Newsletter'}
         </button>
       </form>
 

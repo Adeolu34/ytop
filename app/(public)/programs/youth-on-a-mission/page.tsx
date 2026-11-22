@@ -6,6 +6,7 @@ export const metadata = {
     'Youth on a Mission gives young people a platform for learning, personal development and purposeful community participation.',
 };
 
+// Copy: Master Website Content document, 3.4.
 export default function Page() {
   return (
     <ProgrammeTemplate
@@ -13,7 +14,7 @@ export default function Page() {
         name: 'Youth on a Mission',
         headline: 'Helping Young People Turn Potential into Purposeful Action.',
         intro: [
-          'Young people need opportunities to understand their abilities, identify development priorities and take practical steps towards their personal and professional goals.',
+          'Young people need opportunities to understand their abilities, identify development priorities, and take practical steps towards their personal and professional goals.',
           'Youth on a Mission provides a platform for young people to engage with learning, personal development and purposeful community participation.',
           'Through structured activities and engagement, the initiative encourages participants to take responsibility for their growth and identify ways to contribute positively to society.',
         ],
@@ -27,10 +28,10 @@ export default function Page() {
         ],
         callToAction: {
           heading: 'Join a community of young people committed to learning, growth and meaningful contribution.',
-          body: 'See previous editions on our events page, or get in touch to take part.',
+          body: 'Become part of the YTOP community, or see what previous editions looked like.',
         },
         buttons: [
-          { label: 'Join the Community', href: '/contact?subject=Youth%20on%20a%20Mission', primary: true },
+          { label: 'Join the YTOP Community', href: '/get-involved/community', primary: true },
           { label: 'See Previous Editions', href: '/events#previous-events' },
         ],
       }}
